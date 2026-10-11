@@ -16,5 +16,6 @@
 5. Supply external-service credentials only when the portal/deployment phase begins: GitHub Actions, domain/DNS, VPS, Cloudflare/R2, Turnstile, and email.
 6. Obtain legal review and any SCERT/KITE/NCERT permissions before real school deployment.
 
-The Windows development machine has Tesseract 5.5.3 with `eng`, `mal`, and `osd` installed. Caddy is not installed locally; it is a Linux deployment prerequisite.
+The Windows development machine has Tesseract 5.5.3 with `eng`, `mal`, and `osd` installed. Ollama 0.40.2 is installed with `gemma4:e2b` available, and its bundled `llama-server.exe` is available for local development. Caddy is not installed locally; it is a Linux deployment prerequisite.
 
+The API environment now includes `pypdfium2` and `sqlite-vec`. `RURALMINDS_LLM_BACKEND=ollama` is the current development default; the production configuration can switch to a directly managed `llama-server` later.

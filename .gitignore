@@ -26,6 +26,26 @@ dist/
 build/
 coverage/
 
+# Downloaded model weights and Hugging Face caches; never commit these.
+models/
+bge-m3-weights/
+bge-reranker-weights/
+**/.cache/
+*.safetensors
+*.bin
+*.onnx
+*.pt
+
+# Local/third-party corpora and evaluation downloads.
+dataset/
+eval/data/
+*.parquet
+*.zip
+
+# School documents and local document-ingestion fixtures.
+*.pdf
+data/documents/
+
 # Local data / generated files
 *.db
 *.db-*
