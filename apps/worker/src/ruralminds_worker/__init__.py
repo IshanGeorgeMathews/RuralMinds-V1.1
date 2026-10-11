@@ -1,0 +1,2 @@
+"""RuralMinds worker package placeholder."""
+

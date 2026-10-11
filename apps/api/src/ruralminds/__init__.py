@@ -1,0 +1,2 @@
+"""RuralMinds API package."""
+

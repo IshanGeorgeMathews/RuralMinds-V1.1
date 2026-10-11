@@ -1,0 +1,11 @@
+[tool.uv.workspace]
+members = ["apps/api", "apps/worker"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.pytest.ini_options]
+testpaths = ["apps/api/tests"]
+asyncio_mode = "auto"
+
