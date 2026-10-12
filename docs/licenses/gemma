@@ -1,6 +1,6 @@
-## Google Gemma 4
+## Google Gemma 4 (E2B / E4B)
 
-- **Source URL:** https://huggingface.co/google/gemma-4 (or official Google Gemma repository)
-- **Licence:** Gemma Terms of Use / Google Gemma License
-- **Status:** Weights used unmodified.
-- **Notice:** Subject to Google's Gemma Terms of Use and Prohibited Use Policy (https://ai.google.dev/gemma/terms).
+- **Source URL:** https://huggingface.co/google (Gemma 4 model cards); local copy pulled via Ollama as `gemma4:e2b`
+- **Licence:** Apache License 2.0 (verified 2026-10-12 with `ollama show gemma4:e2b --license`)
+- **Status:** Weights used unmodified (quantised GGUF). Earlier Gemma versions (Gemma 3 and before) used the Gemma Terms of Use; those terms do not apply to Gemma 4.
+- **Notice:** Ship the Apache-2.0 licence text and any NOTICE file with the weights; state that the weights are quantised.

@@ -1,0 +1,1107 @@
+{
+  "label": "bakeoff-qwen3-4b-2507",
+  "run_at": "2026-10-12T21:00:06",
+  "testset": "eval\\datasets\\bakeoff_dev.jsonl",
+  "split": null,
+  "model_path": "C:/Users/ishan/.ollama/models/blobs/sha256-85e4a5b7b8ef0e48af0e8658f5aaab9c2324c76c1641493f4d1e25fce54b18b9",
+  "prompt_version": "system_v1_social",
+  "settings": {
+    "max_context_tokens": 600,
+    "final_top_k": 4,
+    "refusal_threshold": 0.5,
+    "temperature": 0.2,
+    "max_tokens": 300
+  },
+  "summary": {
+    "en": {
+      "items": 10,
+      "recall_at_3": "8/8",
+      "answered_when_answerable": "8/8",
+      "citation_supported": "7/8",
+      "refusal_accuracy": "10/10",
+      "ttft_p50_s": 14.1,
+      "ttft_p95_s": 16.82,
+      "total_p50_s": 21.47,
+      "total_mean_s": 19.25
+    },
+    "ml": {
+      "items": 10,
+      "recall_at_3": "8/8",
+      "answered_when_answerable": "7/8",
+      "citation_supported": "7/8",
+      "refusal_accuracy": "9/10",
+      "ttft_p50_s": 65.93,
+      "ttft_p95_s": 76.0,
+      "total_p50_s": 119.17,
+      "total_mean_s": 100.91
+    }
+  },
+  "results": [
+    {
+      "id": "d01-en",
+      "split": "dev",
+      "lang": "en",
+      "question": "What were the colours in the Palaeolithic cave paintings made from?",
+      "answerable": true,
+      "gold_pages": [
+        8
+      ],
+      "key_facts": "mixtures of plant extracts and powdered laterite",
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "The colours in the Palaeolithic cave paintings were made from mixtures of plant extracts and powdered laterite. [S1]  \nCheck yourself: What material was used to make the red colour in cave paintings?",
+      "citations": [
+        [
+          1,
+          8,
+          8
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          8,
+          8
+        ],
+        [
+          7,
+          8
+        ],
+        [
+          19,
+          21
+        ],
+        [
+          8,
+          9
+        ],
+        [
+          11,
+          12
+        ],
+        [
+          43,
+          44
+        ]
+      ],
+      "ttft_s": 0.53,
+      "total_s": 8.46,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "d01-ml",
+      "split": "dev",
+      "lang": "ml",
+      "question": "പ്രാചീന ശിലായുഗ ഗുഹാചിത്രങ്ങളിലെ നിറങ്ങൾ എന്തുകൊണ്ടാണ് ഉണ്ടാക്കിയിരുന്നത്?",
+      "answerable": true,
+      "gold_pages": [
+        8
+      ],
+      "key_facts": "സസ്യങ്ങളുടെ ചാറും ചെങ്കൽപൊടിയും",
+      "author": "draft-claude, team to check",
+      "event": "refused",
+      "refused": true,
+      "reason": "not_in_textbook",
+      "answer": null,
+      "citations": [],
+      "retrieved_pages": [
+        [
+          7,
+          8
+        ],
+        [
+          8,
+          8
+        ],
+        [
+          11,
+          12
+        ],
+        [
+          19,
+          20
+        ],
+        [
+          8,
+          9
+        ],
+        [
+          20,
+          22
+        ]
+      ],
+      "ttft_s": null,
+      "total_s": 47.14,
+      "refusal_correct": false,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": false
+    },
+    {
+      "id": "d02-en",
+      "split": "dev",
+      "lang": "en",
+      "question": "Where is Bhimbetka and what was special about it?",
+      "answerable": true,
+      "gold_pages": [
+        11
+      ],
+      "key_facts": "Madhya Pradesh; rock shelters; notable Palaeolithic site",
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "Bhimbetka is in Madhya Pradesh [S1]. It was a remarkable Palaeolithic site with a rock shelter as its special feature [S2].  \nCheck yourself: What kind of structure was found at Bhimbetka?",
+      "citations": [
+        [
+          1,
+          11,
+          12
+        ],
+        [
+          1,
+          9,
+          11
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          11,
+          12
+        ],
+        [
+          9,
+          11
+        ],
+        [
+          8,
+          8
+        ],
+        [
+          8,
+          9
+        ],
+        [
+          41,
+          41
+        ],
+        [
+          77,
+          78
+        ]
+      ],
+      "ttft_s": 13.48,
+      "total_s": 21.47,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "d02-ml",
+      "split": "dev",
+      "lang": "ml",
+      "question": "ഭിംബേഡ്ക എവിടെയാണ്, അതിന്റെ സവിശേഷത എന്തായിരുന്നു?",
+      "answerable": true,
+      "gold_pages": [
+        11
+      ],
+      "key_facts": "മധ്യപ്രദേശ്; കല്ലു കൊണ്ടുള്ള വാസസ്ഥലങ്ങൾ (rock shelter)",
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "ഭിംബേഡ്ക മധ്യപ്രദേശിലാണ്. അതിന്റെ സവിശേഷത കല്ലുകൊണ്ട് നിർമ്മിച്ച വാസസ്ഥലങ്ങളായിരുന്നു [S1].  \nസ്വയം പരിശോധിക്കാം: ഭിംബേഡ്കിന്റെ സവിശേഷത എന്തായിരുന്നു?",
+      "citations": [
+        [
+          1,
+          11,
+          12
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          11,
+          12
+        ],
+        [
+          13,
+          14
+        ],
+        [
+          9,
+          11
+        ],
+        [
+          31,
+          32
+        ],
+        [
+          40,
+          40
+        ],
+        [
+          22,
+          22
+        ]
+      ],
+      "ttft_s": 74.78,
+      "total_s": 120.14,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "d03-en",
+      "split": "dev",
+      "lang": "en",
+      "question": "Who called the changes of the Neolithic Age the 'Neolithic Revolution'?",
+      "answerable": true,
+      "gold_pages": [
+        13
+      ],
+      "key_facts": "Gordon Childe (V Gordon Childe), historian/archaeologist",
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "Gordon Childe called the changes of the Neolithic Age the 'Neolithic Revolution' [S1].  \nCheck yourself: What did Gordon Childe study about human life?",
+      "citations": [
+        [
+          1,
+          13,
+          13
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          13,
+          13
+        ],
+        [
+          13,
+          14
+        ],
+        [
+          17,
+          18
+        ],
+        [
+          19,
+          21
+        ],
+        [
+          19,
+          19
+        ],
+        [
+          16,
+          17
+        ]
+      ],
+      "ttft_s": 14.56,
+      "total_s": 20.91,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "d03-ml",
+      "split": "dev",
+      "lang": "ml",
+      "question": "നവീന ശിലായുഗത്തിലെ മാറ്റങ്ങളെ നവീന ശിലായുഗ വിപ്ലവം എന്ന് വിശേഷിപ്പിച്ചത് ആരാണ്?",
+      "answerable": true,
+      "gold_pages": [
+        13
+      ],
+      "key_facts": "ഗോർഡൻ ചൈൽഡ്",
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "നവീന ശിലായുഗത്തിലെ മാറ്റങ്ങളെ നവീന ശിലായുഗ വിപ്ലവം �ന്ന് വിശേഷിപ്പിച്ചത് ഗോർഡൻ ചൈൽഡ് ആണ് [S1].  \nസ്വയം പരിശോധിക്കാം: ഗോർഡൻ ചൈൽഡ് എന്നത് എന്താണ്?",
+      "citations": [
+        [
+          1,
+          13,
+          13
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          13,
+          13
+        ],
+        [
+          16,
+          18
+        ],
+        [
+          20,
+          22
+        ],
+        [
+          15,
+          16
+        ],
+        [
+          19,
+          20
+        ],
+        [
+          12,
+          13
+        ]
+      ],
+      "ttft_s": 76.0,
+      "total_s": 119.03,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "d04-en",
+      "split": "dev",
+      "lang": "en",
+      "question": "Who led the first excavation at Harappa?",
+      "answerable": true,
+      "gold_pages": [
+        24
+      ],
+      "key_facts": "Daya Ram Sahni",
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "Daya Ram Sahni led the first excavation at Harappa. [S1]  \nCheck yourself: What was the name of the person who led the excavation in Mohenjodaro?",
+      "citations": [
+        [
+          2,
+          24,
+          24
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          24,
+          24
+        ],
+        [
+          24,
+          25
+        ],
+        [
+          39,
+          40
+        ],
+        [
+          37,
+          37
+        ],
+        [
+          28,
+          29
+        ],
+        [
+          30,
+          31
+        ]
+      ],
+      "ttft_s": 16.82,
+      "total_s": 24.05,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "d04-ml",
+      "split": "dev",
+      "lang": "ml",
+      "question": "ഹരപ്പയിലെ ആദ്യത്തെ ഉൽഖനനത്തിന് നേതൃത്വം നൽകിയത് ആരാണ്?",
+      "answerable": true,
+      "gold_pages": [
+        24
+      ],
+      "key_facts": "ദയാറാം സാഹ്നി",
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "ഹരപ്പയിലെ ആദ്യത്തെ ഉൽഖനനത്തിന് നേതൃത്വം നൽകിയത് ദയാറാം സാഹ്നിയായിരുന്നു [S1].  \nസ്വയം പരിശോധിക്കാം: ഹരപ്പയിലെ ഉൽഖനനത്തിന് നേതൃത്വം നൽകിയത് എന്തുകൊണ്ട് ദയാറാം സാഹ്നിയായിരുന്നു?",
+      "citations": [
+        [
+          2,
+          24,
+          24
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          24,
+          24
+        ],
+        [
+          24,
+          26
+        ],
+        [
+          39,
+          40
+        ],
+        [
+          29,
+          30
+        ],
+        [
+          28,
+          29
+        ],
+        [
+          30,
+          31
+        ]
+      ],
+      "ttft_s": 62.63,
+      "total_s": 113.82,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "d05-en",
+      "split": "dev",
+      "lang": "en",
+      "question": "How were the drains in Harappan cities built?",
+      "answerable": true,
+      "gold_pages": [
+        26
+      ],
+      "key_facts": "burnt bricks; covered with stone slabs; connected to the main street drain",
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "The drains in Harappan cities were built of burnt bricks. They were covered with stone slabs [S1]. The drains were connected to the main drain of the street [S1].  \n\nCheck yourself: What material were the drains made of?",
+      "citations": [
+        [
+          2,
+          26,
+          27
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          26,
+          27
+        ],
+        [
+          25,
+          26
+        ],
+        [
+          27,
+          28
+        ],
+        [
+          37,
+          37
+        ],
+        [
+          30,
+          31
+        ],
+        [
+          39,
+          40
+        ]
+      ],
+      "ttft_s": 14.1,
+      "total_s": 22.52,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "d05-ml",
+      "split": "dev",
+      "lang": "ml",
+      "question": "ഹരപ്പൻ നഗരങ്ങളിലെ അഴുക്കുചാലുകൾ എങ്ങനെയാണ് നിർമിച്ചിരുന്നത്?",
+      "answerable": true,
+      "gold_pages": [
+        26
+      ],
+      "key_facts": "ചുട്ട ഇഷ്ടിക; കല്ലുപാളികൾ കൊണ്ട് മൂടി",
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "അഴുക്കുചാലുകൾ നഗരങ്ങളിലെ വീടുകളിൽ നിന്നുള്ള മലിനജലം ഒഴുക്കിയിരുന്നതായിരുന്നു [S1]. അവയുടെ ഉപയോഗം നഗരത്തിന്റെ സവിശേഷതയായിരുന്നു [S1].  \nസ്വയം പരിശോധിക്കാം: അഴുക്കുചാലുകൾ എന്തിനായിരുന്നു?",
+      "citations": [
+        [
+          2,
+          26,
+          26
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          26,
+          26
+        ],
+        [
+          37,
+          37
+        ],
+        [
+          26,
+          27
+        ],
+        [
+          29,
+          30
+        ],
+        [
+          27,
+          28
+        ],
+        [
+          30,
+          31
+        ]
+      ],
+      "ttft_s": 65.93,
+      "total_s": 119.17,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "d06-en",
+      "split": "dev",
+      "lang": "en",
+      "question": "Where was evidence of rice cultivation found in the Harappan civilization?",
+      "answerable": true,
+      "gold_pages": [
+        27,
+        28
+      ],
+      "key_facts": "Rangpur and Lothal",
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "Evidence of rice cultivation was found in Rangpur and Lothal in Gujarat. [S1]  \nCheck yourself: What part of India did Rangpur and Lothal belong to?",
+      "citations": [
+        [
+          2,
+          27,
+          28
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          27,
+          28
+        ],
+        [
+          30,
+          31
+        ],
+        [
+          29,
+          30
+        ],
+        [
+          80,
+          81
+        ],
+        [
+          24,
+          24
+        ],
+        [
+          28,
+          28
+        ]
+      ],
+      "ttft_s": 16.53,
+      "total_s": 22.52,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "d06-ml",
+      "split": "dev",
+      "lang": "ml",
+      "question": "ഹരപ്പൻ സംസ്കാരത്തിൽ നെല്ല് കൃഷി ചെയ്തിരുന്നതിന്റെ തെളിവുകൾ എവിടെ നിന്നാണ് ലഭിച്ചത്?",
+      "answerable": true,
+      "gold_pages": [
+        27,
+        28
+      ],
+      "key_facts": "റംഗ്പൂർ, ലോഥാൽ (ഗുജറാത്ത്)",
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "ഹരപ്പൻ സംസ്കാരത്തിൽ നെല്ല് കൃഷി ചെയ്തിരുന്നതിന്റെ തെളിവുകൾ ഗുജറാത്തിലെ റംഗ് പൂർ, ലോഥാൽ എന്നിവിടങ്ങളിൽനിന്നാണ് ലഭിച്ചത് [S1].  \nസ്വയം പരിശോധിക്കാം: നെല്ല് കൃഷി ചെയ്തിരുന്നതിന്റെ തെളിവുകൾ എവിടെ നിന്നാണ് ലഭിച്ചത്?",
+      "citations": [
+        [
+          2,
+          27,
+          28
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          27,
+          28
+        ],
+        [
+          37,
+          37
+        ],
+        [
+          29,
+          30
+        ],
+        [
+          28,
+          29
+        ],
+        [
+          30,
+          31
+        ],
+        [
+          80,
+          80
+        ]
+      ],
+      "ttft_s": 64.16,
+      "total_s": 125.39,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "d07-en",
+      "split": "dev",
+      "lang": "en",
+      "question": "What are the parts of the Indian Parliament?",
+      "answerable": true,
+      "gold_pages": [
+        59,
+        60
+      ],
+      "key_facts": "the President, Rajya Sabha and Lok Sabha; bicameral",
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "The parts of the Indian Parliament are the President and two houses: Rajya Sabha and Lok Sabha. [S1]  \nCheck yourself: What is the name of the upper house in the Indian Parliament?",
+      "citations": [
+        [
+          4,
+          57,
+          59
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          57,
+          59
+        ],
+        [
+          72,
+          72
+        ],
+        [
+          60,
+          61
+        ],
+        [
+          59,
+          60
+        ],
+        [
+          70,
+          71
+        ],
+        [
+          73,
+          74
+        ]
+      ],
+      "ttft_s": 13.48,
+      "total_s": 20.03,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "d07-ml",
+      "split": "dev",
+      "lang": "ml",
+      "question": "ഇന്ത്യൻ പാർലമെന്റിന്റെ ഘടകങ്ങൾ ഏതൊക്കെയാണ്?",
+      "answerable": true,
+      "gold_pages": [
+        59,
+        60,
+        61
+      ],
+      "key_facts": "രാഷ്ട്രപതി, രാജ്യസഭ, ലോക്സഭ",
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "ഇന്ത്യൻ പാർലമെന്റിന്റെ ഘടകങ്ങൾ ലോകസഭയും രാജ്യസഭയുമാണ് [S2]. ലോകസഭ അധോസഭയെന്നും രാജ്യസഭ ഉപരിസഭയെന്നും അറിയപ്പെടുന്നു [S2].  \nസ്വയം പരിശോധിക്കാം: രാജ്യസഭയെ എന്തുകൊണ്ട് ഉപരിസഭയെന്ന് അറിയപ്പെടുന്നു?",
+      "citations": [
+        [
+          4,
+          59,
+          59
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          71,
+          72
+        ],
+        [
+          59,
+          59
+        ],
+        [
+          59,
+          61
+        ],
+        [
+          57,
+          59
+        ],
+        [
+          70,
+          71
+        ],
+        [
+          69,
+          70
+        ]
+      ],
+      "ttft_s": 53.39,
+      "total_s": 105.72,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "d08-en",
+      "split": "dev",
+      "lang": "en",
+      "question": "Who presides over a joint sitting of the Parliament?",
+      "answerable": true,
+      "gold_pages": [
+        62,
+        63
+      ],
+      "key_facts": "the Speaker of the Lok Sabha (summoned by the President)",
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "The President of India presides over a joint sitting of the Parliament. [S2]  \nCheck yourself: What role does the President play in Parliament?",
+      "citations": [
+        [
+          4,
+          59,
+          60
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          60,
+          61
+        ],
+        [
+          59,
+          60
+        ],
+        [
+          62,
+          63
+        ],
+        [
+          62,
+          62
+        ],
+        [
+          72,
+          73
+        ],
+        [
+          61,
+          62
+        ]
+      ],
+      "ttft_s": 12.69,
+      "total_s": 17.69,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": false
+    },
+    {
+      "id": "d08-ml",
+      "split": "dev",
+      "lang": "ml",
+      "question": "പാർലമെന്റിന്റെ സംയുക്ത സമ്മേളനത്തിൽ അധ്യക്ഷത വഹിക്കുന്നത് ആരാണ്?",
+      "answerable": true,
+      "gold_pages": [
+        62,
+        63
+      ],
+      "key_facts": "ലോക്സഭാ സ്പീക്കർ",
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "ലോകസഭാ സ്പീക്കറുടെ അദ്ധ്യക്ഷതയിലായിരിക്കും സംയുക്ത സമ്മേളനം ചേരുക [S2].  \nസ്വയം പരിശോധിക്കാം: ലോകസഭാ സ്പീക്കറുടെ അദ്ധ്യക്ഷതയിലായിരിക്കും സംയുക്ത സമ്മേളനം ചേരുക എന്നത് ശരിയാണോ?",
+      "citations": [
+        [
+          4,
+          62,
+          62
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          59,
+          61
+        ],
+        [
+          62,
+          62
+        ],
+        [
+          70,
+          71
+        ],
+        [
+          71,
+          72
+        ],
+        [
+          72,
+          73
+        ],
+        [
+          64,
+          65
+        ]
+      ],
+      "ttft_s": 72.2,
+      "total_s": 122.63,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "d09-en",
+      "split": "dev",
+      "lang": "en",
+      "question": "Who was the first Mughal emperor of India?",
+      "answerable": false,
+      "gold_pages": [],
+      "key_facts": "not in Pt1 (checked: no Mughal/Babur in either book)",
+      "author": "draft-claude, team to check",
+      "event": "refused",
+      "refused": true,
+      "reason": "not_in_textbook",
+      "answer": null,
+      "citations": [],
+      "retrieved_pages": [
+        [
+          64,
+          65
+        ],
+        [
+          24,
+          24
+        ],
+        [
+          32,
+          33
+        ],
+        [
+          114,
+          115
+        ],
+        [
+          72,
+          73
+        ],
+        [
+          32,
+          32
+        ]
+      ],
+      "ttft_s": null,
+      "total_s": 17.45,
+      "refusal_correct": true,
+      "grade": null
+    },
+    {
+      "id": "d09-ml",
+      "split": "dev",
+      "lang": "ml",
+      "question": "ആദ്യത്തെ മുഗൾ ചക്രവർത്തി ആരായിരുന്നു?",
+      "answerable": false,
+      "gold_pages": [],
+      "key_facts": "not in Pt1",
+      "author": "draft-claude, team to check",
+      "event": "refused",
+      "refused": true,
+      "reason": "not_in_textbook",
+      "answer": null,
+      "citations": [],
+      "retrieved_pages": [
+        [
+          33,
+          33
+        ],
+        [
+          24,
+          24
+        ],
+        [
+          66,
+          67
+        ],
+        [
+          31,
+          32
+        ],
+        [
+          18,
+          19
+        ],
+        [
+          63,
+          64
+        ]
+      ],
+      "ttft_s": null,
+      "total_s": 66.23,
+      "refusal_correct": true,
+      "grade": null
+    },
+    {
+      "id": "d10-en",
+      "split": "dev",
+      "lang": "en",
+      "question": "At what temperature does water boil?",
+      "answerable": false,
+      "gold_pages": [],
+      "key_facts": "off-subject (science)",
+      "author": "draft-claude, team to check",
+      "event": "refused",
+      "refused": true,
+      "reason": "not_in_textbook",
+      "answer": null,
+      "citations": [],
+      "retrieved_pages": [
+        [
+          41,
+          42
+        ],
+        [
+          45,
+          46
+        ],
+        [
+          44,
+          45
+        ],
+        [
+          54,
+          55
+        ],
+        [
+          44,
+          44
+        ],
+        [
+          80,
+          81
+        ]
+      ],
+      "ttft_s": null,
+      "total_s": 17.44,
+      "refusal_correct": true,
+      "grade": null
+    },
+    {
+      "id": "d10-ml",
+      "split": "dev",
+      "lang": "ml",
+      "question": "വെള്ളം എത്ര ഡിഗ്രിയിലാണ് തിളയ്ക്കുന്നത്?",
+      "answerable": false,
+      "gold_pages": [],
+      "key_facts": "off-subject (science)",
+      "author": "draft-claude, team to check",
+      "event": "refused",
+      "refused": true,
+      "reason": "not_in_textbook",
+      "answer": null,
+      "citations": [],
+      "retrieved_pages": [
+        [
+          101,
+          102
+        ],
+        [
+          109,
+          110
+        ],
+        [
+          42,
+          42
+        ],
+        [
+          30,
+          31
+        ],
+        [
+          41,
+          42
+        ],
+        [
+          109,
+          109
+        ]
+      ],
+      "ttft_s": null,
+      "total_s": 69.8,
+      "refusal_correct": true,
+      "grade": null
+    }
+  ]
+}

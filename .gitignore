@@ -73,3 +73,16 @@ Desktop.ini
 .idea/
 *.swp
 *.swo
+
+# Claude local instructions and commands
+.claude/
+**/.claude/
+claude/
+**/claude/
+implementation/Claude_ruralminds/
+
+# Server and API logs (may contain student questions)
+logs/
+
+# Self-authored eval sets stay local until redistribution rights are confirmed (eval/README.md)
+eval/datasets/*.jsonl

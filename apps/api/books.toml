@@ -1,0 +1,53 @@
+# Book manifest. Citations are rendered from this file, never from the model.
+# printed page = PDF page + page_offset. Checked 12 Oct 2026: EN Social Science Pt1
+# chapter starts (7, 23, 41, 57, 75, 87, 107) fall on the matching PDF pages.
+# A chapter runs from its `start` page to the page before the next chapter's start;
+# the last chapter runs to `last_page`.
+# The PDFs are never committed (see .gitignore); teachers place them locally.
+
+[[book]]
+id = "ss8-pt1-en"
+title = "Social Science, Standard VIII, Part 1"
+board = "SCERT-KL"
+medium = "en"
+grade = 8
+subject = "social_science"
+path = "docs/Class-8 scert textbook/english_medium/social_science_pt1.pdf"
+licence = "(c) Department of Education, Government of Kerala; permission pending"
+ocr_lang = "eng"
+page_offset = 0
+last_page = 120
+chapters = [
+  { no = 1, title = "Early Human Life", start = 7 },
+  { no = 2, title = "The River Valley Civilizations", start = 23 },
+  { no = 3, title = "In Search of Earth's Secrets", start = 41 },
+  { no = 4, title = "Our Government", start = 57 },
+  { no = 5, title = "Ancient Tamilakam", start = 75 },
+  { no = 6, title = "Reading Maps", start = 87 },
+  { no = 7, title = "Economic Thought", start = 107 },
+]
+
+# Malayalam medium: legacy ASCII (ML-TT) font, so every page goes through OCR.
+# Chapter titles are transcribed from the contents page (OCR was garbled) and the
+# start pages are assumed to match the English edition; both are checked after OCR.
+[[book]]
+id = "ss8-pt1-ml"
+title = "സാമൂഹ്യശാസ്ത്രം, സ്റ്റാൻഡേർഡ് VIII, ഭാഗം 1"
+board = "SCERT-KL"
+medium = "ml"
+grade = 8
+subject = "social_science"
+path = "docs/Class-8 scert textbook/malayalam_medium/social_science_mal_pt1.pdf"
+licence = "(c) Department of Education, Government of Kerala; permission pending"
+ocr_lang = "mal+eng"
+page_offset = 0
+last_page = 120
+chapters = [
+  { no = 1, title = "ആദ്യകാല മനുഷ്യജീവിതം", start = 7 },
+  { no = 2, title = "നദീതടസംസ്കാരങ്ങളിലൂടെ", start = 23 },
+  { no = 3, title = "ഭൗമരഹസ്യങ്ങൾ തേടി", start = 41 },
+  { no = 4, title = "നമ്മുടെ ഗവൺമെന്റ്", start = 57 },
+  { no = 5, title = "പ്രാചീന തമിഴകം", start = 75 },
+  { no = 6, title = "ഭൂപടങ്ങൾ വായിക്കാം", start = 87 },
+  { no = 7, title = "സാമ്പത്തിക ചിന്തകൾ", start = 107 },
+]
