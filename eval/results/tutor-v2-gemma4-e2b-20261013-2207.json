@@ -1,0 +1,660 @@
+{
+  "label": "tutor-v2-gemma4-e2b",
+  "run_at": "2026-10-13T22:07:54",
+  "testset": "eval\\datasets\\tutor_dev.jsonl",
+  "split": null,
+  "model_path": "C:/Users/ishan/.ollama/models/blobs/sha256-6dd7ac24fe13a238898e16e253ebc7a72fa27fb83f2658c2f6c241df3af5937d",
+  "prompt_version": "system_v2_tutor",
+  "settings": {
+    "max_context_tokens": 600,
+    "final_top_k": 4,
+    "refusal_threshold": 0.5,
+    "temperature": 0.2,
+    "max_tokens": 300
+  },
+  "summary": {
+    "tutor-en": {
+      "items": 7,
+      "recall_at_3": "5/5",
+      "answered_when_answerable": "5/5",
+      "citation_supported": "5/5",
+      "refusal_accuracy": "7/7",
+      "ttft_p50_s": 10.42,
+      "ttft_p95_s": 17.46,
+      "total_p50_s": 44.46,
+      "total_mean_s": 36.15
+    },
+    "tutor-ml": {
+      "items": 3,
+      "recall_at_3": "3/3",
+      "answered_when_answerable": "3/3",
+      "citation_supported": "3/3",
+      "refusal_accuracy": "3/3",
+      "ttft_p50_s": 18.63,
+      "ttft_p95_s": 27.9,
+      "total_p50_s": 59.67,
+      "total_mean_s": 64.45
+    }
+  },
+  "results": [
+    {
+      "id": "t01",
+      "split": "dev",
+      "lang": "en",
+      "medium": "en",
+      "arm": "tutor-en",
+      "question": "explain why harappan civilization failed using a real world example",
+      "answerable": true,
+      "gold_pages": [
+        30,
+        31
+      ],
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "- The **Harappan civilization** started to fade away by the year 1700 BCE [S1].\n- There are several ideas about why this happened [S1].\n- Some reasons mentioned for the decline include **floods**, **external invasions**, **deforestation**, the **decline of the agricultural sector**, and **epidemics** [S1].\n- Also, the discovery of **seals** from Harappa is mentioned as a factor [S1].",
+      "example": "Imagine if a big flood keeps ruining your crops every year, making it impossible to grow enough food for everyone.",
+      "check": "Which of the listed reasons for decline do you think might have been the most damaging to the Harappan people?",
+      "quiz_answers": "",
+      "mode": "example",
+      "search_query": "why harappan civilization failed",
+      "citations": [
+        [
+          2,
+          30,
+          31
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          30,
+          31
+        ],
+        [
+          37,
+          37
+        ],
+        [
+          37,
+          38
+        ],
+        [
+          24,
+          24
+        ],
+        [
+          24,
+          25
+        ],
+        [
+          27,
+          28
+        ]
+      ],
+      "ttft_s": 0.89,
+      "total_s": 30.77,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "t02",
+      "split": "dev",
+      "lang": "en",
+      "medium": "en",
+      "arm": "tutor-en",
+      "question": "explain the harappan drainage system as a story",
+      "answerable": true,
+      "gold_pages": [
+        26
+      ],
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "Imagine you are exploring an ancient city like Mohenjodaro [S1]. This city had a really clever way of managing water!\n\n- The houses in these cities had **drainage systems** [S2].\n- The wastewater from the houses was allowed to flow into the drains [S2].\n- These drains were connected to the main drain of the street [S1].\n- The builders made these drains out of **burnt bricks** [S1].\n- To make them strong, they covered them with **stone slabs** [S1].\n- Even in small towns and villages, they had effective drainage systems [S1].\n\nThe cities themselves were also divided. The part of the city to the west was higher and was used by the **administrators** [S1]. The part to the east was lower and was where the common people lived, with many houses found there [S1].",
+      "example": "Think of it like a modern apartment building where the pipes (drains) carry all the dirty water from the bathrooms and kitchens down to the main sewer line, and the pipes themselves are made of strong, durable material.",
+      "check": "What material did the Harappans use to build their drains?",
+      "quiz_answers": "",
+      "mode": "story",
+      "search_query": "the harappan drainage system",
+      "citations": [
+        [
+          2,
+          26,
+          27
+        ],
+        [
+          2,
+          25,
+          26
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          26,
+          27
+        ],
+        [
+          25,
+          26
+        ],
+        [
+          37,
+          37
+        ],
+        [
+          27,
+          28
+        ],
+        [
+          28,
+          28
+        ],
+        [
+          30,
+          31
+        ]
+      ],
+      "ttft_s": 10.11,
+      "total_s": 53.28,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "t03",
+      "split": "dev",
+      "lang": "en",
+      "medium": "en",
+      "arm": "tutor-en",
+      "question": "I didn't understand what the Neolithic Revolution is, explain in simple words",
+      "answerable": true,
+      "gold_pages": [
+        13
+      ],
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "The **Neolithic Revolution** is a big change in how people lived. [S2]\n- Before this, people mostly gathered food.\n- In the Neolithic Age, things changed a lot. [S1]\n- The biggest change was starting **cultivation**. [S1]\n- This means people started growing their own food instead of just finding it. [S1]\n- This happened around eight thousand years ago. [S1]\n- People started to settle down in river valleys. [S1]\n- They also started to rear animals for food. [S2]\n- This change from gathering food to making food is a big moment in history. [S1]",
+      "example": "Imagine you used to only pick fruits from the garden, but then you started planting seeds to grow your own vegetables. That is a small version of the change that happened.",
+      "check": "What is the main difference between food gathering and food production?",
+      "quiz_answers": "",
+      "mode": "simpler",
+      "search_query": "what the Neolithic Revolution is,",
+      "citations": [
+        [
+          1,
+          13,
+          14
+        ],
+        [
+          1,
+          13,
+          13
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          13,
+          13
+        ],
+        [
+          13,
+          14
+        ],
+        [
+          19,
+          21
+        ],
+        [
+          16,
+          17
+        ],
+        [
+          14,
+          16
+        ],
+        [
+          17,
+          18
+        ]
+      ],
+      "ttft_s": 10.42,
+      "total_s": 44.46,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "t04",
+      "split": "dev",
+      "lang": "en",
+      "medium": "en",
+      "arm": "tutor-en",
+      "question": "quiz me on Bhimbetka",
+      "answerable": true,
+      "gold_pages": [
+        11
+      ],
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "1. Where is the Palaeolithic site of Bhimbetka located? [S2]\n2. What is the main feature of the Bhimbetka site? [S1]\n3. How are the tools of the Mesolithic Age different from those of the Palaeolithic Age? [S2]",
+      "example": "",
+      "check": "",
+      "quiz_answers": "1. The Palaeolithic site of Bhimbetka is in Madhya Pradesh [S2].\n2. The rock shelter was the main feature of the Bhimbetka site [S1].\n3. The tools of the Mesolithic Age are small stone tools with sharp points, which are different from the Palaeolithic tools [S2].",
+      "mode": "quiz",
+      "search_query": "on Bhimbetka",
+      "citations": [
+        [
+          1,
+          11,
+          12
+        ],
+        [
+          1,
+          9,
+          11
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          9,
+          11
+        ],
+        [
+          11,
+          12
+        ],
+        [
+          8,
+          8
+        ],
+        [
+          8,
+          9
+        ],
+        [
+          106,
+          106
+        ],
+        [
+          78,
+          79
+        ]
+      ],
+      "ttft_s": 10.46,
+      "total_s": 36.21,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "t05",
+      "split": "dev",
+      "lang": "ml",
+      "medium": "ml",
+      "arm": "tutor-ml",
+      "question": "river valleys enthanu?",
+      "answerable": true,
+      "gold_pages": [
+        23,
+        24,
+        31,
+        32
+      ],
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "**നദി അരുവികൾ** എന്ന് പറഞ്ഞാൽ, ഒരു നദിക്ക് ചുറ്റുമുള്ള **പ്രദേശമാണ്** [S2].\n\n- സിന്ധു നദിയുടെയും അതിന്റെ കൈവഴികളുടെയും തീരത്തുള്ള പല സ്ഥലങ്ങളിലാണ് ഈ സംസ്കാരം ഉണ്ടായത് [S2].\n- ഈ സംസ്കാരത്തെ **സിന്ധുനദീതട സംസ്കാരം** എന്ന് വിളിക്കുന്നു [S2].\n- ഹരപ്പയിൽ ആദ്യത്തെ ഉൽഖനനം നടന്നത് സിന്ധു നദിയുടെ തീരത്തുള്ള ഒരു പ്രദേശത്താണ് [S2].",
+      "example": "നമ്മുടെ നാട്ടിലെ ഒരു ചെറിയ അരുവി പോലെ, ഒരു നദിക്ക് ചുറ്റുമുള്ള കൃഷിയിടങ്ങളും താമസസ്ഥലങ്ങളും ചേർന്നതാണ് river valley.",
+      "check": "സിന്ധുനദീതട സംസ്കാരം എവിടെയാണ് പ്രധാനമായും നിലനിന്നിരുന്നത്?",
+      "quiz_answers": "",
+      "mode": "explain",
+      "search_query": "നദി താഴ്വരങ്ങൾ എന്താണ്?",
+      "citations": [
+        [
+          2,
+          24,
+          24
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          34,
+          35
+        ],
+        [
+          24,
+          24
+        ],
+        [
+          31,
+          32
+        ],
+        [
+          37,
+          39
+        ],
+        [
+          96,
+          97
+        ],
+        [
+          98,
+          99
+        ]
+      ],
+      "ttft_s": 27.9,
+      "total_s": 58.84,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "t06",
+      "split": "dev",
+      "lang": "ml",
+      "medium": "ml",
+      "arm": "tutor-ml",
+      "question": "harappan nagarangalile drainage engane aayirunnu? oru udaharanam paranju tharamo",
+      "answerable": true,
+      "gold_pages": [
+        26
+      ],
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "ഹരപ്പൻ നഗരങ്ങളിൽ **അഴുക്കുചാൽ** സംവിധാനം എങ്ങനെയായിരുന്നു എന്ന് നോക്കാം.\n\n- നഗരങ്ങളുടെ ഒരു പ്രധാന പ്രത്യേകത **അഴുക്കുചാൽ** ഉണ്ടായിരുന്നു [S1].\n- വീടുകളിൽ നിന്നുള്ള **മലിനജലം** ഈ ചാലുകളിലേക്ക് ഒഴുക്കിവിട്ടാണ് ഇത് പ്രവർത്തിച്ചിരുന്നത് [S1].\n- വീടുകൾ വൃത്തിയായി നിർമ്മിച്ചിരുന്നു. ചില വീടുകൾ ഒറ്റമുറി വീടുകളായിരുന്നെങ്കിൽ, മറ്റു ചിലത് കൂടുതൽ മുറികളും വിശാലമായ മുറ്റവും കിണറുകളുമുള്ളവയായിരുന്നു [S1].\n- വീടുകൾക്ക് **ശയചാലയങ്ങൾ** ഉണ്ടായിരുന്നു [S1].",
+      "example": "നമ്മുടെ വീട്ടിലെ അടുക്കളയിലെ വെള്ളം ഒഴുക്കിവിടാൻ ഉപയോഗിക്കുന്ന പൈപ്പ് ലൈനുകൾ ഒരുതരം അഴുക്കുചാൽ പോലെയാണ്, അത് മാലിന്യം പുറത്തേക്ക് കളയുന്നു.",
+      "check": "നഗരങ്ങളിലെ അഴുക്കുചാൽ സംവിധാനം ഇന്നത്തെ നഗരങ്ങളിലെ ഡ്രെയിനേജ് സംവിധാനങ്ങളിൽ നിന്ന് എങ്ങനെ വ്യത്യാസപ്പെട്ടിരിക്കുന്നു?",
+      "quiz_answers": "",
+      "mode": "example",
+      "search_query": "ഹരപ്പൻ നഗരങ്ങളിലെ ഡ്രെയിനേജ് എങ്ങനെയായിരുന്നു?",
+      "citations": [
+        [
+          2,
+          26,
+          26
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          26,
+          26
+        ],
+        [
+          37,
+          37
+        ],
+        [
+          27,
+          28
+        ],
+        [
+          29,
+          30
+        ],
+        [
+          24,
+          26
+        ],
+        [
+          30,
+          31
+        ]
+      ],
+      "ttft_s": 18.63,
+      "total_s": 59.67,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "t07",
+      "split": "dev",
+      "lang": "ml",
+      "medium": "en",
+      "arm": "tutor-ml",
+      "question": "Bhimbetka evideyanu?",
+      "answerable": true,
+      "gold_pages": [
+        11
+      ],
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "**പുരാതന മനുഷ്യരുടെ** ജീവിതത്തെക്കുറിച്ചാണ് ഈ ഭാഗം പറയുന്നത് [S1].\n\n- ആദ്യകാല മനുഷ്യർക്ക് **ഉപകരണങ്ങൾ** ഉണ്ടാക്കാനും അവ മെച്ചപ്പെടുത്താനും കഴിഞ്ഞു, അതുകൊണ്ടാണ് അവർക്ക് പുരോഗതി നേടാൻ കഴിഞ്ഞത് [S1].\n- അവർക്ക് **ആവശ്യമായ കാര്യങ്ങൾ** എന്തൊക്കെയായിരുന്നു എന്ന് ചർച്ച ചെയ്യാം: ഉപകരണങ്ങൾ ഉണ്ടാക്കൽ, അഭയം, സാമൂഹിക ജീവിതം, കലാപരമായ കഴിവുകൾ, ഭക്ഷണം, ഉപജീവനമാർഗ്ഗം, ആസൂത്രണം, തീയുടെ ഉപയോഗം എന്നിവയെക്കുറിച്ച് ചർച്ച ചെയ്യാം [S1].\n- **കലാപരമായ** കാര്യങ്ങളിൽ, **മूर्तिकला** (Sculpture) ഉം **ചിത്രരചന** (Painting) ഉം ഉണ്ടായിരുന്നു [S1].\n- **ഭീംബേട്ക** എന്നത് മധ്യപ്രദേശിലെ ഒരു പ്രധാനപ്പെട്ട **പാലിയോലിത്തിക്** (Palaeolithic) സ്ഥലമാണ് [S1]. അവിടെ **കല്ലറകൾ** (Rock shelter) പ്രധാന പ്രത്യേകതയായിരുന്നു [S1].\n- ഇന്ത്യയിൽ **പാലിയോലിത്തിക്** മനുഷ്യരുടെ ജീവിതത്തെക്കുറിച്ച് തെളിവുകൾ നൽകുന്ന മറ്റ് സ്ഥലങ്ങളും ഉണ്ട്. ഉദാഹരണത്തിന്, **നർമ്മദ താഴ്‌വര**, **ഭീംബേട്ക**, **ഹൺസ്ഗി**, **കുർണൂൾ ഗുഹകൾ**, **നഗർജുനക്കൊണ്ട** എന്നിവയെല്ലാം അങ്ങനെയാണ് [S2].",
+      "example": "നമ്മുടെ നാട്ടിലെ പഴയ ഗുഹകളെക്കുറിച്ച് പഠിക്കുമ്പോൾ, അവിടെ മനുഷ്യർ എങ്ങനെയാണ് താമസിച്ചിരുന്നത് എന്ന് മനസ്സിലാക്കാൻ സാധിക്കും.",
+      "check": "",
+      "quiz_answers": "",
+      "mode": "explain",
+      "search_query": "Where is Bhimbetka?",
+      "citations": [
+        [
+          1,
+          9,
+          11
+        ],
+        [
+          1,
+          11,
+          12
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          9,
+          11
+        ],
+        [
+          11,
+          12
+        ],
+        [
+          8,
+          9
+        ],
+        [
+          96,
+          97
+        ],
+        [
+          8,
+          8
+        ],
+        [
+          98,
+          99
+        ]
+      ],
+      "ttft_s": 13.18,
+      "total_s": 74.83,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "t08",
+      "split": "dev",
+      "lang": "en",
+      "medium": "ml",
+      "arm": "tutor-en",
+      "question": "Who led the first excavation at Harappa?",
+      "answerable": true,
+      "gold_pages": [
+        24
+      ],
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "- സിന്ധു നദിയുടെ തീരത്തുള്ള പല സ്ഥലങ്ങളിലാണ് ഈ **സംസ്കാരം** ഉണ്ടായിരുന്നത് [S1]. അതുകൊണ്ട് ഈ സംസ്കാരത്തെ **സിന്ധുനദീതട സംസ്കാരം** എന്ന് വിളിക്കുന്നു [S1].\n- പാകിസ്താനിലെ ഹരപ്പയിലായിരുന്നു ആദ്യത്തെ **ഉൽഖനനം** നടന്നത് [S1].\n- ദയാറാം സാഹ്നിയായിരുന്നു ഇതിന് നേതൃത്വം നൽകിയത് [S1].\n- ഹരപ്പയിൽ നിന്ന് സിന്ധുനദീതട സംസ്കാരത്തിന്റെ ആദ്യ തെളിവുകൾ ലഭിച്ചതുകൊണ്ട് ഈ സംസ്കാരത്തെ **ഹരപ്പൻ സംസ്കാരം** എന്നും വിളിക്കുന്നു [S1].\n- ആർ.ഡി. ബാനർജിയായിരുന്നു പാകിസ്താനിലെ മോഹൻജൊദാരോവിൽ ഉൽഖനനങ്ങൾ നടത്തിയത് [S1].\n- ഒ ബി.സി.ഇ 2700 മുതൽ 1700 വരെയുള്ള കാലത്ത് സിന്ധുനദിയുടെയും കൈവഴികളുടെയും തടങ്ങളിലാണ് ഹരപ്പൻ സംസ്കാരം നിലനിന്നിരുന്നത് [S2].\n- ഹരപ്പൻ സംസ്കാരത്തിന്റെ പ്രധാന പ്രത്യേകതകളിലൊന്ന് **അഴുക്കുചാൽ**, തെരുവുകൾ, ധാന്യപ്പുരകൾ, വലിയ കുളങ്ങൾ എന്നിവയാണ് [S2].\n- ഹരപ്പൻ ജനത **വൃത്യസ്ത വിളകൾ** കൃഷി ചെയ്തിരുന്നു [S2].\n- കാർഷിക രംഗത്തെ പുരോഗതി കച്ചവടത്തിന്റെ വളർച്ചയ്ക്ക് കാരണമായി [S2].\n- അവർ **കരകൌശല** രംഗത്ത് വളരെ **വിദഗ്ദ്ധരായിരുന്നു** [S2].",
+      "example": "",
+      "check": "",
+      "quiz_answers": "",
+      "mode": "explain",
+      "search_query": "ഹരപ്പയിലെ ആദ്യ ഖനനം ആര് നയിച്ചു?",
+      "citations": [
+        [
+          2,
+          24,
+          24
+        ],
+        [
+          2,
+          37,
+          37
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          24,
+          24
+        ],
+        [
+          37,
+          37
+        ],
+        [
+          39,
+          40
+        ],
+        [
+          29,
+          30
+        ],
+        [
+          24,
+          26
+        ],
+        [
+          30,
+          31
+        ]
+      ],
+      "ttft_s": 17.46,
+      "total_s": 77.88,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "t09",
+      "split": "dev",
+      "lang": "en",
+      "medium": "en",
+      "arm": "tutor-en",
+      "question": "explain photosynthesis with a real world example",
+      "answerable": false,
+      "gold_pages": [],
+      "author": "draft-claude, team to check",
+      "event": "refused",
+      "refused": true,
+      "reason": "gate",
+      "answer": null,
+      "example": null,
+      "check": null,
+      "quiz_answers": null,
+      "mode": null,
+      "search_query": "photosynthesis",
+      "citations": [],
+      "retrieved_pages": [
+        [
+          48,
+          49
+        ],
+        [
+          54,
+          55
+        ],
+        [
+          46,
+          48
+        ],
+        [
+          107,
+          108
+        ],
+        [
+          50,
+          51
+        ],
+        [
+          51,
+          53
+        ]
+      ],
+      "ttft_s": null,
+      "total_s": 0.18,
+      "refusal_correct": true,
+      "grade": null
+    },
+    {
+      "id": "t10",
+      "split": "dev",
+      "lang": "en",
+      "medium": "en",
+      "arm": "tutor-en",
+      "question": "tell me a story about the first Mughal emperor",
+      "answerable": false,
+      "gold_pages": [],
+      "author": "draft-claude, team to check",
+      "event": "refused",
+      "refused": true,
+      "reason": "not_in_textbook",
+      "answer": null,
+      "example": null,
+      "check": null,
+      "quiz_answers": null,
+      "mode": null,
+      "search_query": "about the first Mughal emperor",
+      "citations": [],
+      "retrieved_pages": [
+        [
+          24,
+          24
+        ],
+        [
+          32,
+          33
+        ],
+        [
+          32,
+          32
+        ],
+        [
+          114,
+          115
+        ],
+        [
+          61,
+          62
+        ],
+        [
+          23,
+          24
+        ]
+      ],
+      "ttft_s": null,
+      "total_s": 10.27,
+      "refusal_correct": true,
+      "grade": null
+    }
+  ]
+}

@@ -101,8 +101,8 @@ def test_vector_search_respects_medium_filter(conn) -> None:
     for chunk_id, medium in [(1, "en"), (2, "ml")]:
         vector = [1.0] + [0.0] * 1023
         conn.execute(
-            "INSERT INTO chunk_vectors VALUES (?,?,?,?,?)",
-            (chunk_id, serialize_vector(vector), medium, "social_science", 1),
+            "INSERT INTO chunk_vectors VALUES (?,?,?,?,?,?)",
+            (chunk_id, serialize_vector(vector), medium, "social_science", 1, 1),
         )
     rows = conn.execute(
         "SELECT chunk_id FROM chunk_vectors WHERE embedding MATCH ? AND k = 5 AND medium = 'ml'",
@@ -142,7 +142,7 @@ def test_manifest_loads() -> None:
 
 # ---------- running headers ----------
 def test_running_headers_and_ocr_fragments_are_dropped() -> None:
-    raw = "\n".join(
+    raw = "\n".join(  # noqa: FLY002 - one header per line reads better than one long string
         [
             "1 0",
             "Social Science",

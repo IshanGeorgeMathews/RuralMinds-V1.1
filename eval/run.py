@@ -28,9 +28,28 @@ def overlaps(pages: list[int], start: int, end: int) -> bool:
     return any(start <= page <= end for page in pages)
 
 
+def book_for(conn, item: dict, medium: str) -> int:
+    """Search one named book, as the app does: an item may name `book_id`; otherwise the first
+    published Social Science book of that medium. Keeps teacher uploads out of the numbers."""
+    row = conn.execute(
+        "SELECT id FROM documents WHERE book_id = ? OR (? IS NULL AND medium = ?"
+        " AND subject = 'social_science' AND status = 'published') ORDER BY id LIMIT 1",
+        (item.get("book_id"), item.get("book_id"), medium),
+    ).fetchone()
+    if row is None:
+        raise SystemExit(f"no book for item {item['id']}")
+    return row[0]
+
+
 async def run_item(conn, client: httpx.AsyncClient, item: dict) -> dict:
     medium = item.get("medium", item["lang"])
-    request = AskRequest(item["question"], item["lang"], medium)
+    request = AskRequest(
+        item["question"],
+        item["lang"],
+        medium,
+        document_id=book_for(conn, item, medium),
+        use_cache=False,
+    )
     start = time.perf_counter()
     ttft, final = None, {}
     async for event in answer_stream(conn, client, AnswerQueue(1, 1), request):
@@ -54,6 +73,11 @@ def score(item: dict, final: dict, ttft: float | None, total: float) -> dict:
         "refused": refused,
         "reason": data.get("reason"),
         "answer": data.get("text"),
+        "example": data.get("example"),
+        "check": data.get("check"),
+        "quiz_answers": data.get("answers"),
+        "mode": data.get("mode"),
+        "search_query": data.get("gate", {}).get("search_query"),
         "citations": [(c["chapter_no"], c["page_start"], c["page_end"]) for c in citations],
         "retrieved_pages": [(r["page_start"], r["page_end"]) for r in retrieved],
         "ttft_s": round(ttft, 2) if ttft is not None else None,
@@ -77,14 +101,19 @@ def percentile(values: list[float], fraction: float) -> float | None:
     return round(ordered[min(len(ordered) - 1, int(fraction * len(ordered)))], 2)
 
 
+def _group(result: dict) -> str:
+    # An item may name its arm (e.g. "manglish->en-book"); otherwise it is grouped by language.
+    return result.get("arm", result["lang"])
+
+
 def summarise(results: list[dict]) -> dict:
     summary = {}
-    for lang in sorted({r["lang"] for r in results}):
-        rows = [r for r in results if r["lang"] == lang]
+    for group in sorted({_group(r) for r in results}):
+        rows = [r for r in results if _group(r) == group]
         answerable = [r for r in rows if r["answerable"]]
         answered = [r for r in answerable if not r["refused"]]
         ttfts = [r["ttft_s"] for r in answered if r["ttft_s"] is not None]
-        summary[lang] = {
+        summary[group] = {
             "items": len(rows),
             "recall_at_3": _rate(answerable, "recall_at_3"),
             "answered_when_answerable": _share(len(answered), len(answerable)),

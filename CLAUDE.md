@@ -88,6 +88,10 @@ npm --prefix frontend install
 # ingest a textbook listed in apps/api/books.toml
 uv run python -m ruralminds.ingest --book ss8-pt1-en
 
+# first run: create the admin (prints a one-time recovery code); demo accounts for the judges
+uv run python -m ruralminds.admin init
+uv run python -m ruralminds.admin demo
+
 # run the API alone (serves frontend/build too)
 uv run uvicorn ruralminds.main:app --host 0.0.0.0 --port 8000
 
@@ -140,7 +144,7 @@ I'm an engineering student and still learning, and we are on a hard deadline.
 
 ## 11. Current focus
 <!-- Update as the project moves -->
-- **Now (until 15 Oct):** Phase 0 — Kerala SCERT Class 8 Social Science Part 1 in **English and Malayalam** (Malayalam via OCR) → hybrid retrieval → streamed answer with `[Sn]` citations rendered as chapter + page → refusal path + unanswered list → exact-match cache + teacher screen → measured EN vs ML eval, bench, power and recovery numbers. Day plan: `docs/SYSTEM_DESIGN.md` §4.
+- **Now (until 15 Oct):** Phase 0 — Kerala SCERT Class 8 Social Science Part 1 in **English and Malayalam** (Malayalam via OCR) → hybrid retrieval → streamed answer with `[Sn]` citations rendered as chapter + page → refusal path + unanswered list → exact-match cache + teacher screen → measured EN vs ML eval, bench, power and recovery numbers. Day plan: `docs/SYSTEM_DESIGN.md` §4. Added 13 Oct (DECISIONS): accounts for students/teachers/admin (username + class only), teacher PDF upload with validation and power-cut-safe ingestion, admin controls (pause, language/class limits, stats).
 - **Next (Phase 1):** Maths + Science in English (Basic Science Pt1 first, then Maths via OCR), then Malayalam; JSON schema + SymPy + hint-first; Manglish via IndicXlit; Linux node with dnsmasq.
 - **Known risks:** Malayalam OCR quality and prefill latency, Windows hotspot without internet (fallback: Ubuntu), small-model citation compliance, SCERT textbook licence unconfirmed.
 

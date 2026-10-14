@@ -1,6 +1,7 @@
-"""Ingest a book from apps/api/books.toml: PDF -> page text (or OCR) -> chunks -> vectors.
+"""Ingest a book: PDF -> page text (or OCR) -> chunks -> vectors.
 
-    python -m ruralminds.ingest --book ss8-pt1-en [--force]
+    python -m ruralminds.ingest --book ss8-pt1-en [--force]   # a book from books.toml
+    python -m ruralminds.ingest --job 7                       # a teacher upload (see uploads.py)
 
 Everything for one book is written in a single transaction, so a power cut mid-ingest
 leaves the previous version intact rather than half a book.
@@ -48,6 +49,7 @@ class Book:
     page_offset: int
     last_page: int
     chapters: list[Chapter]
+    status: str = "published"  # teacher uploads start as "ready" until the teacher publishes
 
     def chapter_for(self, pdf_page: int) -> Chapter | None:
         """The last chapter starting on or before this page (chapters are sorted)."""
@@ -114,8 +116,8 @@ def _replace_document(conn: sqlite3.Connection, book: Book, sha: str, page_count
     if row is None:
         cursor = conn.execute(
             "INSERT INTO documents (title, board, medium, grade, subject, file_path, sha256,"
-            " page_count, licence, book_id) VALUES (?,?,?,?,?,?,?,?,?,?)",
-            (*values, book.id),
+            " page_count, licence, book_id, status) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+            (*values, book.id, book.status),
         )
         return int(cursor.lastrowid)
     doc_id = int(row["id"])
@@ -148,7 +150,7 @@ def store_book(
     chunks: list[Chunk],
     vectors: list[list[float]],
     token_counts: list[int],
-) -> None:
+) -> int:
     with conn:  # one transaction: all or nothing
         doc_id = _replace_document(conn, book, sha, page_count)
         for page in pages:
@@ -183,15 +185,41 @@ def store_book(
                 ),
             )
             conn.execute(
-                "INSERT INTO chunk_vectors VALUES (?,?,?,?,?)",
+                "INSERT INTO chunk_vectors VALUES (?,?,?,?,?,?)",
                 (
                     cursor.lastrowid,
                     serialize_vector(vector),
                     book.medium,
                     book.subject,
                     chunk.chapter_no,
+                    doc_id,
                 ),
             )
+        store_chapters(conn, doc_id, book)
+    return doc_id
+
+
+def store_chapters(conn: sqlite3.Connection, doc_id: int, book: Book) -> None:
+    """The book's chapter list, for the student catalog. Caller owns the transaction."""
+    conn.execute("DELETE FROM book_chapters WHERE document_id = ?", (doc_id,))
+    conn.executemany(
+        "INSERT INTO book_chapters VALUES (?,?,?,?,?)",
+        [(doc_id, c.no, c.title, c.start, c.start + book.page_offset) for c in book.chapters],
+    )
+
+
+def sync_manifest_chapters(conn: sqlite3.Connection, books: dict[str, Book]) -> None:
+    """Fill book_chapters for manifest books ingested before the table existed (schema v1)."""
+    for book in books.values():
+        row = conn.execute("SELECT id FROM documents WHERE book_id = ?", (book.id,)).fetchone()
+        if row is None:
+            continue
+        has_chapters = conn.execute(
+            "SELECT 1 FROM book_chapters WHERE document_id = ?", (row["id"],)
+        ).fetchone()
+        if not has_chapters:
+            with conn:
+                store_chapters(conn, row["id"], book)
 
 
 def _already_ingested(conn: sqlite3.Connection, book_id: str, sha: str) -> bool:
@@ -206,6 +234,14 @@ async def ingest(book: Book, force: bool = False) -> None:
     if not force and _already_ingested(conn, book.id, sha):
         log.info("%s unchanged (sha %s), skipping; use --force to rebuild", book.id, sha[:12])
         return
+    await ingest_book(conn, book, sha)
+
+
+async def ingest_book(conn: sqlite3.Connection, book: Book, sha: str) -> int:
+    """Extract, chunk, embed and store one book; returns its document id.
+
+    OCR results are cached per page, so a run cut short by a power cut resumes where it stopped.
+    """
     page_count = len(pdfium.PdfDocument(book.path))
     pages = extract_pages(
         book.path,
@@ -221,9 +257,12 @@ async def ingest(book: Book, force: bool = False) -> None:
     chunks = chunk_pages(
         build_page_inputs(book, pages), settings.chunk_target_chars, settings.chunk_max_chars
     )
+    if not chunks:
+        raise ValueError("no readable text found in the chapter pages")
     vectors, token_counts = await embed_chunks(chunks)
-    store_book(conn, book, sha, page_count, pages, chunks, vectors, token_counts)
+    doc_id = store_book(conn, book, sha, page_count, pages, chunks, vectors, token_counts)
     _report(book, pages, chunks, token_counts)
+    return doc_id
 
 
 def _report(book: Book, pages: list[PageText], chunks: list[Chunk], tokens: list[int]) -> None:
@@ -240,8 +279,13 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Ingest textbooks listed in books.toml")
     parser.add_argument("--book", action="append", help="book id (repeatable); default: all")
     parser.add_argument("--force", action="store_true", help="rebuild even if unchanged")
+    parser.add_argument("--job", type=int, help="run one teacher-upload job (used by the API)")
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(message)s")
+    if args.job is not None:
+        from .uploads import run_job  # the upload pipeline imports this module
+
+        raise SystemExit(asyncio.run(run_job(args.job)))
     books = load_books(settings.books_file)
     for book_id in args.book or list(books):
         if book_id not in books:

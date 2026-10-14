@@ -1,0 +1,1244 @@
+{
+  "label": "v2tutor-dev-gemma-contended",
+  "run_at": "2026-10-13T22:59:24",
+  "testset": "eval\\datasets\\bakeoff_dev.jsonl",
+  "split": null,
+  "model_path": "C:/Users/ishan/.ollama/models/blobs/sha256-6dd7ac24fe13a238898e16e253ebc7a72fa27fb83f2658c2f6c241df3af5937d",
+  "prompt_version": "system_v2_tutor",
+  "settings": {
+    "max_context_tokens": 600,
+    "final_top_k": 4,
+    "refusal_threshold": 0.5,
+    "temperature": 0.2,
+    "max_tokens": 300
+  },
+  "summary": {
+    "en": {
+      "items": 10,
+      "recall_at_3": "8/8",
+      "answered_when_answerable": "8/8",
+      "citation_supported": "7/8",
+      "refusal_accuracy": "9/10",
+      "ttft_p50_s": 13.3,
+      "ttft_p95_s": 26.49,
+      "total_p50_s": 59.64,
+      "total_mean_s": 55.37
+    },
+    "ml": {
+      "items": 10,
+      "recall_at_3": "8/8",
+      "answered_when_answerable": "8/8",
+      "citation_supported": "8/8",
+      "refusal_accuracy": "10/10",
+      "ttft_p50_s": 14.62,
+      "ttft_p95_s": 23.96,
+      "total_p50_s": 92.38,
+      "total_mean_s": 66.08
+    }
+  },
+  "results": [
+    {
+      "id": "d01-en",
+      "split": "dev",
+      "lang": "en",
+      "question": "What were the colours in the Palaeolithic cave paintings made from?",
+      "answerable": true,
+      "gold_pages": [
+        8
+      ],
+      "key_facts": "mixtures of plant extracts and powdered laterite",
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "The colours used in the Palaeolithic cave paintings were made by mixing things like **plant extracts** and **powdered laterite** [S1]. These mixtures were used to create the different colours seen in the paintings [S1].\n\n- The pictures show various animals like bison, boar, horse, and deer [S1], [S2].\n- These paintings give us information about how early humans lived, including their hunting methods and activities [S1], [S2].\n- The pictures also show that early humans were very **dexterous** because they drew these pictures on the cave ceilings [S1].",
+      "example": "Imagine you are mixing paints at home; you need different powders and liquids to get the exact shade you want.",
+      "check": "What kind of evidence do the hunting pictures give us about early humans?",
+      "quiz_answers": "",
+      "mode": "explain",
+      "search_query": "What were the colours the Palaeolithic cave paintings made from?",
+      "citations": [
+        [
+          1,
+          8,
+          8
+        ],
+        [
+          1,
+          7,
+          8
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          8,
+          8
+        ],
+        [
+          7,
+          8
+        ],
+        [
+          19,
+          21
+        ],
+        [
+          8,
+          9
+        ],
+        [
+          11,
+          12
+        ],
+        [
+          21,
+          22
+        ]
+      ],
+      "ttft_s": 1.29,
+      "total_s": 70.28,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "d01-ml",
+      "split": "dev",
+      "lang": "ml",
+      "question": "പ്രാചീന ശിലായുഗ ഗുഹാചിത്രങ്ങളിലെ നിറങ്ങൾ എന്തുകൊണ്ടാണ് ഉണ്ടാക്കിയിരുന്നത്?",
+      "answerable": true,
+      "gold_pages": [
+        8
+      ],
+      "key_facts": "സസ്യങ്ങളുടെ ചാറും ചെങ്കൽപൊടിയും",
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "പ്രാചീന ശിലായുഗ ഗുഹാചിത്രങ്ങളിലെ നിറങ്ങൾ ഉണ്ടാക്കിയിരുന്നത് എന്തുകൊണ്ടാണെന്ന് നോക്കാം. ഈ ചിത്രങ്ങൾ പ്രാചീന ശിലായുഗത്തിലെ മനുഷ്യർ ഗുഹാഭിത്തികളിൽ വരച്ചവയാണ് [S1]. ഈ ചിത്രങ്ങൾ ആദ്യകാല മനുഷ്യജീവിതത്തെക്കുറിച്ച് നല്ല വിവരങ്ങൾ നൽകുന്നു [S1].\n\n- ഈ ചിത്രങ്ങൾ ഏകദേശം പതിനായിരം വർഷങ്ങൾക്ക് മുമ്പ് വരച്ചവയാണ് [S1].\n- ഈ ചിത്രങ്ങൾ ലോകത്തിന്റെ പല ഭാഗങ്ങളിലും കാണാൻ സാധിക്കും [S1].",
+      "example": "ഒരു കുട്ടിയുടെ കളറിംഗ് ബുക്കിൽ നിറങ്ങൾ ഉപയോഗിക്കുന്നത് പോലെ, ആ പഴയ മനുഷ്യർ അവരുടെ ജീവിതത്തെയും ലോകത്തെയും ചിത്രങ്ങളിലൂടെ രേഖപ്പെടുത്താൻ നിറങ്ങൾ ഉപയോഗിച്ചു.",
+      "check": "ഗുഹാചിത്രങ്ങളിലെ നിറങ്ങൾ തിരഞ്ഞെടുക്കാൻ മനുഷ്യർക്ക് എന്തെങ്കിലും പ്രത്യേക കാരണം ഉണ്ടായിരുന്നോ?",
+      "quiz_answers": "",
+      "mode": "explain",
+      "search_query": "പ്രാചീന ശിലായുഗ ഗുഹാചിത്രങ്ങളിലെ നിറങ്ങൾ എന്തുകൊണ്ടാണ് ഉണ്ടാക്കിയിരുന്നത്?",
+      "citations": [
+        [
+          1,
+          7,
+          8
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          7,
+          8
+        ],
+        [
+          8,
+          8
+        ],
+        [
+          11,
+          12
+        ],
+        [
+          19,
+          20
+        ],
+        [
+          8,
+          9
+        ],
+        [
+          20,
+          22
+        ]
+      ],
+      "ttft_s": 14.05,
+      "total_s": 69.83,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "d02-en",
+      "split": "dev",
+      "lang": "en",
+      "question": "Where is Bhimbetka and what was special about it?",
+      "answerable": true,
+      "gold_pages": [
+        11
+      ],
+      "key_facts": "Madhya Pradesh; rock shelters; notable Palaeolithic site",
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "Bhimbetka is located in **Madhya Pradesh** [S2]. It is a **remarkable Palaeolithic site** [S1].\n- It has a **rock shelter** as its main feature [S1].\n- There are several other sites in India, like Narmada valley, Hunsgi, Kurnool caves, and Nagarjunakonda, that also show evidence of Palaeolithic human life [S2].",
+      "example": "Imagine Bhimbetka as an old, rocky cave where early humans lived and made their shelter.",
+      "check": "What kind of feature made Bhimbetka a significant site for studying early human life?",
+      "quiz_answers": "",
+      "mode": "explain",
+      "search_query": "Where is Bhimbetka and what was special",
+      "citations": [
+        [
+          1,
+          11,
+          12
+        ],
+        [
+          1,
+          9,
+          11
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          9,
+          11
+        ],
+        [
+          11,
+          12
+        ],
+        [
+          8,
+          8
+        ],
+        [
+          8,
+          9
+        ],
+        [
+          96,
+          97
+        ],
+        [
+          25,
+          26
+        ]
+      ],
+      "ttft_s": 26.49,
+      "total_s": 57.9,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "d02-ml",
+      "split": "dev",
+      "lang": "ml",
+      "question": "ഭിംബേഡ്ക എവിടെയാണ്, അതിന്റെ സവിശേഷത എന്തായിരുന്നു?",
+      "answerable": true,
+      "gold_pages": [
+        11
+      ],
+      "key_facts": "മധ്യപ്രദേശ്; കല്ലു കൊണ്ടുള്ള വാസസ്ഥലങ്ങൾ (rock shelter)",
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "ഭിംബേഡ്ക മധ്യപ്രദേശിലാണ് സ്ഥിതി ചെയ്യുന്നത് [S1]. അവിടെ കല്ലുകൊണ്ട് നിർമ്മിച്ച **വാസസ്ഥലങ്ങൾ** (Rockshelter) ഉണ്ടായിരുന്നു [S1].\n\n- പ്രാചീന ശിലായുഗ മനുഷ്യരുടെ ജീവിതത്തെക്കുറിച്ച് തെളിവുകൾ ലഭിക്കുന്ന കേന്ദ്രങ്ങളിൽ ഒന്നാണിത് [S1].\n- ഗുഹകൾ കല്ലുകൊണ്ട് നിർമ്മിച്ച വാസസ്ഥലങ്ങളായിരുന്നു [S1].",
+      "example": "ഭിംബേഡ്കയിലെ കല്ലു കൊണ്ടുള്ള വീടുകൾ കാണുമ്പോൾ, ആ കാലത്തെ ആളുകൾ എങ്ങനെയാണ് താമസിച്ചിരുന്നത് എന്ന് നമുക്ക് മനസ്സിലാക്കാൻ സാധിക്കും.",
+      "check": "ഭിംബേഡ്കയിലെ വാസസ്ഥലങ്ങൾ നിർമ്മിച്ചിരുന്നത് എന്തിനാണ്?",
+      "quiz_answers": "",
+      "mode": "explain",
+      "search_query": "ഭിംബേഡ്ക എവിടെയാണ്, അതിന്റെ സവിശേഷത എന്തായിരുന്നു?",
+      "citations": [
+        [
+          1,
+          11,
+          12
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          11,
+          12
+        ],
+        [
+          13,
+          14
+        ],
+        [
+          9,
+          11
+        ],
+        [
+          31,
+          32
+        ],
+        [
+          40,
+          40
+        ],
+        [
+          22,
+          22
+        ]
+      ],
+      "ttft_s": 19.57,
+      "total_s": 93.24,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "d03-en",
+      "split": "dev",
+      "lang": "en",
+      "question": "Who called the changes of the Neolithic Age the 'Neolithic Revolution'?",
+      "answerable": true,
+      "gold_pages": [
+        13
+      ],
+      "key_facts": "Gordon Childe (V Gordon Childe), historian/archaeologist",
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "Gordon Childe, a historian, is the person who called the changes in human life during the Neolithic Age the 'Neolithic Revolution' [S2]. This revolution marked a big shift in how people lived. - The biggest progress in this age was the **beginning of cultivation**, which started about eight thousand years ago [S1]. - People started to **rear animals for food** and began a settled life for farming [S2]. - Major crops included wheat, barley, jute, and paddy [S2]. EXAMPLE: When we start growing vegetables in our garden instead of just finding wild berries, that's a small version of the big change that happened in the Neolithic Age.",
+      "example": "",
+      "check": "What is the main difference between the Mesolithic Age and the Neolithic Age based on what you read?",
+      "quiz_answers": "",
+      "mode": "explain",
+      "search_query": "Who called the changes of the Neolithic Age the 'Neolithic Revolution'?",
+      "citations": [
+        [
+          1,
+          13,
+          14
+        ],
+        [
+          1,
+          13,
+          13
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          13,
+          13
+        ],
+        [
+          13,
+          14
+        ],
+        [
+          17,
+          18
+        ],
+        [
+          19,
+          21
+        ],
+        [
+          19,
+          19
+        ],
+        [
+          16,
+          17
+        ]
+      ],
+      "ttft_s": 17.24,
+      "total_s": 98.73,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "d03-ml",
+      "split": "dev",
+      "lang": "ml",
+      "question": "നവീന ശിലായുഗത്തിലെ മാറ്റങ്ങളെ നവീന ശിലായുഗ വിപ്ലവം എന്ന് വിശേഷിപ്പിച്ചത് ആരാണ്?",
+      "answerable": true,
+      "gold_pages": [
+        13
+      ],
+      "key_facts": "ഗോർഡൻ ചൈൽഡ്",
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "നവീന ശിലായുഗ വിപ്ലവം എന്ന് വിശേഷിപ്പിച്ചത് ഗോർഡൻ ചൈൽഡ് ആണ് [S1]. ഈ വിപ്ലവം മനുഷ്യജീവിതത്തിൽ വന്ന വലിയ മാറ്റങ്ങളെ സൂചിപ്പിക്കുന്നു [S1].\n\n- കൃഷി ആരംഭിച്ചത് ഈ കാലഘട്ടത്തിലെ പ്രധാന പുരോഗതിയായിരുന്നു [S1].\n- ഭക്ഷ്യശേഖരണത്തിൽ നിന്ന് **ഭക്ഷ്യോത്പാദനത്തിലേക്കുള്ള** മാറ്റം മനുഷ്യചരിത്രത്തിലെ ഒരു വഴിത്തിരിവായിരുന്നു [S1].\n- നദീതടം കേന്ദ്രീകരിച്ച് മനുഷ്യർ കൃഷി തുടങ്ങി സ്ഥിരവാസം ആരംഭിച്ചു [S1].",
+      "example": "നമ്മുടെ നാട്ടിൽ കൃഷി തുടങ്ങുന്നതിനു മുൻപ് ആളുകൾ വേട്ടയാടലിലൂടെ ഭക്ഷണം ശേഖരിക്കുമായിരുന്നു, എന്നാൽ നവീന ശിലായുഗത്തിൽ കൃഷി വന്നതോടെ ജീവിതരീതി മാറി.",
+      "check": "കൃഷി ആരംഭിച്ചത് മനുഷ്യജീവിതത്തിൽ എന്ത് മാറ്റമാണ് കൊണ്ടുവന്നത്?",
+      "quiz_answers": "",
+      "mode": "explain",
+      "search_query": "നവീന ശിലായുഗത്തിലെ മാറ്റങ്ങളെ നവീന ശിലായുഗ വിപ്ലവം എന്ന് വിശേഷിപ്പിച്ചത് ആരാണ്?",
+      "citations": [
+        [
+          1,
+          13,
+          13
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          13,
+          13
+        ],
+        [
+          16,
+          18
+        ],
+        [
+          20,
+          22
+        ],
+        [
+          15,
+          16
+        ],
+        [
+          19,
+          20
+        ],
+        [
+          12,
+          13
+        ]
+      ],
+      "ttft_s": 14.62,
+      "total_s": 99.12,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "d04-en",
+      "split": "dev",
+      "lang": "en",
+      "question": "Who led the first excavation at Harappa?",
+      "answerable": true,
+      "gold_pages": [
+        24
+      ],
+      "key_facts": "Daya Ram Sahni",
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "Daya Ram Sahni led the first excavation at Harappa [S1].\n- R D Banerji led the excavations in Mohenjodaro [S1].\n- The Archaeological Survey of India leads the researches on archaeology in India [S2].",
+      "example": "Imagine a team of explorers digging up old ruins; Daya Ram Sahni was the one who started the digging at Harappa.",
+      "check": "Who led the excavations in Mohenjodaro?",
+      "quiz_answers": "",
+      "mode": "explain",
+      "search_query": "Who led the first excavation at Harappa?",
+      "citations": [
+        [
+          2,
+          24,
+          24
+        ],
+        [
+          2,
+          24,
+          25
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          24,
+          24
+        ],
+        [
+          24,
+          25
+        ],
+        [
+          39,
+          40
+        ],
+        [
+          37,
+          37
+        ],
+        [
+          28,
+          29
+        ],
+        [
+          30,
+          31
+        ]
+      ],
+      "ttft_s": 13.3,
+      "total_s": 38.06,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "d04-ml",
+      "split": "dev",
+      "lang": "ml",
+      "question": "ഹരപ്പയിലെ ആദ്യത്തെ ഉൽഖനനത്തിന് നേതൃത്വം നൽകിയത് ആരാണ്?",
+      "answerable": true,
+      "gold_pages": [
+        24
+      ],
+      "key_facts": "ദയാറാം സാഹ്നി",
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "ഹരപ്പയിലെ ആദ്യത്തെ ഉൽഖനനത്തിന് നേതൃത്വം നൽകിയത് ദയാറാം സാഹ്നിയായിരുന്നു. സിന്ധുനദീതട സംസ്കാരത്തിന്റെ ആദ്യ തെളിവുകൾ ഹരപ്പയിൽ നിന്ന് ലഭിച്ചതുകൊണ്ട് ഈ സംസ്കാരത്തെ ഹരപ്പൻ സംസ്കാരം എന്നും വിളിക്കുന്നു [S1].\n\n- സിന്ധുനദീതട സംസ്കാരത്തിന്റെ ഉൽഖനനത്തിന് നേതൃത്വം നൽകിയ വ്യക്തി ആർ.ഡി. ബാനർജിയായിരുന്നു [S1].\n- മോഹൻജൊദാരോവിൽ ഉൽഖനനങ്ങൾ നടത്തിയത് ആർ.ഡി. ബാനർജിയായിരുന്നു [S1].",
+      "example": "ഒരു ടീമിൽ ആദ്യത്തെ പ്രധാനപ്പെട്ട ജോലിക്ക് നേതൃത്വം നൽകുന്നത് പ്രധാനപ്പെട്ട ആളായിരിക്കും, അതുപോലെ ഹരപ്പയിലെ ആദ്യത്തെ ഉൽഖനനത്തിന് ദയാറാം സാഹ്നിയാണ് നേതൃത്വം നൽകിയത്.",
+      "check": "ഹരപ്പൻ സംസ്കാരം ഏത് സംസ്കാരത്തിന്റെ ഭാഗമാണ്?",
+      "quiz_answers": "",
+      "mode": "explain",
+      "search_query": "ഹരപ്പയിലെ ആദ്യത്തെ ഉൽഖനനത്തിന് നേതൃത്വം നൽകിയത് ആരാണ്?",
+      "citations": [
+        [
+          2,
+          24,
+          24
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          24,
+          24
+        ],
+        [
+          24,
+          26
+        ],
+        [
+          39,
+          40
+        ],
+        [
+          29,
+          30
+        ],
+        [
+          28,
+          29
+        ],
+        [
+          30,
+          31
+        ]
+      ],
+      "ttft_s": 23.96,
+      "total_s": 101.44,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "d05-en",
+      "split": "dev",
+      "lang": "en",
+      "question": "How were the drains in Harappan cities built?",
+      "answerable": true,
+      "gold_pages": [
+        26
+      ],
+      "key_facts": "burnt bricks; covered with stone slabs; connected to the main street drain",
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "The drains in Harappan cities were constructed using **burnt bricks** [S1], and these drains were covered with **stone slabs** [S1]. The wastewater from the houses was allowed to flow into these drains [S1].\n\n- The drains were connected to the main drain of the street [S1].\n- Effective drainage systems were present even in small towns and villages [S1].",
+      "example": "Imagine if you were building a drain in your neighbourhood; you would use strong bricks and cover them with a flat stone to keep the water contained and clean.",
+      "check": "What material was used to build the drains in the Harappan cities?",
+      "quiz_answers": "",
+      "mode": "explain",
+      "search_query": "How were the drains Harappan cities built?",
+      "citations": [
+        [
+          2,
+          26,
+          27
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          26,
+          27
+        ],
+        [
+          25,
+          26
+        ],
+        [
+          27,
+          28
+        ],
+        [
+          37,
+          37
+        ],
+        [
+          30,
+          31
+        ],
+        [
+          39,
+          40
+        ]
+      ],
+      "ttft_s": 10.81,
+      "total_s": 59.64,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "d05-ml",
+      "split": "dev",
+      "lang": "ml",
+      "question": "ഹരപ്പൻ നഗരങ്ങളിലെ അഴുക്കുചാലുകൾ എങ്ങനെയാണ് നിർമിച്ചിരുന്നത്?",
+      "answerable": true,
+      "gold_pages": [
+        26
+      ],
+      "key_facts": "ചുട്ട ഇഷ്ടിക; കല്ലുപാളികൾ കൊണ്ട് മൂടി",
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "ഹരപ്പൻ നഗരങ്ങളിലെ അഴുക്കുചാലുകൾ വീടുകളിൽ നിന്നുള്ള **മലിനജലം** ശേഖരിച്ച് ഒഴുക്കിവിടാൻ ഉപയോഗിച്ചിരുന്നു [S1].\n\n- വീടുകളിൽ നിന്നുള്ള അഴുക്കുചാലുകൾ നഗരങ്ങളുടെ മറ്റൊരു **സവിശേഷത**യായിരുന്നു [S1].\n- ഈ ചാലുകളിലൂടെ വീടുകളിൽ നിന്നുള്ള മലിനജലം ചാലുകളിലേക്ക് ഒഴുക്കിവിട്ടു [S1].\n- വീടുകളിൽ നിന്ന് ചാലുകളിലേക്ക് വെള്ളം ഒഴുക്കിവിടുന്ന രീതിയായിരുന്നു ഇത് [S1].",
+      "example": "നമ്മുടെ വീട്ടിലെ ടാപ്പിൽ നിന്നുള്ള വെള്ളം ഒഴുക്കിവിടുന്നതുപോലെ, നഗരങ്ങളിലെ വീടുകളിൽ നിന്നുള്ള വെള്ളം അഴുക്കുചാലുകളിലൂടെ ഒഴുക്കിവിടുകയായിരുന്നു.",
+      "check": "അഴുക്കുചാലുകൾ നിർമ്മിക്കുന്നത് എന്തിനാണ്?",
+      "quiz_answers": "",
+      "mode": "explain",
+      "search_query": "ഹരപ്പൻ നഗരങ്ങളിലെ അഴുക്കുചാലുകൾ എങ്ങനെയാണ് നിർമിച്ചിരുന്നത്?",
+      "citations": [
+        [
+          2,
+          26,
+          26
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          26,
+          26
+        ],
+        [
+          37,
+          37
+        ],
+        [
+          26,
+          27
+        ],
+        [
+          29,
+          30
+        ],
+        [
+          27,
+          28
+        ],
+        [
+          30,
+          31
+        ]
+      ],
+      "ttft_s": 15.72,
+      "total_s": 92.38,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "d06-en",
+      "split": "dev",
+      "lang": "en",
+      "question": "Where was evidence of rice cultivation found in the Harappan civilization?",
+      "answerable": true,
+      "gold_pages": [
+        27,
+        28
+      ],
+      "key_facts": "Rangpur and Lothal",
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "Evidence of rice cultivation was found in Gujarat [S1]. This shows that the Harappans were growing different crops in their areas [S1].\n\n- Rice cultivation evidence was uncovered from Rangpur and Lothal in Gujarat [S1].",
+      "example": "Imagine if you were looking for different kinds of fruits in your garden; finding rice evidence is like finding a specific type of fruit in a new place.",
+      "check": "Besides rice, what other crops were mentioned as being cultivated in the Harappan civilization?",
+      "quiz_answers": "",
+      "mode": "explain",
+      "search_query": "Where was evidence of rice cultivation found the Harappan civilization?",
+      "citations": [
+        [
+          2,
+          27,
+          28
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          27,
+          28
+        ],
+        [
+          30,
+          31
+        ],
+        [
+          29,
+          30
+        ],
+        [
+          28,
+          28
+        ],
+        [
+          24,
+          24
+        ],
+        [
+          37,
+          37
+        ]
+      ],
+      "ttft_s": 8.39,
+      "total_s": 40.74,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "d06-ml",
+      "split": "dev",
+      "lang": "ml",
+      "question": "ഹരപ്പൻ സംസ്കാരത്തിൽ നെല്ല് കൃഷി ചെയ്തിരുന്നതിന്റെ തെളിവുകൾ എവിടെ നിന്നാണ് ലഭിച്ചത്?",
+      "answerable": true,
+      "gold_pages": [
+        27,
+        28
+      ],
+      "key_facts": "റംഗ്പൂർ, ലോഥാൽ (ഗുജറാത്ത്)",
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "ഹരപ്പൻ സംസ്കാരത്തിൽ നെല്ല് കൃഷി ചെയ്തിരുന്നതിന്റെ തെളിവുകൾ ഗുജറാത്തിലെ റംഗ് പൂർ, ലോഥാൽ എന്നിവിടങ്ങളിൽനിന്ന് ലഭിച്ചിട്ടുണ്ട് [S1].\n- ധാന്യങ്ങൾ ഉണക്കാനും സംഭരിക്കാനുമുള്ള വലിയ കെട്ടിടങ്ങൾ അവിടെ ഉണ്ടായിരുന്നു [S1].\n- സിന്ധുനദി ഒഴുക്കിക്കൊണ്ടുവരുന്ന എക്കൽമ ഈ ഫലഭൂയിഷ്ഠതയ്ക്ക് കാരണമായി [S1].\n- ജലസേചനത്തിനായി കനാലുകൾ നിർമ്മിച്ചിരുന്നു [S1].",
+      "example": "നമ്മുടെ നാട്ടിലെ നെൽവയലുകളിൽ വെള്ളം കൃത്യമായി എത്തിക്കാൻ കനാലുകൾ ഉണ്ടാക്കുന്നത് പോലെ, ഹരപ്പൻ ജനതയും ജലസേചനത്തിനായി കനാലുകൾ നിർമ്മിച്ചിരുന്നു.",
+      "check": "നെല്ല് കൃഷി ചെയ്യാൻ സഹായിച്ച പ്രധാന ഘടകം എന്തായിരുന്നു?",
+      "quiz_answers": "",
+      "mode": "explain",
+      "search_query": "ഹരപ്പൻ സംസ്കാരത്തിൽ നെല്ല് കൃഷി ചെയ്തിരുന്നതിന്റെ തെളിവുകൾ എവിടെ നിന്നാണ് ലഭിച്ചത്?",
+      "citations": [
+        [
+          2,
+          27,
+          28
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          27,
+          28
+        ],
+        [
+          37,
+          37
+        ],
+        [
+          29,
+          30
+        ],
+        [
+          28,
+          29
+        ],
+        [
+          30,
+          31
+        ],
+        [
+          80,
+          80
+        ]
+      ],
+      "ttft_s": 11.89,
+      "total_s": 62.21,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "d07-en",
+      "split": "dev",
+      "lang": "en",
+      "question": "What are the parts of the Indian Parliament?",
+      "answerable": true,
+      "gold_pages": [
+        59,
+        60
+      ],
+      "key_facts": "the President, Rajya Sabha and Lok Sabha; bicameral",
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "The Indian Parliament is made up of the President and two houses, which are the Rajya Sabha and the Lok Sabha [S1]. This structure is important for how laws are made in India [S1].\n\n- The Parliament is known as the **Legislature** in India [S1].\n- It includes the President along with the Rajya Sabha and the Lok Sabha [S1].",
+      "example": "Imagine a school council where the Principal is like the President, and there are two main groups of students (like Rajya Sabha and Lok Sabha) who help make the rules for the school.",
+      "check": "Which two houses make up the Indian Parliament?",
+      "quiz_answers": "",
+      "mode": "explain",
+      "search_query": "What are the parts of the Indian Parliament?",
+      "citations": [
+        [
+          4,
+          57,
+          59
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          57,
+          59
+        ],
+        [
+          72,
+          72
+        ],
+        [
+          60,
+          61
+        ],
+        [
+          59,
+          60
+        ],
+        [
+          70,
+          71
+        ],
+        [
+          73,
+          74
+        ]
+      ],
+      "ttft_s": 8.16,
+      "total_s": 49.27,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "d07-ml",
+      "split": "dev",
+      "lang": "ml",
+      "question": "ഇന്ത്യൻ പാർലമെന്റിന്റെ ഘടകങ്ങൾ ഏതൊക്കെയാണ്?",
+      "answerable": true,
+      "gold_pages": [
+        59,
+        60,
+        61
+      ],
+      "key_facts": "രാഷ്ട്രപതി, രാജ്യസഭ, ലോക്സഭ",
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "ഇന്ത്യൻ പാർലമെന്റിന്റെ ഘടകങ്ങൾ രാഷ്ട്രപതിയും ലോകസഭയും രാജ്യസഭയും ചേർന്നതാണ് [S2].\n\n- ഇന്ത്യയിലെ പാർലമെന്റിനെ **ദ്വിമണ്ഡല നിയമനിർമാണ സഭ** എന്ന് വിളിക്കുന്നു [S2].\n- രാജ്യസഭയെ **ഉപരിസഭ** എന്നും ലോകസഭയെ **അധോസഭ** എന്നും പറയുന്നു [S2].\n- ഈ രണ്ട് സഭകൾ ചേർന്നാണ് ഇന്ത്യൻ പാർലമെന്റ് രൂപപ്പെടുന്നത് [S2].",
+      "example": "നമ്മുടെ സ്കൂളിലെ ക്ലാസ് ടീച്ചർ, ക്ലാസ് റൂം മാനേജർ പോലെയാണ്, എല്ലാവരുടെയും കാര്യങ്ങൾ ശ്രദ്ധിക്കുകയും തീരുമാനങ്ങൾ എടുക്കുകയും ചെയ്യുന്നു.",
+      "check": "ഇന്ത്യൻ പാർലമെന്റിലെ രണ്ട് സഭകൾക്ക് എന്തൊക്കെ പേരുകളാണ് അറിയപ്പെടുന്നത്?",
+      "quiz_answers": "",
+      "mode": "explain",
+      "search_query": "ഇന്ത്യൻ പാർലമെന്റിന്റെ ഘടകങ്ങൾ ഏതൊക്കെയാണ്?",
+      "citations": [
+        [
+          4,
+          59,
+          59
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          71,
+          72
+        ],
+        [
+          59,
+          59
+        ],
+        [
+          59,
+          61
+        ],
+        [
+          57,
+          59
+        ],
+        [
+          70,
+          71
+        ],
+        [
+          69,
+          70
+        ]
+      ],
+      "ttft_s": 8.51,
+      "total_s": 54.93,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "d08-en",
+      "split": "dev",
+      "lang": "en",
+      "question": "Who presides over a joint sitting of the Parliament?",
+      "answerable": true,
+      "gold_pages": [
+        62,
+        63
+      ],
+      "key_facts": "the Speaker of the Lok Sabha (summoned by the President)",
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "The President of India is the one who performs important **legislative functions** for the Parliament [S2]. This includes things like calling the sessions of the Parliament and agreeing to the bills that the Parliament has passed [S2]. The Parliament has two houses, the Rajya Sabha and the Lok Sabha [S2].\n\n- The Rajya Sabha is called the **upper house** [S2].\n- The Lok Sabha is called the **lower house** [S2].\n- Because it has both houses, the Parliament is called a **Bicameral Legislature** [S2].",
+      "example": "When we have a big meeting in school where different groups need to agree on a plan, the principal acts like the President by making sure everyone gets a chance to speak and approving the final decision.",
+      "check": "What is the main difference between the Rajya Sabha and the Lok Sabha?",
+      "quiz_answers": "",
+      "mode": "explain",
+      "search_query": "Who presides over joint sitting of the Parliament?",
+      "citations": [
+        [
+          4,
+          59,
+          60
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          60,
+          61
+        ],
+        [
+          59,
+          60
+        ],
+        [
+          62,
+          63
+        ],
+        [
+          62,
+          62
+        ],
+        [
+          72,
+          73
+        ],
+        [
+          57,
+          59
+        ]
+      ],
+      "ttft_s": 16.17,
+      "total_s": 64.9,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": false
+    },
+    {
+      "id": "d08-ml",
+      "split": "dev",
+      "lang": "ml",
+      "question": "പാർലമെന്റിന്റെ സംയുക്ത സമ്മേളനത്തിൽ അധ്യക്ഷത വഹിക്കുന്നത് ആരാണ്?",
+      "answerable": true,
+      "gold_pages": [
+        62,
+        63
+      ],
+      "key_facts": "ലോക്സഭാ സ്പീക്കർ",
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "പാർലമെന്റിന്റെ സംയുക്ത സമ്മേളനത്തിൽ അധ്യക്ഷത വഹിക്കുന്നത് **രാഷ്ട്രപതിയാണ്** [S2].\n\n*   ബില്ലിനെക്കുറിച്ച് രണ്ട് സഭകൾക്കുമിടയിൽ അഭിപ്രായവ്യത്യാസം ഉണ്ടായാൽ സംയുക്ത സമ്മേളനം വിളിച്ചു ചേർക്കുന്നത് രാഷ്ട്രപതിയാണ് [S2].\n*   ലോകസഭാ സ്പീക്കറുടെ അധ്യക്ഷതയിലാണ് സംയുക്ത സമ്മേളനം ചേരുക [S2].\n*   രാഷ്ട്രപതി പാർലമെന്റിന്റെ ഭാഗമായി പ്രവർത്തിക്കുന്നു, കാരണം അദ്ദേഹം പാർലമെന്റ് സമ്മേളനം വിളിക്കുക, സംയുക്ത സമ്മേളനത്തെ അഭിസംബോധന ചെയ്യുക തുടങ്ങിയ ചുമതലകൾ നിർവഹിക്കുന്നു [S1].",
+      "example": "നമ്മുടെ സ്കൂളിലെ ക്ലാസ് റൂമിൽ ഒരു ചർച്ച നടക്കുമ്പോൾ, എല്ലാവരുടെയും അഭിപ്രായങ്ങൾ കേട്ട് തീരുമാനമെടുക്കാൻ ക്ലാസ് ടീച്ചർ അധ്യക്ഷത വഹിക്കുന്നു.",
+      "check": "സംയുക്ത സമ്മേളനത്തിൽ രാഷ്ട്രപതിയുടെ പങ്ക് എന്താണ്?",
+      "quiz_answers": "",
+      "mode": "explain",
+      "search_query": "പാർലമെന്റിന്റെ സംയുക്ത സമ്മേളനത്തിൽ അധ്യക്ഷത വഹിക്കുന്നത് ആരാണ്?",
+      "citations": [
+        [
+          4,
+          62,
+          62
+        ],
+        [
+          4,
+          59,
+          61
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          59,
+          61
+        ],
+        [
+          62,
+          62
+        ],
+        [
+          70,
+          71
+        ],
+        [
+          71,
+          72
+        ],
+        [
+          72,
+          73
+        ],
+        [
+          64,
+          65
+        ]
+      ],
+      "ttft_s": 11.34,
+      "total_s": 62.94,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "d09-en",
+      "split": "dev",
+      "lang": "en",
+      "question": "Who was the first Mughal emperor of India?",
+      "answerable": false,
+      "gold_pages": [],
+      "key_facts": "not in Pt1 (checked: no Mughal/Babur in either book)",
+      "author": "draft-claude, team to check",
+      "event": "refused",
+      "refused": true,
+      "reason": "not_in_textbook",
+      "answer": null,
+      "example": null,
+      "check": null,
+      "quiz_answers": null,
+      "mode": null,
+      "search_query": "Who was the first Mughal emperor of India?",
+      "citations": [],
+      "retrieved_pages": [
+        [
+          64,
+          65
+        ],
+        [
+          114,
+          115
+        ],
+        [
+          24,
+          24
+        ],
+        [
+          72,
+          73
+        ],
+        [
+          32,
+          33
+        ],
+        [
+          114,
+          114
+        ]
+      ],
+      "ttft_s": null,
+      "total_s": 21.31,
+      "refusal_correct": true,
+      "grade": null
+    },
+    {
+      "id": "d09-ml",
+      "split": "dev",
+      "lang": "ml",
+      "question": "ആദ്യത്തെ മുഗൾ ചക്രവർത്തി ആരായിരുന്നു?",
+      "answerable": false,
+      "gold_pages": [],
+      "key_facts": "not in Pt1",
+      "author": "draft-claude, team to check",
+      "event": "refused",
+      "refused": true,
+      "reason": "not_in_textbook",
+      "answer": null,
+      "example": null,
+      "check": null,
+      "quiz_answers": null,
+      "mode": null,
+      "search_query": "ആദ്യത്തെ മുഗൾ ചക്രവർത്തി ആരായിരുന്നു?",
+      "citations": [],
+      "retrieved_pages": [
+        [
+          33,
+          33
+        ],
+        [
+          24,
+          24
+        ],
+        [
+          66,
+          67
+        ],
+        [
+          31,
+          32
+        ],
+        [
+          18,
+          19
+        ],
+        [
+          63,
+          64
+        ]
+      ],
+      "ttft_s": null,
+      "total_s": 12.52,
+      "refusal_correct": true,
+      "grade": null
+    },
+    {
+      "id": "d10-en",
+      "split": "dev",
+      "lang": "en",
+      "question": "At what temperature does water boil?",
+      "answerable": false,
+      "gold_pages": [],
+      "key_facts": "off-subject (science)",
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "Water boils at $100^\\circ \\text{C}$ when it is at normal atmospheric pressure. The sources mention that the temperature at the **centre of the Earth** is about $5000^\\circ \\text{C}$ [S1].\n\n- The sources do not specifically state the boiling point of water.\n- The sources discuss how temperature and pressure change with depth inside the Earth [S1].\n- They also explain that weathering involves physical, chemical, and biological processes [S2].",
+      "example": "When I boil water for tea, I know it boils at $100^\\circ \\text{C}$ because that is the standard temperature for boiling water on Earth.",
+      "check": "What is the main difference between physical weathering and chemical weathering?",
+      "quiz_answers": "",
+      "mode": "explain",
+      "search_query": "At what temperature does water boil?",
+      "citations": [
+        [
+          3,
+          41,
+          42
+        ],
+        [
+          3,
+          45,
+          46
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          41,
+          42
+        ],
+        [
+          45,
+          46
+        ],
+        [
+          44,
+          45
+        ],
+        [
+          54,
+          55
+        ],
+        [
+          44,
+          44
+        ],
+        [
+          80,
+          81
+        ]
+      ],
+      "ttft_s": 8.33,
+      "total_s": 52.87,
+      "refusal_correct": false,
+      "grade": null
+    },
+    {
+      "id": "d10-ml",
+      "split": "dev",
+      "lang": "ml",
+      "question": "വെള്ളം എത്ര ഡിഗ്രിയിലാണ് തിളയ്ക്കുന്നത്?",
+      "answerable": false,
+      "gold_pages": [],
+      "key_facts": "off-subject (science)",
+      "author": "draft-claude, team to check",
+      "event": "refused",
+      "refused": true,
+      "reason": "not_in_textbook",
+      "answer": null,
+      "example": null,
+      "check": null,
+      "quiz_answers": null,
+      "mode": null,
+      "search_query": "വെള്ളം എത്ര ഡിഗ്രിയിലാണ് തിളയ്ക്കുന്നത്?",
+      "citations": [],
+      "retrieved_pages": [
+        [
+          101,
+          102
+        ],
+        [
+          109,
+          110
+        ],
+        [
+          42,
+          42
+        ],
+        [
+          30,
+          31
+        ],
+        [
+          41,
+          42
+        ],
+        [
+          109,
+          109
+        ]
+      ],
+      "ttft_s": null,
+      "total_s": 12.23,
+      "refusal_correct": true,
+      "grade": null
+    }
+  ]
+}

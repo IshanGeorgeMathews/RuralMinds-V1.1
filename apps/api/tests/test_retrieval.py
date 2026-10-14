@@ -69,12 +69,13 @@ def conn():
         (1, "en", 1, 11, "Bhimbetka rock shelters in Madhya Pradesh", 0),
         (1, "en", 4, 62, "The Parliament makes laws for the country", 1),
         (2, "ml", 1, 11, "ഭിംബേഡ്ക ശിലാഗൃഹങ്ങൾ", 0),
+        (3, "en", 1, 5, "Bhimbetka in a second English book", 0),
     ]
-    for doc_id, medium in [(1, "en"), (2, "ml")]:
+    for doc_id, medium in [(1, "en"), (2, "ml"), (3, "en")]:
         connection.execute(
             "INSERT INTO documents (id, book_id, title, board, medium, grade, subject, file_path,"
             " sha256, page_count) VALUES (?,?,'t','SCERT-KL',?,8,'social_science','p','s',1)",
-            (doc_id, f"book-{medium}", medium),
+            (doc_id, f"book-{doc_id}", medium),
         )
     for ordinal, (doc_id, medium, chapter, page, text, axis) in enumerate(rows):
         cursor = connection.execute(
@@ -83,8 +84,9 @@ def conn():
             (doc_id, ordinal, chapter, page, page, text),
         )
         connection.execute(
-            "INSERT INTO chunk_vectors VALUES (?,?,?,?,?)",
-            (cursor.lastrowid, serialize_vector(_unit(axis)), medium, "social_science", chapter),
+            "INSERT INTO chunk_vectors VALUES (?,?,?,?,?,?)",
+            (cursor.lastrowid, serialize_vector(_unit(axis)), medium, "social_science", chapter,
+             doc_id),
         )
     yield connection
     connection.close()
@@ -103,3 +105,10 @@ def test_search_respects_chapter_filter(conn) -> None:
 
 def test_search_other_subject_returns_nothing(conn) -> None:
     assert search(conn, "Bhimbetka", _unit(0), Filters("en", "maths"), top_k=3) == []
+
+
+def test_search_stays_inside_one_book(conn) -> None:
+    both = search(conn, "Bhimbetka", _unit(0), Filters("en", "social_science"), top_k=5)
+    assert {hit.book_id for hit in both} == {"book-1", "book-3"}
+    one = search(conn, "Bhimbetka", _unit(0), Filters("en", "social_science", None, 3), top_k=5)
+    assert [hit.book_id for hit in one] == ["book-3"]

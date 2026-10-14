@@ -1,5 +1,7 @@
 -- RuralMinds SQLite schema (source of truth). Applied by ruralminds.db.init_schema()
--- after the sqlite-vec extension is loaded. Phase 0: no student accounts at all.
+-- after the sqlite-vec extension is loaded; db.migrate() upgrades older files first.
+-- Schema version 3 (PRAGMA user_version). Accounts hold a username and nothing else about
+-- a child: no name, phone, email or ID number, and no table links a question to an account.
 
 -- ---------- Content ----------
 CREATE TABLE IF NOT EXISTS documents (
@@ -61,12 +63,92 @@ CREATE TRIGGER IF NOT EXISTS chunks_ad AFTER DELETE ON chunks BEGIN
 END;
 
 -- Dense vectors (bge-m3, 1024 dims). Metadata columns allow filtering inside the KNN query.
+-- vec0 rows are NOT removed by ON DELETE CASCADE: delete them explicitly with their chunks.
 CREATE VIRTUAL TABLE IF NOT EXISTS chunk_vectors USING vec0(
     chunk_id    INTEGER PRIMARY KEY,
     embedding   float[1024] distance_metric=cosine,
     medium      TEXT,
     subject     TEXT,
-    chapter_no  INTEGER
+    chapter_no  INTEGER,
+    document_id INTEGER
+);
+
+-- Chapter list per book (from books.toml or the teacher's upload form): the catalog shown
+-- to students and the page ranges used to tag chunks.
+CREATE TABLE IF NOT EXISTS book_chapters (
+    document_id   INTEGER NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
+    chapter_no    INTEGER NOT NULL,
+    title         TEXT NOT NULL,
+    pdf_start     INTEGER NOT NULL,
+    printed_start INTEGER NOT NULL,
+    PRIMARY KEY (document_id, chapter_no)
+);
+
+-- Teacher uploads. The row exists before the file arrives, so a power cut at any point
+-- leaves a job the server can resume or clean up (see uploads.py).
+CREATE TABLE IF NOT EXISTS ingest_jobs (
+    id            INTEGER PRIMARY KEY,
+    status        TEXT NOT NULL DEFAULT 'awaiting_file'
+                  CHECK (status IN ('awaiting_file','awaiting_details','queued','ingesting',
+                                    'ready','failed')),
+    filename      TEXT NOT NULL,              -- as named on the teacher's device; display only
+    metadata      TEXT,                       -- JSON: title, grade, subject, medium, chapters...
+    sha256        TEXT,
+    bytes         INTEGER,
+    page_count    INTEGER,
+    attempts      INTEGER NOT NULL DEFAULT 0,
+    error         TEXT,
+    document_id   INTEGER REFERENCES documents(id) ON DELETE SET NULL,
+    created_by    INTEGER REFERENCES users(id) ON DELETE SET NULL,
+    created_at    TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at    TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+-- ---------- People (created by the admin; no self sign-up) ----------
+CREATE TABLE IF NOT EXISTS classes (
+    id            INTEGER PRIMARY KEY,
+    grade         INTEGER NOT NULL CHECK (grade BETWEEN 1 AND 12),
+    section       TEXT NOT NULL,
+    medium        TEXT NOT NULL CHECK (medium IN ('en','ml')),
+    enabled       INTEGER NOT NULL DEFAULT 1,
+    UNIQUE (grade, section)
+);
+
+CREATE TABLE IF NOT EXISTS class_books (
+    class_id      INTEGER NOT NULL REFERENCES classes(id) ON DELETE CASCADE,
+    document_id   INTEGER NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
+    PRIMARY KEY (class_id, document_id)
+);
+
+CREATE TABLE IF NOT EXISTS users (
+    id             INTEGER PRIMARY KEY,
+    username       TEXT NOT NULL UNIQUE COLLATE NOCASE,
+    role           TEXT NOT NULL CHECK (role IN ('student','teacher','admin')),
+    class_id       INTEGER REFERENCES classes(id) ON DELETE SET NULL,  -- students only
+    pw_hash        TEXT NOT NULL,
+    enabled        INTEGER NOT NULL DEFAULT 1,
+    created_at     TEXT NOT NULL DEFAULT (datetime('now')),
+    last_login_day TEXT                       -- a date, not a timestamp trail
+);
+
+CREATE TABLE IF NOT EXISTS teacher_classes (
+    user_id       INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    class_id      INTEGER NOT NULL REFERENCES classes(id) ON DELETE CASCADE,
+    PRIMARY KEY (user_id, class_id)
+);
+
+CREATE TABLE IF NOT EXISTS sessions (
+    token_hash    TEXT PRIMARY KEY,           -- sha256 of the cookie value
+    user_id       INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    expires_at    REAL NOT NULL,              -- unix time; hard limit
+    idle_seconds  INTEGER NOT NULL,
+    last_seen     REAL NOT NULL
+);
+
+-- Admin switches. Values are JSON. Enforced by the server, not just hidden in the UI.
+CREATE TABLE IF NOT EXISTS settings (
+    key           TEXT PRIMARY KEY,
+    value         TEXT NOT NULL
 );
 
 -- ---------- Answers ----------
@@ -87,7 +169,10 @@ CREATE TABLE IF NOT EXISTS answer_cache (
     updated_at      TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
--- Refused / low-confidence questions -> teacher queue. Deliberately no student identifier.
+-- Questions the book could not answer -> teacher inbox. Deliberately no student identifier.
+-- One row per (class, book, normalised question): asking again raises times_asked instead of
+-- adding rows, and the janitor deletes old rows, so the inbox and the file stay small.
+-- Only students' questions are stored (teacher tests and the eval are not).
 CREATE TABLE IF NOT EXISTS unanswered (
     id            INTEGER PRIMARY KEY,
     question      TEXT NOT NULL,
@@ -95,17 +180,43 @@ CREATE TABLE IF NOT EXISTS unanswered (
     subject       TEXT,
     chapter_no    INTEGER,
     best_score    REAL,
-    reason        TEXT,                       -- gate | no_valid_citation
-    created_at    TEXT NOT NULL DEFAULT (datetime('now'))
+    reason        TEXT,                       -- gate | not_in_textbook | no_valid_citation
+    class_id      INTEGER NOT NULL DEFAULT 0,
+    document_id   INTEGER,
+    created_at    TEXT NOT NULL DEFAULT (datetime('now')),
+    normalised_q  TEXT,
+    times_asked   INTEGER NOT NULL DEFAULT 1,
+    last_asked    TEXT
+);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_unanswered_question
+    ON unanswered(class_id, document_id, normalised_q);
+
+-- AI study notes per chapter (notes.py): key points with page ranges from our own chunks,
+-- plus a short overview. Served instantly for "summarise chapter N"; a teacher can approve.
+CREATE TABLE IF NOT EXISTS chapter_notes (
+    document_id   INTEGER NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
+    chapter_no    INTEGER NOT NULL,
+    language      TEXT NOT NULL,
+    overview      TEXT NOT NULL,
+    points        TEXT NOT NULL,              -- JSON [{"text", "page_start", "page_end"}]
+    status        TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft','approved')),
+    model         TEXT,
+    seconds       REAL,                       -- generation time, for the cost note
+    generated_at  TEXT NOT NULL DEFAULT (datetime('now')),
+    PRIMARY KEY (document_id, chapter_no, language)
 );
 
--- Aggregate usage only (no per-child tracking).
-CREATE TABLE IF NOT EXISTS usage_daily (
-    day           TEXT NOT NULL,
+-- One row per question for stats and class activity. Deliberately no user, session or
+-- device column, and no question text (that lives only in `unanswered`, for the teacher).
+CREATE TABLE IF NOT EXISTS answer_log (
+    id            INTEGER PRIMARY KEY,
+    day           TEXT NOT NULL DEFAULT (date('now', 'localtime')),
+    class_id      INTEGER NOT NULL DEFAULT 0, -- 0 = teacher / eval
+    document_id   INTEGER,
+    chapter_no    INTEGER,
     language      TEXT NOT NULL,
-    subject       TEXT NOT NULL,
-    questions     INTEGER NOT NULL DEFAULT 0,
-    cache_hits    INTEGER NOT NULL DEFAULT 0,
-    refusals      INTEGER NOT NULL DEFAULT 0,
-    PRIMARY KEY (day, language, subject)
+    outcome       TEXT NOT NULL CHECK (outcome IN ('answered','refused','cached','error')),
+    ttft_ms       INTEGER,
+    total_ms      INTEGER
 );
+CREATE INDEX IF NOT EXISTS idx_answer_log_day ON answer_log(day, class_id);

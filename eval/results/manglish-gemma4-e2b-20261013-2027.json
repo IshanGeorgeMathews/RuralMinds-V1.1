@@ -1,0 +1,1091 @@
+{
+  "label": "manglish-gemma4-e2b",
+  "run_at": "2026-10-13T20:27:26",
+  "testset": "eval\\datasets\\manglish_dev.jsonl",
+  "split": null,
+  "model_path": "C:/Users/ishan/.ollama/models/blobs/sha256-6dd7ac24fe13a238898e16e253ebc7a72fa27fb83f2658c2f6c241df3af5937d",
+  "prompt_version": "system_v1_social",
+  "settings": {
+    "max_context_tokens": 600,
+    "final_top_k": 4,
+    "refusal_threshold": 0.5,
+    "temperature": 0.2,
+    "max_tokens": 300
+  },
+  "summary": {
+    "manglish->en-book": {
+      "items": 10,
+      "recall_at_3": "4/8",
+      "answered_when_answerable": "5/8",
+      "citation_supported": "2/8",
+      "refusal_accuracy": "7/10",
+      "ttft_p50_s": 8.79,
+      "ttft_p95_s": 10.61,
+      "total_p50_s": 19.17,
+      "total_mean_s": 10.43
+    },
+    "manglish->ml-book": {
+      "items": 10,
+      "recall_at_3": "5/8",
+      "answered_when_answerable": "3/8",
+      "citation_supported": "3/8",
+      "refusal_accuracy": "5/10",
+      "ttft_p50_s": 7.35,
+      "ttft_p95_s": 8.28,
+      "total_p50_s": 14.38,
+      "total_mean_s": 3.82
+    }
+  },
+  "results": [
+    {
+      "id": "m01-mlbook",
+      "split": "dev",
+      "lang": "ml",
+      "medium": "ml",
+      "arm": "manglish->ml-book",
+      "question": "Palaeolithic guha chithrangalile niram enthil ninnanu undakkiyathu?",
+      "answerable": true,
+      "gold_pages": [
+        8
+      ],
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "പ്രാചീന ശിലായുഗ മനുഷ്യർ ഗുഹാഭിത്തികളിൽ വരച്ച ചിത്രങ്ങളായിരുന്നു അവ [S1]. ഈ ചിത്രങ്ങൾ ആദ്യകാല മനുഷ്യജീവിതത്തെക്കുറിച്ച് വിലയേറിയ വിവരങ്ങൾ നൽകുന്നു [S1].\nസ്വയം പരിശോധിക്കാം: ഗുഹാചിത്രങ്ങൾ എന്തിനെക്കുറിച്ചുള്ള വിവരങ്ങൾ നൽകുന്നു?",
+      "citations": [
+        [
+          1,
+          7,
+          8
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          7,
+          8
+        ],
+        [
+          19,
+          20
+        ],
+        [
+          13,
+          14
+        ],
+        [
+          16,
+          18
+        ],
+        [
+          13,
+          13
+        ],
+        [
+          33,
+          33
+        ]
+      ],
+      "ttft_s": 0.83,
+      "total_s": 5.63,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "m02-mlbook",
+      "split": "dev",
+      "lang": "ml",
+      "medium": "ml",
+      "arm": "manglish->ml-book",
+      "question": "Bhimbetka evideyanu, athinte prathyekatha enthayirunnu?",
+      "answerable": true,
+      "gold_pages": [
+        11
+      ],
+      "author": "draft-claude, team to check",
+      "event": "refused",
+      "refused": true,
+      "reason": "gate",
+      "answer": null,
+      "citations": [],
+      "retrieved_pages": [
+        [
+          11,
+          12
+        ],
+        [
+          42,
+          43
+        ],
+        [
+          80,
+          81
+        ],
+        [
+          103,
+          104
+        ],
+        [
+          41,
+          42
+        ],
+        [
+          8,
+          8
+        ]
+      ],
+      "ttft_s": null,
+      "total_s": 0.16,
+      "refusal_correct": false,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": false
+    },
+    {
+      "id": "m03-mlbook",
+      "split": "dev",
+      "lang": "ml",
+      "medium": "ml",
+      "arm": "manglish->ml-book",
+      "question": "Neolithic yugathile maattangale Neolithic viplavam ennu vilichathu aaranu?",
+      "answerable": true,
+      "gold_pages": [
+        13
+      ],
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "നവീനശിലായുഗത്തിലെ മാറ്റങ്ങളെ ഗോർഡൻ ചൈൽഡ് നവീന ശിലായുഗ വിപ്ലവം എന്ന് വിശേഷിപ്പിച്ചു [S1]. കൃഷി ആരംഭിച്ചതാണ് ഏകദേശം എണ്ണായിരം വർഷം മുൻപുള്ള ഈ കാലഘട്ടത്തിലെ പ്രധാന പുരോഗതി [S1]. ഭക്ഷ്യശേഖരണത്തിൽനിന്ന് ഭക്ഷ്യോത്പാദനത്തിലേക്കുള്ള മാറ്റം മനുഷ്യചരിത്രത്തിലെ വഴിത്തിരിവായിരുന്നു [S1].\nസ്വയം പരിശോധിക്കാം: കൃഷി ആരംഭിച്ചത് മനുഷ്യജീവിതത്തിൽ എന്ത് മാറ്റമാണ് കൊണ്ടുവന്നത്?",
+      "citations": [
+        [
+          1,
+          13,
+          13
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          13,
+          13
+        ],
+        [
+          19,
+          20
+        ],
+        [
+          12,
+          13
+        ],
+        [
+          29,
+          30
+        ],
+        [
+          44,
+          44
+        ],
+        [
+          76,
+          77
+        ]
+      ],
+      "ttft_s": 8.28,
+      "total_s": 17.08,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "m04-mlbook",
+      "split": "dev",
+      "lang": "ml",
+      "medium": "ml",
+      "arm": "manglish->ml-book",
+      "question": "Harappayile aadyathe uthkhananathinu nethruthvam nalkiyathu aaranu?",
+      "answerable": true,
+      "gold_pages": [
+        24
+      ],
+      "author": "draft-claude, team to check",
+      "event": "refused",
+      "refused": true,
+      "reason": "gate",
+      "answer": null,
+      "citations": [],
+      "retrieved_pages": [
+        [
+          42,
+          43
+        ],
+        [
+          41,
+          41
+        ],
+        [
+          80,
+          81
+        ],
+        [
+          75,
+          76
+        ],
+        [
+          29,
+          30
+        ],
+        [
+          23,
+          24
+        ]
+      ],
+      "ttft_s": null,
+      "total_s": 0.17,
+      "refusal_correct": false,
+      "grade": null,
+      "recall_at_3": false,
+      "citation_supported": false
+    },
+    {
+      "id": "m05-mlbook",
+      "split": "dev",
+      "lang": "ml",
+      "medium": "ml",
+      "arm": "manglish->ml-book",
+      "question": "Harappan nagarangalile azhukkuchalukal engane aanu nirmichirunnathu?",
+      "answerable": true,
+      "gold_pages": [
+        26
+      ],
+      "author": "draft-claude, team to check",
+      "event": "refused",
+      "refused": true,
+      "reason": "gate",
+      "answer": null,
+      "citations": [],
+      "retrieved_pages": [
+        [
+          24,
+          26
+        ],
+        [
+          40,
+          40
+        ],
+        [
+          30,
+          31
+        ],
+        [
+          75,
+          76
+        ],
+        [
+          78,
+          79
+        ],
+        [
+          37,
+          37
+        ]
+      ],
+      "ttft_s": null,
+      "total_s": 0.16,
+      "refusal_correct": false,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": false
+    },
+    {
+      "id": "m06-mlbook",
+      "split": "dev",
+      "lang": "ml",
+      "medium": "ml",
+      "arm": "manglish->ml-book",
+      "question": "Harappan samskarathil nellu krishi cheythirunnathinte thelivu evide ninnanu kittiyathu?",
+      "answerable": true,
+      "gold_pages": [
+        27,
+        28
+      ],
+      "author": "draft-claude, team to check",
+      "event": "refused",
+      "refused": true,
+      "reason": "gate",
+      "answer": null,
+      "citations": [],
+      "retrieved_pages": [
+        [
+          55,
+          56
+        ],
+        [
+          30,
+          31
+        ],
+        [
+          45,
+          46
+        ],
+        [
+          42,
+          43
+        ],
+        [
+          37,
+          37
+        ],
+        [
+          40,
+          40
+        ]
+      ],
+      "ttft_s": null,
+      "total_s": 0.21,
+      "refusal_correct": false,
+      "grade": null,
+      "recall_at_3": false,
+      "citation_supported": false
+    },
+    {
+      "id": "m07-mlbook",
+      "split": "dev",
+      "lang": "ml",
+      "medium": "ml",
+      "arm": "manglish->ml-book",
+      "question": "Indian parliamentinte ghatakangal ethokke aanu?",
+      "answerable": true,
+      "gold_pages": [
+        59,
+        60,
+        61
+      ],
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "ഇന്ത്യയിലെ പാർലമെന്റ് രാഷ്ട്രപതിയും ലോകസഭയും രാജ്യസഭ എന്നീ രണ്ട് സഭകളാണ് ഉൾക്കൊള്ളുന്നത് [S1]. രാജ്യസഭ ഉപരിസഭയെന്നും ലോകസഭ അധോസഭയെന്നും അറിയപ്പെടുന്നു [S1]. രണ്ട് സഭകൾ ഉള്ളതിനാൽ ഇതിനെ ദ്വിമണ്ഡല നിയമനിർമാണ സഭ എന്ന് വിളിക്കുന്നു [S1].\nസ്വയം പരിശോധിക്കാം: ഇന്ത്യൻ പാർലമെന്റിൽ ഉൾപ്പെട്ടിരിക്കുന്ന സഭകൾ ഏതൊക്കെയാണ്?",
+      "citations": [
+        [
+          4,
+          59,
+          59
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          59,
+          59
+        ],
+        [
+          71,
+          72
+        ],
+        [
+          59,
+          61
+        ],
+        [
+          70,
+          71
+        ],
+        [
+          65,
+          66
+        ],
+        [
+          64,
+          65
+        ]
+      ],
+      "ttft_s": 7.35,
+      "total_s": 14.38,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "m08-mlbook",
+      "split": "dev",
+      "lang": "ml",
+      "medium": "ml",
+      "arm": "manglish->ml-book",
+      "question": "Parliamentinte samyuktha sammelanathil adhyakshatha vahikkunnathu aaranu?",
+      "answerable": true,
+      "gold_pages": [
+        62,
+        63
+      ],
+      "author": "draft-claude, team to check",
+      "event": "refused",
+      "refused": true,
+      "reason": "gate",
+      "answer": null,
+      "citations": [],
+      "retrieved_pages": [
+        [
+          59,
+          61
+        ],
+        [
+          65,
+          66
+        ],
+        [
+          64,
+          65
+        ],
+        [
+          70,
+          71
+        ],
+        [
+          71,
+          72
+        ],
+        [
+          59,
+          59
+        ]
+      ],
+      "ttft_s": null,
+      "total_s": 0.15,
+      "refusal_correct": false,
+      "grade": null,
+      "recall_at_3": false,
+      "citation_supported": false
+    },
+    {
+      "id": "m09-mlbook",
+      "split": "dev",
+      "lang": "ml",
+      "medium": "ml",
+      "arm": "manglish->ml-book",
+      "question": "Indiayile aadyathe Mughal chakravarthi aaru aayirunnu?",
+      "answerable": false,
+      "gold_pages": [],
+      "author": "draft-claude, team to check",
+      "event": "refused",
+      "refused": true,
+      "reason": "gate",
+      "answer": null,
+      "citations": [],
+      "retrieved_pages": [
+        [
+          65,
+          66
+        ],
+        [
+          64,
+          65
+        ],
+        [
+          40,
+          40
+        ],
+        [
+          78,
+          79
+        ],
+        [
+          114,
+          114
+        ],
+        [
+          115,
+          116
+        ]
+      ],
+      "ttft_s": null,
+      "total_s": 0.16,
+      "refusal_correct": true,
+      "grade": null
+    },
+    {
+      "id": "m10-mlbook",
+      "split": "dev",
+      "lang": "ml",
+      "medium": "ml",
+      "arm": "manglish->ml-book",
+      "question": "Vellam ethra degreeyil aanu thilaykkunnathu?",
+      "answerable": false,
+      "gold_pages": [],
+      "author": "draft-claude, team to check",
+      "event": "refused",
+      "refused": true,
+      "reason": "gate",
+      "answer": null,
+      "citations": [],
+      "retrieved_pages": [
+        [
+          41,
+          41
+        ],
+        [
+          42,
+          43
+        ],
+        [
+          41,
+          42
+        ],
+        [
+          91,
+          92
+        ],
+        [
+          23,
+          24
+        ],
+        [
+          80,
+          81
+        ]
+      ],
+      "ttft_s": null,
+      "total_s": 0.15,
+      "refusal_correct": true,
+      "grade": null
+    },
+    {
+      "id": "m01-enbook",
+      "split": "dev",
+      "lang": "ml",
+      "medium": "en",
+      "arm": "manglish->en-book",
+      "question": "Palaeolithic guha chithrangalile niram enthil ninnanu undakkiyathu?",
+      "answerable": true,
+      "gold_pages": [
+        8
+      ],
+      "author": "draft-claude, team to check",
+      "event": "refused",
+      "refused": true,
+      "reason": "no_valid_citation",
+      "answer": null,
+      "citations": [],
+      "retrieved_pages": [
+        [
+          11,
+          12
+        ],
+        [
+          17,
+          18
+        ],
+        [
+          9,
+          11
+        ],
+        [
+          13,
+          14
+        ],
+        [
+          19,
+          21
+        ],
+        [
+          16,
+          17
+        ]
+      ],
+      "ttft_s": 6.84,
+      "total_s": 10.32,
+      "refusal_correct": false,
+      "grade": null,
+      "recall_at_3": false,
+      "citation_supported": false
+    },
+    {
+      "id": "m02-enbook",
+      "split": "dev",
+      "lang": "ml",
+      "medium": "en",
+      "arm": "manglish->en-book",
+      "question": "Bhimbetka evideyanu, athinte prathyekatha enthayirunnu?",
+      "answerable": true,
+      "gold_pages": [
+        11
+      ],
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "ബിംബേത്ക ഒരു പാലിയോലിത്തിക് സൈറ്റാണ് [S1]. ഈ സൈറ്റിൽ പാറക്കെട്ടുകൾ പ്രധാന സവിശേഷതയായിരുന്നു [S1]. ബിംബേത്ക മധ്യപ്രദേശിലാണ് സ്ഥിതി ചെയ്യുന്നത് [S2].\nസ്വയം പരിശോധിക്കാം: ബിംബേത്കയിൽ പ്രധാനമായി എന്ത് കാണപ്പെട്ടിരുന്നു?",
+      "citations": [
+        [
+          1,
+          9,
+          11
+        ],
+        [
+          1,
+          11,
+          12
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          9,
+          11
+        ],
+        [
+          11,
+          12
+        ],
+        [
+          8,
+          8
+        ],
+        [
+          8,
+          9
+        ],
+        [
+          19,
+          21
+        ],
+        [
+          12,
+          13
+        ]
+      ],
+      "ttft_s": 6.28,
+      "total_s": 11.31,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "m03-enbook",
+      "split": "dev",
+      "lang": "ml",
+      "medium": "en",
+      "arm": "manglish->en-book",
+      "question": "Neolithic yugathile maattangale Neolithic viplavam ennu vilichathu aaranu?",
+      "answerable": true,
+      "gold_pages": [
+        13
+      ],
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "Neolithic yugathile maattangale Palaeolithic Age-ileppozhumulla maattangale aayirunnu [S2]. Neolithic Age-il Palaeolithic Age-ileppozhumulla parayum changes aanu [S2].\nസ്വയം പരിശോധിക്കാം: പാലിയോലിത്തിക് കാലഘട്ടത്തിൽ നിന്ന് നവീനശിലാ കാലഘട്ടത്തിലേക്ക് എന്ത് മാറ്റങ്ങളാണ് സംഭവിച്ചത്?",
+      "citations": [
+        [
+          1,
+          17,
+          18
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          16,
+          17
+        ],
+        [
+          17,
+          18
+        ],
+        [
+          13,
+          13
+        ],
+        [
+          13,
+          14
+        ],
+        [
+          14,
+          16
+        ],
+        [
+          19,
+          21
+        ]
+      ],
+      "ttft_s": 9.51,
+      "total_s": 22.15,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": false
+    },
+    {
+      "id": "m04-enbook",
+      "split": "dev",
+      "lang": "ml",
+      "medium": "en",
+      "arm": "manglish->en-book",
+      "question": "Harappayile aadyathe uthkhananathinu nethruthvam nalkiyathu aaranu?",
+      "answerable": true,
+      "gold_pages": [
+        24
+      ],
+      "author": "draft-claude, team to check",
+      "event": "refused",
+      "refused": true,
+      "reason": "gate",
+      "answer": null,
+      "citations": [],
+      "retrieved_pages": [
+        [
+          80,
+          81
+        ],
+        [
+          82,
+          82
+        ],
+        [
+          81,
+          81
+        ],
+        [
+          75,
+          76
+        ],
+        [
+          94,
+          96
+        ],
+        [
+          85,
+          86
+        ]
+      ],
+      "ttft_s": null,
+      "total_s": 0.34,
+      "refusal_correct": false,
+      "grade": null,
+      "recall_at_3": false,
+      "citation_supported": false
+    },
+    {
+      "id": "m05-enbook",
+      "split": "dev",
+      "lang": "ml",
+      "medium": "en",
+      "arm": "manglish->en-book",
+      "question": "Harappan nagarangalile azhukkuchalukal engane aanu nirmichirunnathu?",
+      "answerable": true,
+      "gold_pages": [
+        26
+      ],
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "മൺപാത്രങ്ങൾ, ചെമ്പ്, കളിമൺ, പാമ്പ് പുറംതോടുകൾ എന്നിവ ഉപയോഗിച്ച് വളകൾ നിർമ്മിച്ചു [S2]. അവർ ചെമ്പ്വും ടിന്നും ചേർത്ത് തങ്കം ഉണ്ടാക്കി [S2]. തങ്കം ഉപയോഗിച്ച് അവർ ഉപകരണങ്ങളും ആയുധങ്ങളും നിർമ്മിച്ചു [S2].\nസ്വയം പരിശോധിക്കാം: വളകൾ നിർമ്മിക്കാൻ ഉപയോഗിച്ച വസ്തുക്കൾ എന്തൊക്കെയായിരുന്നു?",
+      "citations": [
+        [
+          2,
+          29,
+          30
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          30,
+          30
+        ],
+        [
+          29,
+          30
+        ],
+        [
+          30,
+          31
+        ],
+        [
+          37,
+          37
+        ],
+        [
+          27,
+          28
+        ],
+        [
+          24,
+          25
+        ]
+      ],
+      "ttft_s": 7.9,
+      "total_s": 18.93,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": false,
+      "citation_supported": false
+    },
+    {
+      "id": "m06-enbook",
+      "split": "dev",
+      "lang": "ml",
+      "medium": "en",
+      "arm": "manglish->en-book",
+      "question": "Harappan samskarathil nellu krishi cheythirunnathinte thelivu evide ninnanu kittiyathu?",
+      "answerable": true,
+      "gold_pages": [
+        27,
+        28
+      ],
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "അവരുടെ നഗര അവശിഷ്ടങ്ങളിൽ നിന്ന് എന്തൊക്കെ സാമൂഹികവും ഭരണപരവുമായ സംവിധാനങ്ങളെക്കുറിച്ച് മനസ്സിലാക്കാൻ കഴിയും? [S2] ധാന്യപ്പുരകൾ ഹാരപ്പയിൽ നിന്ന് കണ്ടെത്തിയ അവശിഷ്ടങ്ങളിൽ പ്രധാനപ്പെട്ടവയാണ്. അവ ധാന്യങ്ങൾ ഉണക്കി സൂക്ഷിക്കാൻ സൗകര്യമുള്ള വലിയ കെട്ടിടങ്ങളായിരുന്നു [S2].\n\nസ്വയം പരിശോധിക്കാം: ധാന്യപ്പുരകൾ എന്തിനാണ് പ്രധാനപ്പെട്ടതായിരുന്നു?",
+      "citations": [
+        [
+          2,
+          27,
+          28
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          29,
+          30
+        ],
+        [
+          27,
+          28
+        ],
+        [
+          30,
+          31
+        ],
+        [
+          30,
+          30
+        ],
+        [
+          40,
+          40
+        ],
+        [
+          39,
+          40
+        ]
+      ],
+      "ttft_s": 8.79,
+      "total_s": 21.46,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "m07-enbook",
+      "split": "dev",
+      "lang": "ml",
+      "medium": "en",
+      "arm": "manglish->en-book",
+      "question": "Indian parliamentinte ghatakangal ethokke aanu?",
+      "answerable": true,
+      "gold_pages": [
+        59,
+        60,
+        61
+      ],
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "ഇന്ത്യൻ പാർലമെന്റ് ലോക്സഭയെയും രാജ്യസഭയെയും ഉൾക്കൊള്ളുന്നു [S1]. ഇത് ഒരു ബൈകാമറൽ നിയമസഭയാണ് [S2].\nസ്വയം പരിശോധിക്കാം: ഇന്ത്യൻ പാർലമെന്റിന്റെ ഘടനയെക്കുറിച്ച് കൂടുതൽ എന്താണ് അറിയേണ്ടത്?",
+      "citations": [
+        [
+          4,
+          72,
+          72
+        ],
+        [
+          4,
+          73,
+          74
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          72,
+          72
+        ],
+        [
+          73,
+          74
+        ],
+        [
+          57,
+          59
+        ],
+        [
+          64,
+          65
+        ],
+        [
+          114,
+          114
+        ],
+        [
+          59,
+          60
+        ]
+      ],
+      "ttft_s": 10.61,
+      "total_s": 19.17,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": false
+    },
+    {
+      "id": "m08-enbook",
+      "split": "dev",
+      "lang": "ml",
+      "medium": "en",
+      "arm": "manglish->en-book",
+      "question": "Parliamentinte samyuktha sammelanathil adhyakshatha vahikkunnathu aaranu?",
+      "answerable": true,
+      "gold_pages": [
+        62,
+        63
+      ],
+      "author": "draft-claude, team to check",
+      "event": "refused",
+      "refused": true,
+      "reason": "gate",
+      "answer": null,
+      "citations": [],
+      "retrieved_pages": [
+        [
+          59,
+          60
+        ],
+        [
+          72,
+          73
+        ],
+        [
+          65,
+          65
+        ],
+        [
+          68,
+          69
+        ],
+        [
+          72,
+          72
+        ],
+        [
+          57,
+          59
+        ]
+      ],
+      "ttft_s": null,
+      "total_s": 0.25,
+      "refusal_correct": false,
+      "grade": null,
+      "recall_at_3": false,
+      "citation_supported": false
+    },
+    {
+      "id": "m09-enbook",
+      "split": "dev",
+      "lang": "ml",
+      "medium": "en",
+      "arm": "manglish->en-book",
+      "question": "Indiayile aadyathe Mughal chakravarthi aaru aayirunnu?",
+      "answerable": false,
+      "gold_pages": [],
+      "author": "draft-claude, team to check",
+      "event": "refused",
+      "refused": true,
+      "reason": "gate",
+      "answer": null,
+      "citations": [],
+      "retrieved_pages": [
+        [
+          94,
+          96
+        ],
+        [
+          64,
+          65
+        ],
+        [
+          96,
+          97
+        ],
+        [
+          63,
+          64
+        ],
+        [
+          114,
+          115
+        ],
+        [
+          65,
+          65
+        ]
+      ],
+      "ttft_s": null,
+      "total_s": 0.19,
+      "refusal_correct": true,
+      "grade": null
+    },
+    {
+      "id": "m10-enbook",
+      "split": "dev",
+      "lang": "ml",
+      "medium": "en",
+      "arm": "manglish->en-book",
+      "question": "Vellam ethra degreeyil aanu thilaykkunnathu?",
+      "answerable": false,
+      "gold_pages": [],
+      "author": "draft-claude, team to check",
+      "event": "refused",
+      "refused": true,
+      "reason": "gate",
+      "answer": null,
+      "citations": [],
+      "retrieved_pages": [
+        [
+          42,
+          43
+        ],
+        [
+          63,
+          64
+        ],
+        [
+          43,
+          43
+        ],
+        [
+          55,
+          56
+        ],
+        [
+          94,
+          94
+        ],
+        [
+          28,
+          29
+        ]
+      ],
+      "ttft_s": null,
+      "total_s": 0.17,
+      "refusal_correct": true,
+      "grade": null
+    }
+  ]
+}

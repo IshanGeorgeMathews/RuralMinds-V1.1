@@ -1,7 +1,9 @@
 """One student question -> streamed, cited answer or a polite refusal.
 
-    retrieve -> gate (layer 1) -> pack sources -> prompt -> llama-server stream
-    -> sentinel / marker check (layer 2) -> citations from the database -> label
+    admin controls -> mode (explain / simpler / example / story / quiz / summary)
+    -> chapter notes or teacher-approved cache -> search text in the book's language
+    -> retrieve -> gate (layer 1) -> pack sources -> tutor prompt -> llama-server stream
+    -> sentinel / marker check (layer 2) -> sections + citations from the database -> label
 
 The model only ever sees sources as [S1]..[Sn]; chapter and page numbers come from our own
 tables, so the model cannot invent a page. Every request emits a `gate` record with the inputs
@@ -12,22 +14,27 @@ import asyncio
 import logging
 import re
 import sqlite3
+import time
 from collections.abc import AsyncIterator
 from dataclasses import asdict, dataclass, field, replace
-from functools import cache
-from pathlib import Path
 
 import httpx
 
+from . import tutor
+from .cache import lookup as lookup_approved
+from .cache import normalise_question
 from .config import settings
-from .llm import chat_stream
+from .controls import ask_blocked, load_controls
+from .llm import chat_stream, complete
+from .notes import notes_answer
 from .retrieve import Filters, RetrievedChunk, retrieve
 from .textnorm import normalize
+from .tutor import load_prompt
 
 log = logging.getLogger("ruralminds.answer")
 
 SENTINEL = "NOT_IN_TEXTBOOK"
-PROMPT_VERSION = "system_v1_social"
+PROMPT_VERSION = "system_v2_tutor"
 CANDIDATE_POOL = 6  # retrieved before packing to the token budget
 # [S1], [S1, S3], [S1; 2], [Source 1]: small models are inconsistent, so parse leniently.
 _MARKER = re.compile(
@@ -50,6 +57,19 @@ class AskRequest:
     subject: str = "social_science"
     chapter_no: int | None = None
     history: list[Turn] = field(default_factory=list)
+    document_id: int | None = None  # the book being asked about; None = eval across a medium
+    class_id: int = 0  # only for class-level counts; 0 = teacher or eval. Never a student id.
+    use_cache: bool = True  # the eval turns it off so it measures the model, not the cache
+    mode: str | None = None  # a quick-action chip; None = detect from the question
+
+
+@dataclass
+class Clock:
+    started: float = field(default_factory=time.perf_counter)
+    first_token: float | None = None
+
+    def ms(self, moment: float | None) -> int | None:
+        return None if moment is None else round((moment - self.started) * 1000)
 
 
 @dataclass
@@ -60,6 +80,7 @@ class Gate:
     candidates: int
     passed: bool
     reason: str | None = None  # gate | not_in_textbook | no_valid_citation | model_error
+    search_query: str | None = None  # what was searched (after removing request words / rewriting)
     # Every candidate's location and ranks, so the eval can compute recall@k from the event.
     retrieved: list[dict[str, object]] = field(default_factory=list)
 
@@ -68,11 +89,8 @@ def event(name: str, **data: object) -> dict[str, object]:
     return {"event": name, "data": data}
 
 
-@cache
 def system_prompt(language: str) -> str:
-    """Prompt file body after the '---' line; the version line stays out of the prompt."""
-    path = Path(__file__).parent / "prompts" / f"{PROMPT_VERSION}_{language}.md"
-    return path.read_text(encoding="utf-8").split("\n---\n", 1)[1].strip()
+    return load_prompt(f"{PROMPT_VERSION}_{language}")
 
 
 def check_gate(hits: list[RetrievedChunk]) -> Gate:
@@ -133,8 +151,12 @@ def build_messages(request: AskRequest, sources: list[RetrievedChunk]) -> list[d
         # Old markers point at old sources; drop them so they cannot be confused with new ones.
         messages.append({"role": "assistant", "content": _MARKER.sub("", turn.answer).strip()})
     numbered = "\n\n".join(f"[S{n}] {hit.text}" for n, hit in enumerate(sources, start=1))
+    task = tutor.instruction(request.mode or "explain")
     messages.append(
-        {"role": "user", "content": f"Sources:\n{numbered}\n\nQuestion: {request.question}"}
+        {
+            "role": "user",
+            "content": f"Sources:\n{numbered}\n\nTask: {task}\nQuestion: {request.question}",
+        }
     )
     return messages
 
@@ -192,17 +214,28 @@ class AnswerQueue:
 async def answer_stream(
     conn: sqlite3.Connection, client: httpx.AsyncClient, queue: AnswerQueue, request: AskRequest
 ) -> AsyncIterator[dict[str, object]]:
-    """Events: queued{position} | token{text} | done{...} | refused{...} | busy | error."""
+    """Events: queued{position} | token{text} | done | notes | refused | blocked | busy | error."""
+    clock = Clock()
     question = normalize(request.question).strip()[: settings.max_question_chars]
     if not question:
         yield event("refused", reason="empty", message_key="refusal.empty")
         return
-    request = replace(request, question=question)
-    filters = Filters(request.medium, request.subject, request.chapter_no)
-    hits = await retrieve(conn, _retrieval_query(request), filters, CANDIDATE_POOL)
-    gate = check_gate(hits)
+    blocked = ask_blocked(load_controls(conn), request.language, request.class_id or None)
+    if blocked:
+        yield event("blocked", message_key=blocked)
+        return
+    request = _with_mode(replace(request, question=question))
+    ready = _ready_answer(conn, request)
+    if ready is not None:
+        _log(conn, request, "cached", clock)
+        yield ready
+        return
+    search_text = await _search_text(conn, client, request)
+    filters = Filters(request.medium, request.subject, request.chapter_no, request.document_id)
+    hits = await retrieve(conn, search_text, filters, CANDIDATE_POOL)
+    gate = replace(check_gate(hits), search_query=search_text)
     if not gate.passed:
-        yield _refuse(conn, request, gate)
+        yield _refuse(conn, request, gate, clock)
         return
     sources = pack_sources(hits, settings.max_context_tokens)
     if queue.full():
@@ -213,21 +246,107 @@ async def answer_stream(
     parts: list[str] = []
     async with queue:
         try:
-            stream = chat_stream(build_messages(request, sources), client)
+            messages = build_messages(request, sources)
+            stream = chat_stream(messages, client, tutor.MAX_TOKENS.get(request.mode or "", None))
             async for piece in _release_tokens(stream, parts):
+                clock.first_token = clock.first_token or time.perf_counter()
                 yield event("token", text=piece)
         except httpx.HTTPError:
             log.exception("llama-server request failed")
+            _log(conn, request, "error", clock)
             yield event("error", message_key="error.model")
             return
-    yield _finish(conn, request, gate, sources, "".join(parts))
+    yield _finish(conn, request, gate, sources, "".join(parts), clock)
+
+
+def _with_mode(request: AskRequest) -> AskRequest:
+    """A chip sets the mode; otherwise read it from the question. "Summarise chapter 2"
+    also narrows the search to chapter 2."""
+    mode = request.mode if request.mode in tutor.MODES else tutor.detect_mode(request.question)
+    chapter = request.chapter_no
+    if mode == "summary" and chapter is None:
+        chapter = tutor.chapter_in(request.question)
+    return replace(request, mode=mode, chapter_no=chapter)
+
+
+def _ready_answer(conn: sqlite3.Connection, request: AskRequest) -> dict[str, object] | None:
+    """Answers that need no model call: chapter study notes, then teacher-approved answers."""
+    if request.mode == "summary" and request.document_id and request.chapter_no:
+        # Notes are made in the book's language; another language falls back to those.
+        for language in dict.fromkeys([request.language, request.medium]):
+            notes = notes_answer(conn, request.document_id, request.chapter_no, language)
+            if notes is not None:
+                return event("notes", **notes)
+    cached = _cached_answer(conn, request)
+    if cached is not None:
+        return event("done", **cached, label="teacher_approved")
+    return None
+
+
+async def _search_text(
+    conn: sqlite3.Connection, client: httpx.AsyncClient, request: AskRequest
+) -> str:
+    """Search in the book's language: a Manglish or other-language question is rewritten first,
+    because keywords can only match text written in the same script."""
+    topic = _retrieval_query(request)
+    if len(topic.split()) < 2 and request.chapter_no and request.document_id:
+        # "Quiz me on this chapter" leaves no topic words: search for the chapter itself.
+        row = conn.execute(
+            "SELECT title FROM book_chapters WHERE document_id = ? AND chapter_no = ?",
+            (request.document_id, request.chapter_no),
+        ).fetchone()
+        if row is not None:
+            return f"{row['title']} {topic}".strip()  # titles are in the book's language
+    if tutor.question_language(request.question) == request.medium:
+        return topic
+    return await _rewrite_for_search(client, topic, request.medium) or topic
+
+
+_REWRITES: dict[tuple[str, str], str] = {}
+_MAX_REWRITES = 500
+
+
+async def _rewrite_for_search(client: httpx.AsyncClient, text: str, medium: str) -> str | None:
+    key = (text, medium)
+    if key in _REWRITES:
+        return _REWRITES[key]
+    language = "Malayalam (Malayalam script)" if medium == "ml" else "English"
+    messages = [
+        {"role": "system", "content": load_prompt("rewrite_v1")},
+        {"role": "user", "content": f"Language: {language}\nQuestion: {text}"},
+    ]
+    try:
+        reply = await complete(messages, client, max_tokens=80)
+    except httpx.HTTPError:
+        log.warning("search rewrite failed; searching with the original words")
+        return None
+    rewritten = normalize(reply.splitlines()[0] if reply else "").strip().strip('"')
+    if not rewritten or SENTINEL in rewritten:
+        return None
+    if len(_REWRITES) >= _MAX_REWRITES:
+        _REWRITES.clear()
+    _REWRITES[key] = rewritten
+    return rewritten
+
+
+def _cached_answer(conn: sqlite3.Connection, request: AskRequest) -> dict | None:
+    """Only a first question can match: a follow-up depends on the conversation before it."""
+    if request.document_id is None or request.history or not request.use_cache:
+        return None
+    return lookup_approved(
+        conn, request.question, request.language, request.document_id, request.chapter_no
+    )
 
 
 def _retrieval_query(request: AskRequest) -> str:
-    """A follow-up like "Why?" retrieves nothing alone; search with the previous question too."""
-    if request.history:
-        return f"{request.history[-1].question} {request.question}"
-    return request.question
+    """The topic of the question, without request words ("explain as a story", "simpler").
+    A follow-up like "Why?" or "Give an example" has no topic of its own, so the latest earlier
+    question that does name a topic is searched too ("as a story, I didn't understand" names
+    none, so it is skipped)."""
+    topic = tutor.topic_query(request.question)
+    earlier = (tutor.topic_query(turn.question) for turn in reversed(request.history))
+    previous = next((text for text in earlier if len(text.split()) >= 2), "")
+    return f"{previous} {topic}".strip() or request.question
 
 
 async def _release_tokens(stream: AsyncIterator[str], parts: list[str]) -> AsyncIterator[str]:
@@ -252,17 +371,34 @@ def _finish(
     gate: Gate,
     sources: list[RetrievedChunk],
     raw_text: str,
+    clock: Clock,
 ) -> dict[str, object]:
     """Layer 2: the model's own "not in the sources" signal, then marker validation."""
     if SENTINEL in raw_text:
-        return _refuse(conn, request, replace(gate, passed=False, reason="not_in_textbook"))
-    text, cited = validate_markers(raw_text, len(sources))
+        gate = replace(gate, passed=False, reason="not_in_textbook")
+        return _refuse(conn, request, gate, clock)
+    parts = tutor.split_sections(raw_text)
+    if tutor.admits_missing(parts.explanation) or tutor.wrong_script(
+        parts.explanation, request.language
+    ):
+        gate = replace(gate, passed=False, reason="not_in_textbook")
+        return _refuse(conn, request, gate, clock)
+    text, cited = validate_markers(parts.explanation, len(sources))
+    answers, cited_in_answers = validate_markers(parts.answers, len(sources))
+    cited = list(dict.fromkeys(cited + cited_in_answers))
     if not cited:
-        return _refuse(conn, request, replace(gate, passed=False, reason="no_valid_citation"))
-    _count_usage(conn, request, refused=False)
+        gate = replace(gate, passed=False, reason="no_valid_citation")
+        return _refuse(conn, request, gate, clock)
+    _log(conn, request, "answered", clock)
     return event(
         "done",
         text=text,
+        # Not from the book, so it never carries a source marker (shown in its own box).
+        example=_MARKER.sub("", parts.example).strip(),
+        check=_MARKER.sub("", parts.check).strip(),
+        answers=answers,
+        mode=request.mode,
+        language=request.language,
         citations=[citation(n, sources[n - 1]) for n in cited],
         label="ai_explanation",
         prompt_version=f"{PROMPT_VERSION}_{request.language}",
@@ -270,11 +406,25 @@ def _finish(
     )
 
 
-def _refuse(conn: sqlite3.Connection, request: AskRequest, gate: Gate) -> dict[str, object]:
+def _refuse(
+    conn: sqlite3.Connection, request: AskRequest, gate: Gate, clock: Clock
+) -> dict[str, object]:
+    if request.class_id:  # students only: teacher tests and the eval stay out of the inbox
+        _save_unanswered(conn, request, gate)
+    _log(conn, request, "refused", clock)
+    return event("refused", reason=gate.reason, message_key="refusal.not_found", gate=asdict(gate))
+
+
+def _save_unanswered(conn: sqlite3.Connection, request: AskRequest, gate: Gate) -> None:
+    """One inbox row per question per class and book; asking again only raises the count."""
     with conn:
         conn.execute(
-            "INSERT INTO unanswered (question, language, subject, chapter_no, best_score, reason)"
-            " VALUES (?,?,?,?,?,?)",
+            "INSERT INTO unanswered (question, language, subject, chapter_no, best_score, reason,"
+            " class_id, document_id, normalised_q, last_asked)"
+            " VALUES (?,?,?,?,?,?,?,?,?, datetime('now'))"
+            " ON CONFLICT (class_id, document_id, normalised_q) DO UPDATE SET"
+            " times_asked = times_asked + 1, last_asked = excluded.last_asked,"
+            " reason = excluded.reason",
             (
                 request.question,
                 request.language,
@@ -282,19 +432,26 @@ def _refuse(conn: sqlite3.Connection, request: AskRequest, gate: Gate) -> dict[s
                 request.chapter_no,
                 gate.top_similarity,
                 gate.reason,
+                request.class_id,
+                request.document_id,
+                normalise_question(request.question),
             ),
         )
-    _count_usage(conn, request, refused=True)
-    return event("refused", reason=gate.reason, message_key="refusal.not_found", gate=asdict(gate))
 
 
-def _count_usage(conn: sqlite3.Connection, request: AskRequest, refused: bool) -> None:
-    """Aggregate counts only: no question text, no student, no device."""
+def _log(conn: sqlite3.Connection, request: AskRequest, outcome: str, clock: Clock) -> None:
+    """Class-level counts and timings only: no student, no device, no question text."""
     with conn:
         conn.execute(
-            "INSERT INTO usage_daily (day, language, subject, questions, refusals)"
-            " VALUES (date('now', 'localtime'), ?, ?, 1, ?)"
-            " ON CONFLICT (day, language, subject) DO UPDATE SET"
-            " questions = questions + 1, refusals = refusals + excluded.refusals",
-            (request.language, request.subject, int(refused)),
+            "INSERT INTO answer_log (class_id, document_id, chapter_no, language, outcome,"
+            " ttft_ms, total_ms) VALUES (?,?,?,?,?,?,?)",
+            (
+                request.class_id,
+                request.document_id,
+                request.chapter_no,
+                request.language,
+                outcome,
+                clock.ms(clock.first_token),
+                clock.ms(time.perf_counter()),
+            ),
         )

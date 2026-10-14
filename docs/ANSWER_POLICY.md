@@ -9,6 +9,14 @@ This is the contract for how RuralMinds answers. Prompts, code and tests must fo
 4. Stay short: about 300 tokens max, plain language suited to Grade 8–10, one idea per sentence.
 5. Use the student's chosen language (English by default; Malayalam only once benchmarked).
 
+## 1a. Tutor, not a text retriever (13 Oct)
+Students use RuralMinds to *understand*, so answers explain in the model's own simple words and must not copy book sentences. Facts about the topic still come only from the retrieved sources, each with a source marker. **One labelled exception:** an everyday example, comparison or story frame may come from outside the book, shown in its own box marked "Example to help you understand — not from your book"; it may not state facts about the topic and never carries a citation. Modes: explain (default), simpler, example, story, quiz (answers hidden until tapped), summary (served from chapter study notes). Prompt: `prompts/system_v2_tutor_{en,ml}.md`.
+
+## 1b. Languages (13 Oct)
+- The **UI language** is a Settings choice and never changes answers.
+- The **answer language** is the student's "Answer in" setting: Auto (default: the question's language; Manglish → Malayalam), English or Malayalam.
+- The **search language** is always the book's language: a question in another language or in Manglish is rewritten into the book's language before searching (`prompts/rewrite_v1.md`).
+
 ## 2. Answer shape (explain mode)
 1. **Concept** — 2–4 sentences in simple words.
 2. **Worked example** — taken from the textbook where possible, with numbered steps.

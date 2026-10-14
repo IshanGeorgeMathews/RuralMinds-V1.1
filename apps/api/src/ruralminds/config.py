@@ -24,6 +24,8 @@ class Settings(BaseSettings):
 
     # Local llama-server instances (never internet hosts)
     llm_url: str = "http://127.0.0.1:8080"
+    # Shown to the admin; the GGUF file name may be an Ollama blob hash.
+    chat_model_label: str = ""
     embed_url: str = "http://127.0.0.1:8081"
     embed_dim: int = 1024
     embed_batch_size: int = 16
@@ -51,7 +53,31 @@ class Settings(BaseSettings):
     max_queue: int = 30
     max_question_chars: int = 500
     history_turns: int = 2
-    teacher_pin_hash: str = ""
+
+    # Accounts and sessions (see auth.py)
+    student_idle_minutes: int = 30  # shared phones: sign out soon after the student stops
+    teacher_idle_minutes: int = 480
+    admin_idle_minutes: int = 60
+    session_max_hours: int = 12
+    login_max_failures: int = 5
+    login_window_minutes: int = 10
+
+    # Teacher uploads (see uploads.py). Our largest textbook PDF is 32 MB / 159 pages.
+    books_dir: Path = Path("data/books")
+    uploads_dir: Path = Path("data/uploads")
+    page_cache_dir: Path = Path("data/pages")
+    page_image_dpi: int = 110  # readable on a phone when zoomed; ~1 MB raw per page
+    frontend_dir: Path = Path("frontend/build")
+    max_upload_mb: int = 60
+    max_pages: int = 400
+    min_free_disk_gb: float = 2.0
+    stale_upload_hours: int = 6
+    max_ingest_attempts: int = 3
+
+    # Retention (janitor): the inbox and the usage log never grow without bound
+    unanswered_keep_days: int = 30
+    unanswered_keep_per_class: int = 300
+    answer_log_keep_days: int = 180
 
 
 settings = Settings()

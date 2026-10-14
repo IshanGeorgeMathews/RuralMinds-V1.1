@@ -10,6 +10,9 @@ from .config import settings
 EMBED_TIMEOUT = httpx.Timeout(120.0, connect=5.0)
 # Read timeout is per chunk of the stream, so it bounds stalls, not total answer time.
 CHAT_TIMEOUT = httpx.Timeout(60.0, connect=5.0)
+# A non-streamed reply arrives only when the whole text is written: allow for long ones
+# (Malayalam study notes on a busy model took over 60 s on 13 Oct).
+COMPLETE_TIMEOUT = httpx.Timeout(300.0, connect=5.0)
 
 
 async def embed(texts: list[str], client: httpx.AsyncClient | None = None) -> list[list[float]]:
@@ -36,7 +39,7 @@ async def count_tokens(text: str, client: httpx.AsyncClient) -> int:
 
 
 async def chat_stream(
-    messages: list[dict[str, str]], client: httpx.AsyncClient
+    messages: list[dict[str, str]], client: httpx.AsyncClient, max_tokens: int | None = None
 ) -> AsyncIterator[str]:
     """Stream answer text pieces from llama-server's OpenAI-compatible endpoint.
 
@@ -47,7 +50,7 @@ async def chat_stream(
         "messages": messages,
         "stream": True,
         "temperature": settings.temperature,
-        "max_tokens": settings.max_tokens,
+        "max_tokens": max_tokens or settings.max_tokens,
         "cache_prompt": True,  # reuse the KV cache for the shared system-prompt prefix
     }
     url = f"{settings.llm_url}/v1/chat/completions"
@@ -63,3 +66,21 @@ async def chat_stream(
             piece = choices[0].get("delta", {}).get("content") if choices else None
             if piece:
                 yield piece
+
+
+async def complete(
+    messages: list[dict[str, str]], client: httpx.AsyncClient, max_tokens: int
+) -> str:
+    """One short, non-streamed reply (temperature 0), e.g. rewriting a question for search."""
+    payload = {
+        "messages": messages,
+        "stream": False,
+        "temperature": 0.0,
+        "max_tokens": max_tokens,
+        "cache_prompt": True,
+    }
+    reply = await client.post(
+        f"{settings.llm_url}/v1/chat/completions", json=payload, timeout=COMPLETE_TIMEOUT
+    )
+    reply.raise_for_status()
+    return reply.json()["choices"][0]["message"]["content"].strip()

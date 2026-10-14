@@ -1,0 +1,1258 @@
+{
+  "label": "v2tutor-manglish-gemma-contended",
+  "run_at": "2026-10-13T23:14:50",
+  "testset": "eval\\datasets\\manglish_dev.jsonl",
+  "split": null,
+  "model_path": "C:/Users/ishan/.ollama/models/blobs/sha256-6dd7ac24fe13a238898e16e253ebc7a72fa27fb83f2658c2f6c241df3af5937d",
+  "prompt_version": "system_v2_tutor",
+  "settings": {
+    "max_context_tokens": 600,
+    "final_top_k": 4,
+    "refusal_threshold": 0.5,
+    "temperature": 0.2,
+    "max_tokens": 300
+  },
+  "summary": {
+    "manglish->en-book": {
+      "items": 10,
+      "recall_at_3": "7/8",
+      "answered_when_answerable": "8/8",
+      "citation_supported": "6/8",
+      "refusal_accuracy": "9/10",
+      "ttft_p50_s": 12.81,
+      "ttft_p95_s": 14.39,
+      "total_p50_s": 53.44,
+      "total_mean_s": 51.23
+    },
+    "manglish->ml-book": {
+      "items": 10,
+      "recall_at_3": "5/8",
+      "answered_when_answerable": "5/8",
+      "citation_supported": "4/8",
+      "refusal_accuracy": "6/10",
+      "ttft_p50_s": 16.42,
+      "ttft_p95_s": 19.42,
+      "total_p50_s": 48.81,
+      "total_mean_s": 32.62
+    }
+  },
+  "results": [
+    {
+      "id": "m01-mlbook",
+      "split": "dev",
+      "lang": "ml",
+      "medium": "ml",
+      "arm": "manglish->ml-book",
+      "question": "Palaeolithic guha chithrangalile niram enthil ninnanu undakkiyathu?",
+      "answerable": true,
+      "gold_pages": [
+        8
+      ],
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "പാലിയോലിത്തിക് ഗുഹാചിത്രങ്ങളിൽ നിറം ഉണ്ടാക്കാൻ എന്ത് ഉപയോഗിച്ചു?\n\nഗുഹാചിത്രങ്ങളിൽ നിറങ്ങൾ ഉണ്ടാക്കാൻ സസ്യങ്ങളുടെ ചാറും ചെങ്കൽപൊടിയും ചേർത്താണ് ഉപയോഗിച്ചിരുന്നത് [S1].\n\n- വേട്ടയാടേണ്ട സ്ഥലം, വേട്ടയാടേണ്ട മൃഗം എന്നിവ ആസൂത്രണം ചെയ്തതിന്റെ തെളിവുകളാണ് വേട്ടയെക്കുറിച്ചുള്ള ഗുഹാചിത്രങ്ങൾ [S1].\n- ഗുഹകളുടെ മേൽഭിത്തിയിലും ചിത്രങ്ങൾ വരച്ചിരുന്നു, ഇത് പ്രാചീന മനുഷ്യരുടെ വൈദഗ്ദ്ധ്യത്തിന്റെ തെളിവുകളാണ് [S1].\n- കൃഷിയുടെ ആരംഭം മനുഷ്യപുരോഗതിയുടെ നാഴികക്കല്ലായി കണക്കാക്കുന്നതിന് കാരണം കൂട്ടായ ജീവിതത്തിന് അത് വഴിതെളിച്ചു [S2].",
+      "example": "നമ്മുടെ വീട്ടിലെ പഴയ ചിത്രങ്ങൾ നോക്കുമ്പോൾ, അതിലെ നിറങ്ങൾ ഉണ്ടാക്കാൻ അവർ എന്ത് സാധനങ്ങൾ ഉപയോഗിച്ചു എന്ന് നമ്മൾ ഊഹിക്കാൻ ശ്രമിക്കും.",
+      "check": "ഗുഹാചിത്രങ്ങൾ പ്രാചീന മനുഷ്യജീവിതത്തെക്കുറിച്ച് എന്ത് വിവരങ്ങളാണ് നൽകുന്നത്?",
+      "quiz_answers": "",
+      "mode": "explain",
+      "search_query": "പാലിയോലിത്തി ഗുഹ ചിത്രങ്ങൾ എന്തിനെ സൂചിപ്പിക്കുന്നു?",
+      "citations": [
+        [
+          1,
+          8,
+          8
+        ],
+        [
+          1,
+          14,
+          15
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          8,
+          8
+        ],
+        [
+          7,
+          8
+        ],
+        [
+          14,
+          15
+        ],
+        [
+          13,
+          14
+        ],
+        [
+          19,
+          20
+        ],
+        [
+          20,
+          22
+        ]
+      ],
+      "ttft_s": 1.34,
+      "total_s": 68.56,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "m02-mlbook",
+      "split": "dev",
+      "lang": "ml",
+      "medium": "ml",
+      "arm": "manglish->ml-book",
+      "question": "Bhimbetka evideyanu, athinte prathyekatha enthayirunnu?",
+      "answerable": true,
+      "gold_pages": [
+        11
+      ],
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "എടക്കൽ ഗുഹ കേരളത്തിൽ സ്ഥിതി ചെയ്യുന്ന ഒരു പ്രധാന **നവീനശിലായുഗ കേന്ദ്രമാണ്** [S1]. ഈ ഗുഹയിലെ ചിത്രങ്ങൾ വളരെ ശ്രദ്ധേയമാണ് [S1].\n\n- ഈ ഗുഹയിലെ ചിത്രങ്ങൾ കാണുന്നത് വഴി നമുക്ക് ആ കാലഘട്ടത്തെക്കുറിച്ച് കൂടുതൽ മനസ്സിലാക്കാൻ സാധിക്കും [S1].\n- ഈ ചിത്രങ്ങൾ ആ കാലത്തെ ജീവിതരീതികളെക്കുറിച്ച് സൂചന നൽകുന്നു [S1].\n- ഈ ഗുഹകൾ ചരിത്രാതീതകാലത്തെക്കുറിച്ചുള്ള വിവരങ്ങൾ ലഭിക്കാൻ സഹായിക്കുന്നു [S1].",
+      "example": "എടക്കൽ ഗുഹയിലെ ചിത്രങ്ങൾ കാണുമ്പോൾ, ആ കാലത്തെ ആളുകൾ എങ്ങനെയായിരുന്നു, അവർ എന്ത് ഭക്ഷണം കഴിച്ചു എന്നതിനെക്കുറിച്ച് നമുക്ക് ഒരു ചെറിയ കഥ പോലെ മനസ്സിലാക്കാൻ സാധിക്കും.",
+      "check": "എടക്കൽ ഗുഹയുടെ ചിത്രങ്ങൾ കാണുന്നത് എന്തിനാണ് പ്രധാനമായി കണക്കാക്കുന്നത്?",
+      "quiz_answers": "",
+      "mode": "explain",
+      "search_query": "ഭീംബേട്ക എവിടെയാണ്, അതിൻ്റെ പ്രത്യേകതകൾ എന്തൊക്കെയാണ്?",
+      "citations": [
+        [
+          1,
+          13,
+          14
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          13,
+          14
+        ],
+        [
+          39,
+          40
+        ],
+        [
+          106,
+          106
+        ],
+        [
+          11,
+          12
+        ],
+        [
+          34,
+          35
+        ],
+        [
+          22,
+          22
+        ]
+      ],
+      "ttft_s": 17.8,
+      "total_s": 67.51,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": false,
+      "citation_supported": false
+    },
+    {
+      "id": "m03-mlbook",
+      "split": "dev",
+      "lang": "ml",
+      "medium": "ml",
+      "arm": "manglish->ml-book",
+      "question": "Neolithic yugathile maattangale Neolithic viplavam ennu vilichathu aaranu?",
+      "answerable": true,
+      "gold_pages": [
+        13
+      ],
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "നവീനശിലായുഗത്തിലെ മാറ്റങ്ങളെ **നവീന ശിലായുഗ വിപ്ലവം** എന്ന് ചരിത്രകാരനായ ഗോർഡൻ ചൈൽഡ് വിശേഷിപ്പിച്ചു [S1].\n\n- കൃഷി ആരംഭിച്ചതാണ് ഈ കാലഘട്ടത്തിലെ **പ്രധാന പുരോഗതി** [S1].\n- ഭക്ഷ്യശേഖരണത്തിൽ നിന്ന് **ഭക്ഷ്യോത്പാദനത്തിലേക്കുള്ള മാറ്റം** മനുഷ്യചരിത്രത്തിലെ ഒരു വഴിത്തിരിവായിരുന്നു [S1].\n- നദീതടം കേന്ദ്രീകരിച്ച് മനുഷ്യർ കൃഷി തുടങ്ങി സ്ഥിരവാസം ആരംഭിച്ചു [S1].",
+      "example": "നമ്മുടെ നാട്ടിൽ ഇപ്പോൾ കൃഷി ചെയ്യുന്നതിലൂടെ നമുക്ക് ധാരാളം ഭക്ഷണം ലഭിക്കുന്നു, ഇത് പഴയ കാലത്തെ ഭക്ഷ്യശേഖരണത്തിൽ നിന്നുള്ള വലിയ മാറ്റമാണ്.",
+      "check": "കൃഷി ആരംഭിച്ചത് മനുഷ്യജീവിതത്തിൽ എന്ത് മാറ്റമാണ് കൊണ്ടുവന്നത്?",
+      "quiz_answers": "",
+      "mode": "explain",
+      "search_query": "Neolithic yugathile maattangale ennu vilichathu?",
+      "citations": [
+        [
+          1,
+          13,
+          13
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          13,
+          13
+        ],
+        [
+          19,
+          20
+        ],
+        [
+          12,
+          13
+        ],
+        [
+          15,
+          16
+        ],
+        [
+          13,
+          14
+        ],
+        [
+          31,
+          32
+        ]
+      ],
+      "ttft_s": 19.42,
+      "total_s": 48.81,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "m04-mlbook",
+      "split": "dev",
+      "lang": "ml",
+      "medium": "ml",
+      "arm": "manglish->ml-book",
+      "question": "Harappayile aadyathe uthkhananathinu nethruthvam nalkiyathu aaranu?",
+      "answerable": true,
+      "gold_pages": [
+        24
+      ],
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "ഹരപ്പയിലെ ആദ്യത്തെ ഉത്ഖനനത്തിന് നേതൃത്വം നൽകിയത് ദയാറാം സാഹ്നിയായിരുന്നു.\n\n- സിന്ധുനദീതട സംസ്കാരത്തിന്റെ ആദ്യ തെളിവുകൾ ഹരപ്പയിൽ നിന്ന് ലഭിച്ചതുകൊണ്ടാണ് ഈ സംസ്കാരത്തെ ഹരപ്പൻ സംസ്കാരം എന്ന് വിളിക്കുന്നത് [S1].\n- മോഹൻജൊദാരോവിൽ ഉത്ഖനനങ്ങൾ നടത്തിയത് ആർ.ഡി. ബാനർജിയായിരുന്നു [S1].\n- ആർക്കിയോളജിക്കൽ സർവ്വേ ഓഫ് ഇന്ത്യയാണ് ഇന്ത്യയിലെ പുരാവസ്തു പഠനങ്ങൾക്ക് നേതൃത്വം നൽകുന്നത് [S1].",
+      "example": "നമ്മുടെ സ്കൂളിലെ ചരിത്ര പുസ്തകത്തിൽ ഹരപ്പൻ സംസ്കാരത്തെക്കുറിച്ച് വായിക്കുമ്പോൾ, ദയാറാം സാഹ്നിയെക്കുറിച്ചും ആർ.ഡി. ബാനർജിയെക്കുറിച്ചും അറിയാൻ ശ്രമിക്കുന്നത് നല്ലതാണ്.",
+      "check": "ഹരപ്പൻ സംസ്കാരത്തെക്കുറിച്ച് പഠിക്കുമ്പോൾ, ആദ്യത്തെ ഉത്ഖനനത്തിന് നേതൃത്വം നൽകിയ വ്യക്തി ആരായിരുന്നു?",
+      "quiz_answers": "",
+      "mode": "explain",
+      "search_query": "ഹരപ്പായിലെ ആദ്യത്തെ ഉത്ഖനനത്തിന് നേതൃത്വം നൽകിയത് ആര്?",
+      "citations": [
+        [
+          2,
+          24,
+          24
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          24,
+          24
+        ],
+        [
+          82,
+          82
+        ],
+        [
+          115,
+          116
+        ],
+        [
+          116,
+          116
+        ],
+        [
+          24,
+          26
+        ],
+        [
+          66,
+          67
+        ]
+      ],
+      "ttft_s": 15.67,
+      "total_s": 45.87,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "m05-mlbook",
+      "split": "dev",
+      "lang": "ml",
+      "medium": "ml",
+      "arm": "manglish->ml-book",
+      "question": "Harappan nagarangalile azhukkuchalukal engane aanu nirmichirunnathu?",
+      "answerable": true,
+      "gold_pages": [
+        26
+      ],
+      "author": "draft-claude, team to check",
+      "event": "refused",
+      "refused": true,
+      "reason": "gate",
+      "answer": null,
+      "example": null,
+      "check": null,
+      "quiz_answers": null,
+      "mode": null,
+      "search_query": "Harappan nagarangalile azhukkuchalukal engane aanu nirmichirunnathu?",
+      "citations": [],
+      "retrieved_pages": [
+        [
+          24,
+          26
+        ],
+        [
+          40,
+          40
+        ],
+        [
+          30,
+          31
+        ],
+        [
+          75,
+          76
+        ],
+        [
+          78,
+          79
+        ],
+        [
+          37,
+          37
+        ]
+      ],
+      "ttft_s": null,
+      "total_s": 7.48,
+      "refusal_correct": false,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": false
+    },
+    {
+      "id": "m06-mlbook",
+      "split": "dev",
+      "lang": "ml",
+      "medium": "ml",
+      "arm": "manglish->ml-book",
+      "question": "Harappan samskarathil nellu krishi cheythirunnathinte thelivu evide ninnanu kittiyathu?",
+      "answerable": true,
+      "gold_pages": [
+        27,
+        28
+      ],
+      "author": "draft-claude, team to check",
+      "event": "refused",
+      "refused": true,
+      "reason": "gate",
+      "answer": null,
+      "example": null,
+      "check": null,
+      "quiz_answers": null,
+      "mode": null,
+      "search_query": "Harappan samskarathil nellu krishi cheythirunnathinte thelivu evide ninnanu kittiyathu?",
+      "citations": [],
+      "retrieved_pages": [
+        [
+          55,
+          56
+        ],
+        [
+          30,
+          31
+        ],
+        [
+          45,
+          46
+        ],
+        [
+          42,
+          43
+        ],
+        [
+          37,
+          37
+        ],
+        [
+          40,
+          40
+        ]
+      ],
+      "ttft_s": null,
+      "total_s": 6.84,
+      "refusal_correct": false,
+      "grade": null,
+      "recall_at_3": false,
+      "citation_supported": false
+    },
+    {
+      "id": "m07-mlbook",
+      "split": "dev",
+      "lang": "ml",
+      "medium": "ml",
+      "arm": "manglish->ml-book",
+      "question": "Indian parliamentinte ghatakangal ethokke aanu?",
+      "answerable": true,
+      "gold_pages": [
+        59,
+        60,
+        61
+      ],
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "ഇന്ത്യൻ പാർലമെന്റിന്റെ ഘടകങ്ങൾ എന്തൊക്കെയാണ്? ഇന്ത്യൻ പാർലമെന്റ് പ്രധാനമായും രണ്ട് സഭകൾ ചേർന്നതാണ് [S2].\n\n- **ലോകസഭ** ജനങ്ങൾ നേരിട്ട് തിരഞ്ഞെടുക്കുന്ന 543 അംഗങ്ങളുള്ള സഭയാണ് [S2].\n- **രാജ്യസഭ** തിരഞ്ഞെടുക്കപ്പെട്ട 238 അംഗങ്ങളും നാമനിർദ്ദേശം ചെയ്യപ്പെട്ട 12 അംഗങ്ങളുമുള്ള സഭയാണ് [S2].",
+      "example": "നമ്മുടെ സ്കൂളിലെ ക്ലാസ് ടീച്ചർക്കും പ്രധാനാധ്യാപകനും ചേർന്നാണ് സ്കൂളിന്റെ പ്രധാന തീരുമാനങ്ങൾ എടുക്കുന്നത്, അതുപോലെ പാർലമെന്റിൽ രണ്ട് സഭകൾ ചേർന്നാണ് നിയമങ്ങൾ ഉണ്ടാക്കുന്നത്.",
+      "check": "ലോകസഭയും രാജ്യസഭയും ചേരുമ്പോൾ ഉണ്ടാകുന്ന പ്രധാന കാര്യം എന്താണ്?",
+      "quiz_answers": "",
+      "mode": "explain",
+      "search_query": "ഇന്ത്യൻ പാർലമെന്റിന്റെ ഘടന എന്തൊക്കെയാണ്?",
+      "citations": [
+        [
+          4,
+          59,
+          61
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          71,
+          72
+        ],
+        [
+          59,
+          61
+        ],
+        [
+          59,
+          59
+        ],
+        [
+          70,
+          71
+        ],
+        [
+          73,
+          74
+        ],
+        [
+          64,
+          65
+        ]
+      ],
+      "ttft_s": 16.42,
+      "total_s": 37.39,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "m08-mlbook",
+      "split": "dev",
+      "lang": "ml",
+      "medium": "ml",
+      "arm": "manglish->ml-book",
+      "question": "Parliamentinte samyuktha sammelanathil adhyakshatha vahikkunnathu aaranu?",
+      "answerable": true,
+      "gold_pages": [
+        62,
+        63
+      ],
+      "author": "draft-claude, team to check",
+      "event": "refused",
+      "refused": true,
+      "reason": "gate",
+      "answer": null,
+      "example": null,
+      "check": null,
+      "quiz_answers": null,
+      "mode": null,
+      "search_query": "Parliamentinte samyuktha sammelanathil adhyakshatha vahikkunnathu aaranu?",
+      "citations": [],
+      "retrieved_pages": [
+        [
+          59,
+          61
+        ],
+        [
+          65,
+          66
+        ],
+        [
+          64,
+          65
+        ],
+        [
+          70,
+          71
+        ],
+        [
+          71,
+          72
+        ],
+        [
+          59,
+          59
+        ]
+      ],
+      "ttft_s": null,
+      "total_s": 5.28,
+      "refusal_correct": false,
+      "grade": null,
+      "recall_at_3": false,
+      "citation_supported": false
+    },
+    {
+      "id": "m09-mlbook",
+      "split": "dev",
+      "lang": "ml",
+      "medium": "ml",
+      "arm": "manglish->ml-book",
+      "question": "Indiayile aadyathe Mughal chakravarthi aaru aayirunnu?",
+      "answerable": false,
+      "gold_pages": [],
+      "author": "draft-claude, team to check",
+      "event": "refused",
+      "refused": true,
+      "reason": "gate",
+      "answer": null,
+      "example": null,
+      "check": null,
+      "quiz_answers": null,
+      "mode": null,
+      "search_query": "Indiyile aadyathe Mughal chakravarthi aaru?",
+      "citations": [],
+      "retrieved_pages": [
+        [
+          78,
+          78
+        ],
+        [
+          78,
+          79
+        ],
+        [
+          7,
+          8
+        ],
+        [
+          14,
+          15
+        ],
+        [
+          75,
+          76
+        ],
+        [
+          41,
+          41
+        ]
+      ],
+      "ttft_s": null,
+      "total_s": 3.91,
+      "refusal_correct": true,
+      "grade": null
+    },
+    {
+      "id": "m10-mlbook",
+      "split": "dev",
+      "lang": "ml",
+      "medium": "ml",
+      "arm": "manglish->ml-book",
+      "question": "Vellam ethra degreeyil aanu thilaykkunnathu?",
+      "answerable": false,
+      "gold_pages": [],
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "ഭൂമിയുടെ കേന്ദ്രഭാഗത്ത് ഏകദേശം **5000°C** താപം അനുഭവപ്പെടുന്നു [S2].\n\n- ഈ ചൂടിൽ ഇരുമ്പുപോലും ഉരുകി തുടങ്ങും [S2].\n- അഗ്നിപർവ്വത സ്ഫോടനങ്ങളിലൂടെയാണ് ഭൂമിയുടെ ഉള്ളറയെക്കുറിച്ച് നമുക്ക് മനസ്സിലാക്കാൻ കഴിയുന്നത് [S2].\n- ഭൂകമ്പ സമയത്തെ തരംഗങ്ങളും പാളികളെക്കുറിച്ചുള്ള വിശകലനങ്ങളും ഇതിന് സഹായിക്കുന്നു [S2].",
+      "example": "ഒരു വലിയ അഗ്നിപർവ്വതം പൊട്ടിത്തെറിക്കുമ്പോൾ പുറത്തുവരുന്ന ചൂട് എത്രത്തോളം കൂടുതലായിരിക്കും എന്ന് നമ്മൾ മനസ്സിലാക്കാൻ ശ്രമിക്കുന്നത് പോലെയാണ് ഭൂമിയുടെ ഉള്ളറയെക്കുറിച്ച് പഠിക്കുന്നത്.",
+      "check": "ഭൂമിയുടെ കേന്ദ്രഭാഗത്ത് അനുഭവപ്പെടുന്ന താപം എത്രയാണ്?",
+      "quiz_answers": "",
+      "mode": "explain",
+      "search_query": "വെള്ളം എന്ത് ഡിഗ്രിയിലാണ് തിളയ്ക്കുന്നത്?",
+      "citations": [
+        [
+          3,
+          42,
+          42
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          30,
+          31
+        ],
+        [
+          42,
+          42
+        ],
+        [
+          41,
+          42
+        ],
+        [
+          93,
+          94
+        ],
+        [
+          45,
+          46
+        ],
+        [
+          94,
+          94
+        ]
+      ],
+      "ttft_s": 13.68,
+      "total_s": 34.55,
+      "refusal_correct": false,
+      "grade": null
+    },
+    {
+      "id": "m01-enbook",
+      "split": "dev",
+      "lang": "ml",
+      "medium": "en",
+      "arm": "manglish->en-book",
+      "question": "Palaeolithic guha chithrangalile niram enthil ninnanu undakkiyathu?",
+      "answerable": true,
+      "gold_pages": [
+        8
+      ],
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "പാലിയോലിത്തി കാലഘട്ടത്തിലെ ഗുഹകളിൽ നിന്ന് എന്ത് ലഭിക്കുന്നു എന്നതിനെക്കുറിച്ചാണ് ഇവിടെ പറയുന്നത്. ഈ ഗുഹകളിൽ **മനുഷ്യരുടെ വാസസ്ഥലങ്ങളുടെ** തെളിവുകളാണ് പ്രധാനമായി ലഭിക്കുന്നത് [S1].\n\n- ഈ സ്ഥലങ്ങളിൽ **പാലിയോലിത്തി മനുഷ്യർ** ജീവിച്ചിരുന്നതിന്റെ സൂചനകൾ കാണാം [S1].\n- ഈ ഗുഹകളും **കല്ലറകളും** പോലുള്ള സ്ഥലങ്ങളുമാണ് പാലിയോലിത്തി കാലഘട്ടത്തിലെ പ്രധാനപ്പെട്ട സൈറ്റുകൾ [S1].\n- ഈ സ്ഥലങ്ങൾ ഇന്ത്യയിൽ **പാലിയോലിത്തി മനുഷ്യരുടെ** വാസസ്ഥലങ്ങളുടെ തെളിവുകൾ കണ്ടെത്താൻ സഹായിക്കുന്നു [S1].",
+      "example": "നമ്മുടെ നാട്ടിലെ പഴയ ഗുഹകളോ കല്ലറകളോ കാണുമ്പോൾ, അതിൽ മുൻകാല മനുഷ്യർ എങ്ങനെ ജീവിച്ചിരുന്നു എന്ന് നമുക്ക് മനസ്സിലാക്കാൻ സാധിക്കും.",
+      "check": "പാലിയോലിത്തി കാലഘട്ടത്തിലെ മനുഷ്യർ എന്തിനാണ് ഗുഹകളിൽ താമസിച്ചത്?",
+      "quiz_answers": "",
+      "mode": "explain",
+      "search_query": "Palaeolithic guha chithrangalile niram enthil ninnanu undakkiyathu?",
+      "citations": [
+        [
+          1,
+          11,
+          12
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          11,
+          12
+        ],
+        [
+          17,
+          18
+        ],
+        [
+          9,
+          11
+        ],
+        [
+          13,
+          14
+        ],
+        [
+          19,
+          21
+        ],
+        [
+          16,
+          17
+        ]
+      ],
+      "ttft_s": 9.86,
+      "total_s": 54.14,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": false,
+      "citation_supported": false
+    },
+    {
+      "id": "m02-enbook",
+      "split": "dev",
+      "lang": "ml",
+      "medium": "en",
+      "arm": "manglish->en-book",
+      "question": "Bhimbetka evideyanu, athinte prathyekatha enthayirunnu?",
+      "answerable": true,
+      "gold_pages": [
+        11
+      ],
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "ഭീംബേട്ക ഒരു **പാലിയോലിത്തിക്** സ്ഥലമാണ്, അവിടെ **കല്ലറകൾ** പ്രധാന പ്രത്യേകതയായിരുന്നു [S1].\n- ഇത് മധ്യപ്രദേശിലാണ് സ്ഥിതി ചെയ്യുന്നത് [S2].\n- ഈ സ്ഥലങ്ങളിൽ **പാലിയോലിത്തിക് മനുഷ്യരുടെ ജീവിതത്തിന്റെ തെളിവുകൾ** ലഭിക്കുന്നു [S2].",
+      "example": "ഭീംബേട്കയിൽ പഴയ കാലത്തെ മനുഷ്യർ എങ്ങനെ ജീവിച്ചു എന്ന് മനസ്സിലാക്കാൻ നമുക്ക് കല്ലറകൾ കാണുന്നത് ഒരു നല്ല ഉദാഹരണമാണ്.",
+      "check": "ഭീംബേട്കയിൽ കണ്ടെത്തിയ പ്രധാന പ്രത്യേകത എന്തായിരുന്നു?",
+      "quiz_answers": "",
+      "mode": "explain",
+      "search_query": "What is Bhimbetka and what are its features?",
+      "citations": [
+        [
+          1,
+          9,
+          11
+        ],
+        [
+          1,
+          11,
+          12
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          9,
+          11
+        ],
+        [
+          11,
+          12
+        ],
+        [
+          8,
+          8
+        ],
+        [
+          37,
+          37
+        ],
+        [
+          39,
+          40
+        ],
+        [
+          84,
+          85
+        ]
+      ],
+      "ttft_s": 12.81,
+      "total_s": 38.3,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "m03-enbook",
+      "split": "dev",
+      "lang": "ml",
+      "medium": "en",
+      "arm": "manglish->en-book",
+      "question": "Neolithic yugathile maattangale Neolithic viplavam ennu vilichathu aaranu?",
+      "answerable": true,
+      "gold_pages": [
+        13
+      ],
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "Neolithic yugathile maattangale **Neolithic viplavam** ennu vilichathu [S2]. ഇത് മനുഷ്യജീവിതത്തിലെ വലിയ മാറ്റങ്ങളെയാണ് സൂചിപ്പിക്കുന്നത്.\n\n- ഭക്ഷണം ശേഖരിക്കുന്നതിൽ നിന്ന് **ഭക്ഷണം ഉത്പാദിപ്പിക്കലിലേക്ക്** മാറിയത് ഇതിൽ പ്രധാനമാണ് [S1].\n- മനുഷ്യർ **മൃഗങ്ങളെ വളർത്താനും** കൃഷി ചെയ്യാനും തുടങ്ങി [S2].\n- ഇത് ഒരു **പ്രധാന നാഴികക്കല്ലാണ്** മനുഷ്യചരിത്രത്തിൽ [S1].",
+      "example": "നമ്മൾ ഇന്ന് പലതരം പച്ചക്കറികളും ധാന്യങ്ങളും കൃഷി ചെയ്യുന്നത്, അത് ആ കാലഘട്ടത്തിലെ മാറ്റങ്ങളുടെ തുടർച്ചയാണ്.",
+      "check": "കൃഷി ആരംഭിച്ചത് മനുഷ്യജീവിതത്തിൽ എന്ത് മാറ്റമാണ് കൊണ്ടുവന്നത്?",
+      "quiz_answers": "",
+      "mode": "explain",
+      "search_query": "What is the Neolithic Revolution?",
+      "citations": [
+        [
+          1,
+          13,
+          14
+        ],
+        [
+          1,
+          13,
+          13
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          13,
+          13
+        ],
+        [
+          13,
+          14
+        ],
+        [
+          16,
+          17
+        ],
+        [
+          17,
+          18
+        ],
+        [
+          19,
+          21
+        ],
+        [
+          14,
+          16
+        ]
+      ],
+      "ttft_s": 12.15,
+      "total_s": 51.6,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "m04-enbook",
+      "split": "dev",
+      "lang": "ml",
+      "medium": "en",
+      "arm": "manglish->en-book",
+      "question": "Harappayile aadyathe uthkhananathinu nethruthvam nalkiyathu aaranu?",
+      "answerable": true,
+      "gold_pages": [
+        24
+      ],
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "ഇൻഡസ് താഴ്വര സംസ്കാരം എവിടെയൊക്കെ ഉണ്ടായിരുന്നു എന്ന് ഖനനങ്ങളിലൂടെ മനസ്സിലാക്കാൻ സാധിച്ചു.\n\n- സിന്ധു നദിയും അതിന്റെ **പുറത്തുള്ള നദികളും** ഒഴുകുന്ന താഴ്വരകളിലാണ് ഈ സംസ്കാരം നിലനിന്നിരുന്നത് [S1].\n- ഹാരപ്പയിൽ ആദ്യത്തെ ഖനനം നടന്നു, അതുകൊണ്ട് ഈ സംസ്കാരത്തെ **ഹാരപ്പൻ സംസ്കാരം** എന്നും വിളിക്കുന്നു [S1].\n- മോഹൻജോദാരോയിൽ നടന്ന ഖനനങ്ങളിൽ നിന്ന് **മറ്റ് വിവരങ്ങൾ** ലഭിച്ചു [S1].",
+      "example": "നമ്മുടെ നാട്ടിലെ പഴയ വീടുകളിലെ അടിത്തറകൾ പരിശോധിക്കുമ്പോൾ, ആ വീട് ഏത് കാലഘട്ടത്തിൽ പണിതതാണെന്ന് മനസ്സിലാക്കാൻ സാധിക്കും.",
+      "check": "ഇൻഡസ് താഴ്വര സംസ്കാരത്തെക്കുറിച്ച് കൂടുതൽ അറിയാൻ നിങ്ങൾ എന്ത് ചെയ്യും?",
+      "quiz_answers": "",
+      "mode": "explain",
+      "search_query": "Who gave the first rise to Harappa?",
+      "citations": [
+        [
+          2,
+          24,
+          24
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          24,
+          24
+        ],
+        [
+          30,
+          31
+        ],
+        [
+          114,
+          115
+        ],
+        [
+          37,
+          37
+        ],
+        [
+          25,
+          26
+        ],
+        [
+          29,
+          30
+        ]
+      ],
+      "ttft_s": 11.98,
+      "total_s": 53.44,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "m05-enbook",
+      "split": "dev",
+      "lang": "ml",
+      "medium": "en",
+      "arm": "manglish->en-book",
+      "question": "Harappan nagarangalile azhukkuchalukal engane aanu nirmichirunnathu?",
+      "answerable": true,
+      "gold_pages": [
+        26
+      ],
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "ഹാരപ്പൻ നഗരങ്ങളിൽ അഴുക്കുചാലുകൾ എങ്ങനെ നിർമ്മിച്ചിരുന്നു എന്ന് നോക്കാം. വീടുകളിൽ നിന്നുള്ള **അഴുക്കുചാലുകൾ** പ്രധാനമായി നിർമ്മിച്ചിരുന്നു [S2].\n\n- വീടുകളിൽ നിന്നുള്ള വെള്ളം **ചാലുകളിലേക്ക്** ഒഴുക്കി കളയാൻ ഇത് ഉപയോഗിച്ചു [S2].\n- ഈ ചാലുകൾ പ്രധാന **തെരുവ് ചാലുകളുമായി** ബന്ധിപ്പിച്ചിട്ടുണ്ടായിരുന്നു [S1].\n- ഈ ചാലുകൾ **കടുപ്പമുള്ള കൽക്കല്ലുകൾ** കൊണ്ട് മൂടപ്പെട്ടിരുന്നു [S1].",
+      "example": "നമ്മുടെ വീട്ടിലെ പൈപ്പ് ലൈനുകൾ പോലെ, വീടുകളിൽ നിന്നുള്ള വെള്ളം പുറത്തേക്ക് കളയാൻ ഈ ചാലുകൾ സഹായിച്ചു.",
+      "check": "വീടുകളിൽ നിന്നുള്ള വെള്ളം പുറത്തേക്ക് കളയാൻ ചാലുകൾ ഉണ്ടാക്കിയതിൻ്റെ പ്രധാന ആവശ്യം എന്തായിരുന്നു?",
+      "quiz_answers": "",
+      "mode": "explain",
+      "search_query": "How were the Harappan cities built?",
+      "citations": [
+        [
+          2,
+          25,
+          26
+        ],
+        [
+          2,
+          26,
+          27
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          26,
+          27
+        ],
+        [
+          25,
+          26
+        ],
+        [
+          27,
+          28
+        ],
+        [
+          37,
+          37
+        ],
+        [
+          29,
+          30
+        ],
+        [
+          30,
+          31
+        ]
+      ],
+      "ttft_s": 14.3,
+      "total_s": 48.93,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "m06-enbook",
+      "split": "dev",
+      "lang": "ml",
+      "medium": "en",
+      "arm": "manglish->en-book",
+      "question": "Harappan samskarathil nellu krishi cheythirunnathinte thelivu evide ninnanu kittiyathu?",
+      "answerable": true,
+      "gold_pages": [
+        27,
+        28
+      ],
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "നഗരങ്ങളിലെ കൃഷിയുമായി ബന്ധപ്പെട്ട വിവരങ്ങൾGranary-കൾ ഹാരപ്പൻ നഗരങ്ങളുടെ അവശിഷ്ടങ്ങളിൽ നിന്ന് ലഭിക്കുന്ന പ്രധാന കാര്യങ്ങളാണ് [S1].\n\n- ധാന്യങ്ങൾ ഉണക്കി സൂക്ഷിക്കാൻ കഴിയുന്ന വലിയ കെട്ടിടങ്ങളായിരുന്നു Granary-കൾ [S1].\n- അവിടെ ഗോതമ്പ്, ബാർലി, മillet തുടങ്ങിയ ധാന്യങ്ങളുടെ അവശിഷ്ടങ്ങൾ കണ്ടെത്തിയിട്ടുണ്ട് [S1].\n- ഈ ധാന്യങ്ങൾ ജനങ്ങൾക്ക് ലഭ്യമാക്കാൻ സഹായിച്ച **ഭരണസംവിധാനത്തിന്റെ** തെളിവുകളാണ് Granary-കൾ [S2].",
+      "example": "നമ്മുടെ നാട്ടിലെ ഒരു വീട്ടിൽ ധാന്യങ്ങൾ സൂക്ഷിക്കാൻ ഒരു പ്രത്യേക സ്ഥലം മാറ്റിവെക്കുന്നത്, ഹാരപ്പൻ കാലത്തെ Granary-കളുടെ പ്രാധാന്യത്തെ ഓർമ്മിപ്പിക്കുന്നു.",
+      "check": "Granary-കൾ എന്തിനെയാണ് തെളിയിക്കുന്നത്?",
+      "quiz_answers": "",
+      "mode": "explain",
+      "search_query": "Where can I find the evidence of settled agriculture in Harappan culture?",
+      "citations": [
+        [
+          2,
+          27,
+          28
+        ],
+        [
+          2,
+          28,
+          28
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          27,
+          28
+        ],
+        [
+          28,
+          28
+        ],
+        [
+          29,
+          30
+        ],
+        [
+          40,
+          40
+        ],
+        [
+          26,
+          27
+        ],
+        [
+          24,
+          24
+        ]
+      ],
+      "ttft_s": 14.26,
+      "total_s": 53.06,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "m07-enbook",
+      "split": "dev",
+      "lang": "ml",
+      "medium": "en",
+      "arm": "manglish->en-book",
+      "question": "Indian parliamentinte ghatakangal ethokke aanu?",
+      "answerable": true,
+      "gold_pages": [
+        59,
+        60,
+        61
+      ],
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "ഇന്ത്യൻ പാർലമെൻ്റ് പ്രധാനമായും രണ്ട് ഭാഗങ്ങളായി നിന്നാണ് പ്രവർത്തിക്കുന്നത്. പ്രധാനമായും **ലോക്സഭ** (Lok Sabha) എന്നും **രാജ്യസഭ** (Rajya Sabha) എന്നും ഉള്ള രണ്ട് സഭകളാണ് ഇന്ത്യൻ പാർലമെൻ്റ് [S1].\n\n- പാർലമെൻ്റിൻ്റെ സെഷനുകൾ വർഷത്തിൽ മൂന്ന് തവണ സാധാരണയായി നടക്കും, അവയെ **മൺസൂൺ സെഷൻ**, **വിന്റർ സെഷൻ**, **സമ്മർ സെഷൻ** എന്ന് വിളിക്കുന്നു [S2].\n- ഓരോ ദിവസവും രാവിലെ 11 മണിക്ക് പാർലമെൻ്റ് യോഗം ചേരും, അതിൽ **ക്വസ്റ്റ്യൻ അവർ** (Question Hour) എന്ന സമയത്താണ് ചോദ്യങ്ങൾ ചോദിക്കുന്നത് [S2].\n- ഉച്ചയ്ക്ക് 12 മണിക്ക് ക്വസ്റ്റ്യൻ അവർ അവസാനിക്കുകയും അതിനുശേഷം ചർച്ചകൾ തുടങ്ങുന്ന സമയം **സീറോ അവർ** (Zero Hour) എന്നറിയപ്പെടുന്നു [S2].",
+      "example": "നമ്മുടെ സ്കൂളിലെ ക്ലാസ് റൂമിലെ ചർച്ചകളെ ഓർക്കുക. ക്ലാസ് തുടങ്ങുമ്പോൾ എല്ലാവരും ചോദ്യങ്ങൾ ചോദിക്കുകയും, ഒരു നിശ്ചിത സമയത്തിന് ശേഷം പ്രധാന വിഷയം ചർച്ച ചെയ്യാൻ തുടങ്ങുകയും ചെയ്യുന്നു.",
+      "check": "ഇന്ത്യൻ പാർലമെൻ്റിൽ ചോദ്യങ്ങൾ ചോദിക്കുന്ന സമയത്തെ പേരെന്താണ്?",
+      "quiz_answers": "",
+      "mode": "explain",
+      "search_query": "How many members are in the Indian Parliament?",
+      "citations": [
+        [
+          4,
+          72,
+          72
+        ],
+        [
+          4,
+          62,
+          62
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          72,
+          72
+        ],
+        [
+          62,
+          62
+        ],
+        [
+          57,
+          59
+        ],
+        [
+          72,
+          73
+        ],
+        [
+          65,
+          65
+        ],
+        [
+          59,
+          60
+        ]
+      ],
+      "ttft_s": 14.39,
+      "total_s": 79.31,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": false
+    },
+    {
+      "id": "m08-enbook",
+      "split": "dev",
+      "lang": "ml",
+      "medium": "en",
+      "arm": "manglish->en-book",
+      "question": "Parliamentinte samyuktha sammelanathil adhyakshatha vahikkunnathu aaranu?",
+      "answerable": true,
+      "gold_pages": [
+        62,
+        63
+      ],
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "의회 கூட்ட会合の議長は誰が務めますか？\n\n議会は法律を作るという主な役割を持っています [S1]。法律を作るためには、議会の両院の承認が必要です [S1]。ロクサバーとラージヤサバーは法律制定のために別々に集まります [S1]。\n- 法律の草案は**ビルの**形で知られています [S1]。\n- 法律を通過させるには、**第一読会**、**第二読会**、**第三読会**という段階があります [S1]。\n- 議会は年に3回集まるのが普通で、これらはモンスーン会期、ウィンター会期、サマー会期と呼ばれます [S2]。",
+      "example": "法律を作るプロセスは、まるで一つの大きなプロジェクトを段階的に進めるようなものです。まず提案し、議論を経て修正し、最後に全体として承認されるわけです。",
+      "check": "法律を成立させるために、議会の両院の承認がなぜ必要なのですか？",
+      "quiz_answers": "",
+      "mode": "explain",
+      "search_query": "Who presides over the Parliament's joint session?",
+      "citations": [
+        [
+          4,
+          60,
+          61
+        ],
+        [
+          4,
+          62,
+          62
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          60,
+          61
+        ],
+        [
+          62,
+          62
+        ],
+        [
+          59,
+          60
+        ],
+        [
+          61,
+          62
+        ],
+        [
+          62,
+          63
+        ],
+        [
+          65,
+          66
+        ]
+      ],
+      "ttft_s": 11.95,
+      "total_s": 73.64,
+      "refusal_correct": true,
+      "grade": null,
+      "recall_at_3": true,
+      "citation_supported": true
+    },
+    {
+      "id": "m09-enbook",
+      "split": "dev",
+      "lang": "ml",
+      "medium": "en",
+      "arm": "manglish->en-book",
+      "question": "Indiayile aadyathe Mughal chakravarthi aaru aayirunnu?",
+      "answerable": false,
+      "gold_pages": [],
+      "author": "draft-claude, team to check",
+      "event": "done",
+      "refused": false,
+      "reason": null,
+      "answer": "भारत में पहले राष्ट्रपति कौन थे, यह जानकारी दी गई है [S1]। राष्ट्रपति भारत गणराज्य के मुखिया होते हैं और उन्हें एक चुनावी कॉलेज द्वारा पाँच साल के कार्यकाल के लिए चुना जाता है [S1]।\n\n- राष्ट्रपति भारत सरकार की **कार्यपालिका** के प्रमुख होते हैं [S1]।\n- राष्ट्रपति केंद्रीय मंत्रियों की सलाह और सहायता से ये सभी काम करते हैं [S1]।\n- राष्ट्रपति को लोकसभा, राज्यसभा और राज्य विधानसभाओं के चुने हुए सदस्यों से बना चुनावी कॉलेज चुनता है [S1]।",
+      "example": "जैसे हमारे स्कूल में एक क्लास मॉनिटर होता है जो शिक्षकों की मदद करता है, वैसे ही राष्ट्रपति देश की सरकार का मुखिया होता है।",
+      "check": "राष्ट्रपति की शक्तियाँ किसके समर्थन से काम करती हैं?",
+      "quiz_answers": "",
+      "mode": "explain",
+      "search_query": "Who were the first Mughal emperors in India?",
+      "citations": [
+        [
+          4,
+          64,
+          65
+        ]
+      ],
+      "retrieved_pages": [
+        [
+          64,
+          65
+        ],
+        [
+          114,
+          115
+        ],
+        [
+          24,
+          24
+        ],
+        [
+          114,
+          114
+        ],
+        [
+          24,
+          25
+        ],
+        [
+          116,
+          116
+        ]
+      ],
+      "ttft_s": 15.37,
+      "total_s": 55.39,
+      "refusal_correct": false,
+      "grade": null
+    },
+    {
+      "id": "m10-enbook",
+      "split": "dev",
+      "lang": "ml",
+      "medium": "en",
+      "arm": "manglish->en-book",
+      "question": "Vellam ethra degreeyil aanu thilaykkunnathu?",
+      "answerable": false,
+      "gold_pages": [],
+      "author": "draft-claude, team to check",
+      "event": "refused",
+      "refused": true,
+      "reason": "gate",
+      "answer": null,
+      "example": null,
+      "check": null,
+      "quiz_answers": null,
+      "mode": null,
+      "search_query": "What degree is Vellam in?",
+      "citations": [],
+      "retrieved_pages": [
+        [
+          84,
+          85
+        ],
+        [
+          78,
+          78
+        ],
+        [
+          85,
+          86
+        ],
+        [
+          63,
+          64
+        ],
+        [
+          65,
+          65
+        ],
+        [
+          82,
+          82
+        ]
+      ],
+      "ttft_s": null,
+      "total_s": 4.45,
+      "refusal_correct": true,
+      "grade": null
+    }
+  ]
+}

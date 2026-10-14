@@ -35,6 +35,9 @@ class Filters:
     medium: str
     subject: str
     chapter_no: int | None = None
+    # Students always search one allocated book; chapter numbers only mean something inside a
+    # book. None (eval, CLI) searches every published book of that medium and subject.
+    document_id: int | None = None
 
 
 @dataclass
@@ -69,13 +72,18 @@ def _search_term(word: str) -> str:
     return malayalam_stem(word) if is_malayalam else word
 
 
-def _filter_sql(filters: Filters, medium: str, subject: str, chapter: str) -> tuple[str, list]:
+def _filter_sql(
+    filters: Filters, medium: str, subject: str, chapter: str, document: str
+) -> tuple[str, list]:
     """WHERE fragment for the hard filters; column names differ between the two searches."""
     sql = f" AND {medium} = ? AND {subject} = ?"
     params: list[object] = [filters.medium, filters.subject]
     if filters.chapter_no is not None:
         sql += f" AND {chapter} = ?"
         params.append(filters.chapter_no)
+    if filters.document_id is not None:
+        sql += f" AND {document} = ?"
+        params.append(filters.document_id)
     return sql, params
 
 
@@ -83,11 +91,14 @@ def keyword_ranks(conn: sqlite3.Connection, question: str, filters: Filters) -> 
     match = fts_query(question)
     if match is None:
         return []
-    filter_sql, params = _filter_sql(filters, "d.medium", "d.subject", "c.chapter_no")
+    filter_sql, params = _filter_sql(filters, "d.medium", "d.subject", "c.chapter_no", "d.id")
+    # A named book may be unpublished (teacher preview); the caller has checked access.
+    status_sql = "" if filters.document_id is not None else " AND d.status = 'published'"
     rows = conn.execute(
         "SELECT c.id FROM chunks_fts f JOIN chunks c ON c.id = f.rowid"
         " JOIN documents d ON d.id = c.document_id"
-        " WHERE chunks_fts MATCH ? AND d.status = 'published'"
+        " WHERE chunks_fts MATCH ?"
+        + status_sql
         + filter_sql
         + " ORDER BY bm25(chunks_fts, 1.0, 0.5) LIMIT ?",
         [match, *params, CANDIDATES],
@@ -99,7 +110,7 @@ def vector_ranks(
     conn: sqlite3.Connection, query_vector: list[float], filters: Filters
 ) -> list[tuple[int, float]]:
     """(chunk_id, cosine distance), nearest first. Filters run inside the KNN search."""
-    filter_sql, params = _filter_sql(filters, "medium", "subject", "chapter_no")
+    filter_sql, params = _filter_sql(filters, "medium", "subject", "chapter_no", "document_id")
     rows = conn.execute(
         "SELECT chunk_id, distance FROM chunk_vectors WHERE embedding MATCH ? AND k = ?"
         + filter_sql
