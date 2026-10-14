@@ -17,7 +17,9 @@
 	} from '#lib/study.svelte.js';
 	import AnswerCard from './AnswerCard.svelte';
 	import Icon from './Icon.svelte';
+	import Logo from './Logo.svelte';
 	import Sheet from './Sheet.svelte';
+	import { toast } from '#lib/feedback.svelte.js';
 
 	let { teacherMode = false }: { teacherMode?: boolean } = $props();
 
@@ -60,7 +62,7 @@
 		try {
 			await approve(turn);
 		} catch (error) {
-			alert(t(error instanceof ApiError ? error.key : 'error.generic'));
+			toast(t(error instanceof ApiError ? error.key : 'error.generic'), 'error');
 		}
 	}
 
@@ -100,7 +102,7 @@
 	<div class="conversation" aria-live="polite">
 		{#if study.turns.length === 0}
 			<div class="welcome">
-				<div class="art"><Icon name="sparkle" size={30} /></div>
+				<Logo size={56} />
 				<h2>{t('ask.welcome_title')}</h2>
 				<p class="muted">{t('ask.welcome_body')}</p>
 				<div class="suggestions">
@@ -184,8 +186,8 @@
 		display: flex;
 		gap: 8px;
 		align-items: center;
-		padding: 10px 0;
-		background: linear-gradient(var(--bg) 70%, transparent);
+		padding: 12px 0 10px;
+		background: linear-gradient(var(--bg) 75%, transparent);
 	}
 	.pill {
 		flex: 1;
@@ -193,18 +195,25 @@
 		display: flex;
 		align-items: center;
 		gap: 8px;
-		min-height: 44px;
-		padding: 0 14px;
+		min-height: 42px;
+		padding: 0 12px 0 14px;
 		border-radius: 999px;
-		border: 1px solid var(--line-strong);
+		border: 1px solid var(--line);
 		background: var(--surface);
-		box-shadow: var(--shadow-sm);
+		box-shadow: var(--shadow-xs);
 		cursor: pointer;
 		color: var(--text);
 		text-align: left;
+		transition: border-color 0.15s;
+	}
+	.pill:hover:not(:disabled) {
+		border-color: var(--line-strong);
 	}
 	.pill :global(svg:first-child) {
 		color: var(--accent-strong);
+	}
+	.pill :global(svg:last-child) {
+		color: var(--faint);
 	}
 	.pill-text {
 		flex: 1;
@@ -212,13 +221,18 @@
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
-		font-size: 0.92rem;
+		font-size: 0.9rem;
+		color: var(--muted);
+	}
+	.pill-text strong {
+		color: var(--text);
+		font-weight: 650;
 	}
 	.conversation {
 		flex: 1;
 		display: grid;
 		align-content: start;
-		gap: 22px;
+		gap: 28px;
 		padding: 8px 0 24px;
 	}
 	.welcome {
@@ -226,49 +240,55 @@
 		justify-items: center;
 		text-align: center;
 		gap: 6px;
-		padding: 20px 4px;
+		padding: 28px 4px 12px;
 	}
 	.welcome h2 {
-		margin: 8px 0 0;
+		margin: 14px 0 0;
+		font-size: 1.45rem;
+		letter-spacing: -0.025em;
 	}
 	.welcome p {
-		max-width: 36ch;
-	}
-	.art {
-		display: grid;
-		place-items: center;
-		width: 64px;
-		height: 64px;
-		border-radius: 22px;
-		background: linear-gradient(135deg, var(--accent), var(--accent-strong));
-		color: #fff;
-		box-shadow: var(--shadow);
+		max-width: 40ch;
 	}
 	.suggestions {
 		display: grid;
 		gap: 8px;
 		width: 100%;
-		max-width: 460px;
-		margin-top: 10px;
+		max-width: 560px;
+		margin-top: 14px;
+	}
+	@media (min-width: 700px) {
+		.suggestions {
+			grid-template-columns: 1fr 1fr;
+		}
+		.suggestions > :only-child,
+		.suggestions > :first-child:nth-last-child(odd) {
+			grid-column: 1 / -1;
+		}
 	}
 	.suggestion {
 		display: flex;
 		align-items: center;
 		gap: 10px;
 		width: 100%;
-		min-height: 52px;
+		min-height: 56px;
 		padding: 10px 14px;
 		border: 1px solid var(--line);
 		border-radius: 14px;
 		background: var(--surface);
-		box-shadow: var(--shadow-sm);
+		box-shadow: var(--shadow-xs);
 		cursor: pointer;
 		text-align: left;
 		color: var(--text);
-		font-weight: 600;
+		font-weight: 550;
+		font-size: 0.94rem;
+		transition:
+			border-color 0.15s,
+			background 0.15s;
 	}
 	.suggestion:hover {
-		border-color: var(--accent);
+		border-color: var(--line-strong);
+		background: var(--surface-2);
 	}
 	.suggestion span {
 		flex: 1;
@@ -276,15 +296,19 @@
 	.suggestion :global(svg:first-child) {
 		color: var(--accent-strong);
 	}
+	.suggestion :global(svg:last-child) {
+		color: var(--faint);
+	}
 	.composer {
 		position: sticky;
 		bottom: calc(var(--nav-height) + env(safe-area-inset-bottom));
-		padding: 8px 0 10px;
-		background: linear-gradient(transparent, var(--bg) 30%);
+		padding: 10px 0 10px;
+		background: linear-gradient(transparent, var(--bg) 35%);
 	}
 	@media (min-width: 900px) {
 		.composer {
 			bottom: 0;
+			padding-bottom: 16px;
 		}
 		.chat {
 			min-height: calc(100dvh - 58px);
@@ -294,19 +318,24 @@
 		display: flex;
 		align-items: flex-end;
 		gap: 8px;
-		padding: 6px 6px 6px 16px;
-		border-radius: 26px;
+		padding: 7px 7px 7px 18px;
+		border-radius: 24px;
 		border: 1px solid var(--line-strong);
 		background: var(--surface);
 		box-shadow: var(--shadow);
+		transition:
+			border-color 0.15s,
+			box-shadow 0.15s;
 	}
 	.box:focus-within {
 		border-color: var(--accent);
+		box-shadow: var(--shadow), var(--ring);
 	}
 	textarea {
 		flex: 1;
 		border: 0;
 		background: transparent;
+		box-shadow: none;
 		resize: none;
 		min-height: 44px;
 		max-height: 140px;
@@ -316,6 +345,7 @@
 	}
 	textarea:focus-visible {
 		outline: none;
+		box-shadow: none;
 	}
 	.send {
 		display: grid;
@@ -324,9 +354,18 @@
 		height: 44px;
 		border-radius: 50%;
 		border: 0;
-		background: var(--accent);
-		color: var(--on-accent);
+		background: var(--primary);
+		color: var(--on-primary);
 		cursor: pointer;
+		transition:
+			background 0.15s,
+			transform 0.05s;
+	}
+	.send:hover:not(:disabled) {
+		background: var(--primary-hover);
+	}
+	.send:active:not(:disabled) {
+		transform: scale(0.95);
 	}
 	.send:disabled {
 		background: var(--surface-3);
@@ -334,24 +373,28 @@
 		cursor: default;
 	}
 	.send.stop {
-		background: var(--text);
-		color: var(--bg);
+		background: var(--surface-2);
+		color: var(--text);
+		border: 1px solid var(--line-strong);
 	}
 	.hint {
 		display: block;
 		text-align: center;
-		font-size: 0.75rem;
-		color: var(--muted);
-		margin-top: 6px;
+		font-size: 0.74rem;
+		color: var(--faint);
+		margin-top: 8px;
 		text-decoration: none;
 	}
+	.hint:hover {
+		color: var(--muted);
+	}
 	.sheet-label {
-		margin: 8px 0 6px;
-		font-size: 0.8rem;
-		font-weight: 750;
+		margin: 10px 0 8px;
+		font-size: 0.74rem;
+		font-weight: 650;
 		color: var(--muted);
 		text-transform: uppercase;
-		letter-spacing: 0.05em;
+		letter-spacing: 0.07em;
 	}
 	.options {
 		display: grid;
@@ -364,29 +407,38 @@
 		min-height: 52px;
 		padding: 8px 12px;
 		border: 1px solid var(--line);
-		border-radius: 14px;
+		border-radius: 12px;
 		background: var(--surface);
 		cursor: pointer;
 		text-align: left;
 		color: var(--text);
+		transition:
+			border-color 0.15s,
+			background 0.15s;
+	}
+	.option:hover {
+		background: var(--surface-2);
 	}
 	.option[aria-pressed='true'] {
 		border-color: var(--accent);
 		background: var(--accent-softer);
-		font-weight: 700;
+		font-weight: 650;
 	}
 	.num {
 		display: grid;
 		place-items: center;
 		width: 30px;
 		height: 30px;
-		border-radius: 10px;
+		border-radius: 8px;
 		background: var(--surface-2);
-		font-weight: 800;
+		border: 1px solid var(--line);
+		font-weight: 700;
 		font-size: 0.85rem;
+		font-variant-numeric: tabular-nums;
 	}
 	.option[aria-pressed='true'] .num {
 		background: var(--accent);
+		border-color: var(--accent);
 		color: var(--on-accent);
 	}
 </style>

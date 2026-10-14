@@ -35,7 +35,7 @@ export function applyPrefs(): void {
 	root.dataset.size = prefs.textSize;
 	const dark = prefs.theme === 'dark' || (prefs.theme === 'system' && darkQuery.matches);
 	root.dataset.theme = dark ? 'dark' : 'light';
-	document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#0f1412' : '#0f766e');
+	document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#0b0f0e' : '#f7f8f7');
 }
 
 darkQuery.addEventListener('change', applyPrefs);

@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { api, ApiError, uploadFile } from '#lib/api.js';
+	import { toast } from '#lib/feedback.svelte.js';
+	import Icon from './Icon.svelte';
 	import { t } from '#lib/i18n/index.svelte.js';
 
 	type ClassRow = { id: number; label: string; medium: string };
@@ -105,7 +107,7 @@
 				chapters,
 				class_ids: classIds
 			});
-			alert(t('upload.queued'));
+			toast(t('upload.queued'), 'ok');
 			ondone();
 		} catch (error) {
 			errors = error instanceof ApiError ? error.keys : ['error.generic'];
@@ -170,11 +172,11 @@
 						<input type="number" bind:value={chapter.no} min="1" max="99" aria-label={t('upload.chapter_no')} />
 						<input bind:value={chapter.title} required maxlength="120" placeholder={t('upload.chapter_title')} aria-label={t('upload.chapter_title')} />
 						<input type="number" bind:value={chapter.start} min="1" max={pageCount} aria-label={t('upload.chapter_start')} title={t('upload.chapter_start')} />
-						<button type="button" class="btn small ghost" onclick={() => chapters.splice(index, 1)} disabled={chapters.length === 1} aria-label={t('upload.remove')}>✕</button>
+						<button type="button" class="btn small ghost" onclick={() => chapters.splice(index, 1)} disabled={chapters.length === 1} aria-label={t('upload.remove')}><Icon name="close" size={16} /></button>
 					</div>
 				{/each}
 				<div class="row muted small"><span class="grow">{t('upload.chapter_title')}</span><span>{t('upload.chapter_start')}</span></div>
-				<button type="button" class="btn small" onclick={addChapter}>＋ {t('upload.add_chapter')}</button>
+				<button type="button" class="btn small" onclick={addChapter}><Icon name="plus" size={16} />{t('upload.add_chapter')}</button>
 			</fieldset>
 
 			<fieldset>
@@ -203,7 +205,7 @@
 		cursor: pointer;
 	}
 	.bar {
-		height: 12px;
+		height: 8px;
 		border-radius: 999px;
 		background: var(--surface-2);
 		overflow: hidden;
@@ -221,13 +223,15 @@
 	}
 	fieldset {
 		border: 1px solid var(--line);
-		border-radius: 12px;
-		padding: 12px;
+		border-radius: 14px;
+		padding: 14px 16px 16px;
 		margin: 0;
+		background: var(--bg);
 	}
 	legend {
-		font-weight: 700;
-		padding: 0 6px;
+		font-weight: 650;
+		font-size: 0.92rem;
+		padding: 0 8px;
 	}
 	.chapter {
 		display: grid;
@@ -238,6 +242,9 @@
 	.small {
 		font-size: 0.85rem;
 		margin: 0;
+	}
+	.error {
+		display: grid;
 	}
 	.error p {
 		margin: 2px 0;

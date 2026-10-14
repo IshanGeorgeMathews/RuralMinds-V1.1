@@ -57,12 +57,12 @@
 
 <style>
 	.page {
-		padding-top: 14px;
-		padding-bottom: 24px;
+		padding-top: 16px;
+		padding-bottom: 28px;
 	}
 	.group {
 		display: grid;
-		gap: 12px;
+		gap: 14px;
 	}
 	.row-head {
 		display: flex;
@@ -70,12 +70,19 @@
 		align-items: flex-start;
 	}
 	.row-head :global(svg) {
+		width: 36px;
+		height: 36px;
+		padding: 8px;
+		border-radius: 10px;
+		background: var(--surface-2);
+		border: 1px solid var(--line);
 		color: var(--accent-strong);
-		margin-top: 2px;
+		box-sizing: border-box;
 	}
 	.row-head h2 {
 		font-size: 1rem;
-		margin: 0;
+		font-weight: 650;
+		margin: 6px 0 0;
 	}
 	.row-head p {
 		margin: 2px 0 0;
@@ -89,22 +96,29 @@
 		grid-auto-columns: 1fr;
 		gap: 4px;
 		padding: 4px;
-		border-radius: 14px;
+		border-radius: 12px;
 		background: var(--surface-2);
+		border: 1px solid var(--line);
 	}
 	.segmented button {
 		min-height: 42px;
 		border: 0;
-		border-radius: 11px;
+		border-radius: 9px;
 		background: transparent;
 		cursor: pointer;
-		font-weight: 650;
+		font-weight: 600;
 		color: var(--muted);
+		transition:
+			background 0.15s,
+			color 0.15s;
+	}
+	.segmented button:hover {
+		color: var(--text);
 	}
 	.segmented button[aria-checked='true'] {
 		background: var(--surface);
-		color: var(--accent-strong);
-		box-shadow: var(--shadow);
+		color: var(--text);
+		box-shadow: var(--shadow-sm);
 	}
 	.size-lg {
 		font-size: 1.1rem;

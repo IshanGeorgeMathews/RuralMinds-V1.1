@@ -44,20 +44,23 @@
 		color: var(--text);
 	}
 	dialog::backdrop {
-		background: rgb(10 16 14 / 0.45);
+		background: rgb(6 10 9 / 0.5);
+		backdrop-filter: blur(3px);
 	}
 	.sheet {
 		background: var(--surface);
-		border-radius: 22px 22px 0 0;
+		border: 1px solid var(--line);
+		border-bottom: 0;
+		border-radius: 20px 20px 0 0;
 		box-shadow: var(--shadow-lg);
 		display: flex;
 		flex-direction: column;
 		max-height: 85dvh;
 		padding-bottom: env(safe-area-inset-bottom);
-		animation: rise 0.2s ease-out;
+		animation: rise 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
 	}
 	.grip {
-		width: 40px;
+		width: 36px;
 		height: 4px;
 		border-radius: 4px;
 		background: var(--line-strong);
@@ -67,22 +70,30 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		padding: 6px 8px 6px 18px;
+		padding: 8px 8px 8px 20px;
 	}
 	.head h2 {
 		margin: 0;
-		font-size: 1.1rem;
+		font-size: 1.08rem;
+		font-weight: 650;
 	}
 	.body {
 		overflow-y: auto;
-		padding: 0 16px 18px;
+		padding: 0 16px 20px;
 	}
 	@media (min-width: 700px) {
 		dialog {
 			margin: auto;
 		}
 		.sheet {
-			border-radius: 22px;
+			border-radius: 20px;
+			border-bottom: 1px solid var(--line);
+		}
+		.grip {
+			display: none;
+		}
+		.head {
+			padding-top: 14px;
 		}
 	}
 	@keyframes rise {

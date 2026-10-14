@@ -28,7 +28,7 @@
 				<span class="num">{index + 1}</span>
 				<span class="point">{point.text}</span>
 				<button class="page" onclick={() => (opened = { first: point.page_start, last: point.page_end })}>
-					{t('notes.page', { page: pageLabel(point.page_start, point.page_end) })}
+					<Icon name="page" size={13} />{t('notes.page', { page: pageLabel(point.page_start, point.page_end) })}
 				</button>
 			</li>
 		{/each}
@@ -51,33 +51,39 @@
 <style>
 	.notes {
 		display: grid;
-		gap: 10px;
+		gap: 12px;
 	}
 	.kicker {
 		margin: 0;
 		color: var(--accent-strong);
-		font-weight: 750;
-		font-size: 0.8rem;
+		font-weight: 650;
+		font-size: 0.76rem;
 		text-transform: uppercase;
-		letter-spacing: 0.06em;
+		letter-spacing: 0.08em;
 	}
 	h2 {
 		margin: 0;
+		font-size: 1.4rem;
+		letter-spacing: -0.025em;
 	}
 	h3 {
 		margin: 6px 0 0;
-		font-size: 0.95rem;
+		font-size: 0.76rem;
+		font-weight: 650;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
 		color: var(--muted);
 	}
 	.overview {
 		display: flex;
-		gap: 10px;
+		gap: 12px;
 		align-items: flex-start;
 		background: var(--accent-softer);
 		border: 1px solid var(--accent-soft);
 		border-radius: 14px;
-		padding: 12px 14px;
+		padding: 14px 16px;
 		color: var(--text);
+		line-height: 1.6;
 	}
 	.overview :global(svg) {
 		color: var(--accent-strong);
@@ -91,53 +97,68 @@
 		padding: 0;
 		margin: 0;
 		display: grid;
-		gap: 8px;
-	}
-	.points li {
-		display: grid;
-		grid-template-columns: 28px 1fr;
-		gap: 4px 10px;
-		align-items: start;
-		padding: 10px 12px;
 		border: 1px solid var(--line);
 		border-radius: 14px;
 		background: var(--surface);
+		overflow: hidden;
+	}
+	.points li {
+		display: grid;
+		grid-template-columns: 26px 1fr;
+		gap: 6px 12px;
+		align-items: start;
+		padding: 12px 14px;
+	}
+	.points li + li {
+		border-top: 1px solid var(--line);
 	}
 	.num {
 		display: grid;
 		place-items: center;
-		width: 26px;
-		height: 26px;
-		border-radius: 50%;
-		background: var(--accent);
-		color: var(--on-accent);
-		font-weight: 800;
-		font-size: 0.8rem;
+		width: 24px;
+		height: 24px;
+		border-radius: 7px;
+		background: var(--surface-2);
+		border: 1px solid var(--line);
+		color: var(--text);
+		font-weight: 700;
+		font-size: 0.75rem;
+		font-variant-numeric: tabular-nums;
 		margin-top: 2px;
+	}
+	.point {
+		line-height: 1.6;
 	}
 	.page {
 		grid-column: 2;
 		justify-self: start;
-		border: 0;
-		background: none;
-		padding: 0;
+		display: inline-flex;
+		align-items: center;
+		gap: 5px;
+		min-height: 28px;
+		padding: 0 10px;
+		border: 1px solid var(--accent-soft);
+		border-radius: 999px;
+		background: var(--accent-softer);
 		color: var(--accent-strong);
-		font-weight: 650;
-		font-size: 0.82rem;
+		font-weight: 600;
+		font-size: 0.78rem;
 		cursor: pointer;
-		text-decoration: underline;
-		text-underline-offset: 3px;
+		transition: background 0.15s;
+	}
+	.page:hover {
+		background: var(--accent-soft);
 	}
 	.label {
 		display: flex;
 		align-items: center;
 		gap: 6px;
 		margin: 2px 0 0;
-		font-size: 0.8rem;
+		font-size: 0.78rem;
 		color: var(--muted);
 	}
 	.label.approved {
 		color: var(--ok);
-		font-weight: 700;
+		font-weight: 650;
 	}
 </style>

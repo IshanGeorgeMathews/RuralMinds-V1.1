@@ -78,8 +78,8 @@
 	.page {
 		display: grid;
 		gap: 14px;
-		padding-top: 14px;
-		padding-bottom: 24px;
+		padding-top: 16px;
+		padding-bottom: 28px;
 	}
 	.actions {
 		display: grid;
@@ -89,29 +89,39 @@
 	.action {
 		display: grid;
 		justify-items: center;
-		gap: 6px;
-		padding: 14px 6px;
-		border-radius: var(--radius);
+		gap: 8px;
+		padding: 16px 6px 14px;
+		border-radius: 14px;
 		border: 1px solid var(--line);
 		background: var(--surface);
-		box-shadow: var(--shadow-sm);
+		box-shadow: var(--shadow-xs);
 		cursor: pointer;
 		color: var(--text);
-		font-weight: 650;
+		font-weight: 600;
 		font-size: 0.85rem;
+		transition:
+			border-color 0.15s,
+			background 0.15s;
 	}
 	.action :global(svg) {
+		width: 40px;
+		height: 40px;
+		padding: 9px;
+		border-radius: 12px;
+		background: var(--accent-softer);
 		color: var(--accent-strong);
+		box-sizing: border-box;
 	}
 	.action:hover {
-		border-color: var(--accent);
+		border-color: var(--line-strong);
+		background: var(--surface-2);
 	}
 	.kicker {
 		margin: 0;
 		color: var(--accent-strong);
-		font-weight: 750;
-		font-size: 0.8rem;
+		font-weight: 650;
+		font-size: 0.76rem;
 		text-transform: uppercase;
-		letter-spacing: 0.06em;
+		letter-spacing: 0.08em;
 	}
 </style>

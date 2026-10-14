@@ -5,6 +5,7 @@
 	import ConsoleShell from '#lib/components/ConsoleShell.svelte';
 	import Icon from '#lib/components/Icon.svelte';
 	import UploadWizard from '#lib/components/UploadWizard.svelte';
+	import { confirmAction, toast } from '#lib/feedback.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 	import { requireRole } from '#lib/session.svelte.js';
 	import { ask, choose, newConversation, setBooks, study } from '#lib/study.svelte.js';
@@ -81,7 +82,7 @@
 			await action();
 			await refresh();
 		} catch (error) {
-			alert(t(error instanceof ApiError ? error.key : 'error.generic'));
+			toast(t(error instanceof ApiError ? error.key : 'error.generic'), 'error');
 		}
 	}
 
@@ -97,6 +98,11 @@
 </script>
 
 <ConsoleShell role={t('teacher.title')} {items} current={tab} onselect={open} title={items.find((item) => item.id === tab)?.label ?? ''}>
+	{#snippet actions()}
+		{#if tab === 'library' && data}
+			<button class="btn primary" onclick={() => (tab = 'upload')}><Icon name="upload" size={18} />{t('teacher.tab.upload')}</button>
+		{/if}
+	{/snippet}
 	{#if errorKey}<p class="error">{t(errorKey)}</p>{/if}
 
 	{#if !data}
@@ -194,7 +200,7 @@
 							{/if}
 							<button class="btn small" onclick={() => { open('try'); }}><Icon name="sparkle" size={16} />{t('teacher.tab.try')}</button>
 							<span class="grow"></span>
-							<button class="btn small danger" onclick={() => confirm(t('teacher.delete_confirm', { title: book.title })) && act(() => api.del(`/api/teacher/books/${book.id}`))}><Icon name="trash" size={16} />{t('teacher.delete')}</button>
+							<button class="btn small danger" onclick={async () => (await confirmAction(t('teacher.delete_confirm', { title: book.title }), { danger: true, confirmLabel: t('teacher.delete') })) && act(() => api.del(`/api/teacher/books/${book.id}`))}><Icon name="trash" size={16} />{t('teacher.delete')}</button>
 						</div>
 					</article>
 				{/each}
@@ -248,6 +254,7 @@
 		{@const top = Math.max(1, ...activity.rows.map((row) => row.asked))}
 		<section class="card stack">
 			<p class="muted small">{t('activity.intro', { days: activity.days, min: activity.min_group })}</p>
+			<p class="legend"><span><i class="swatch"></i>{t('activity.asked')}</span><span><i class="swatch miss"></i>{t('activity.not_found')}</span></p>
 			{#if activity.rows.length === 0}
 				<div class="empty"><div class="art"><Icon name="chart" size={28} /></div><p>{t('activity.empty')}</p></div>
 			{:else}
@@ -273,6 +280,9 @@
 		font-size: 1rem;
 		margin: 0;
 	}
+	.section-title :global(svg) {
+		color: var(--accent-strong);
+	}
 	.small {
 		font-size: 0.85rem;
 		margin: 0;
@@ -282,20 +292,25 @@
 		align-items: center;
 		gap: 10px;
 		flex-wrap: wrap;
-		padding-top: 10px;
+		padding-top: 12px;
 		border-top: 1px solid var(--line);
+	}
+	.job strong {
+		font-weight: 600;
+		overflow-wrap: anywhere;
 	}
 	.progress {
 		height: 6px;
 		border-radius: 6px;
 		background: var(--surface-2);
 		overflow: hidden;
-		margin-top: 6px;
+		margin-top: 8px;
 	}
 	.progress span {
 		display: block;
 		width: 40%;
 		height: 100%;
+		border-radius: 6px;
 		background: var(--accent);
 		animation: slide 1.4s ease-in-out infinite;
 	}
@@ -314,25 +329,38 @@
 	}
 	.book {
 		display: grid;
-		gap: 12px;
+		gap: 14px;
 		align-content: start;
 	}
 	.book-head {
 		display: flex;
-		gap: 12px;
+		gap: 14px;
 		align-items: flex-start;
 	}
+	.book-head .grow {
+		/* long Malayalam words in titles must not push the card wider than a phone */
+		overflow-wrap: anywhere;
+	}
+	.book-head .badge {
+		white-space: normal;
+		text-align: center;
+	}
 	.book-head h3 {
-		margin: 0;
+		margin: 0 0 2px;
+		font-size: 1.05rem;
+		line-height: 1.3;
 	}
 	.cover {
 		display: grid;
 		place-items: center;
 		width: 44px;
-		height: 54px;
-		border-radius: 8px 12px 12px 8px;
-		background: linear-gradient(135deg, var(--accent), var(--accent-strong));
-		color: #fff;
+		height: 56px;
+		border-radius: 4px 9px 9px 4px;
+		background:
+			linear-gradient(90deg, rgb(0 0 0 / 0.22) 0 5px, transparent 5px),
+			linear-gradient(150deg, #13897c, #0a4f48);
+		color: rgb(255 255 255 / 0.92);
+		box-shadow: var(--shadow-sm);
 		flex-shrink: 0;
 	}
 	.disclose {
@@ -340,61 +368,85 @@
 		align-items: center;
 		gap: 8px;
 		width: 100%;
-		min-height: 42px;
-		padding: 0 10px;
+		min-height: 44px;
+		padding: 0 12px;
 		border: 1px solid var(--line);
-		border-radius: 12px;
+		border-radius: 10px;
 		background: var(--surface-2);
 		cursor: pointer;
 		color: var(--text);
-		font-weight: 600;
+		font-weight: 550;
+		font-size: 0.92rem;
 		text-align: left;
+		transition: border-color 0.15s;
+	}
+	.disclose:hover {
+		border-color: var(--line-strong);
+	}
+	.disclose :global(svg:first-child) {
+		color: var(--accent-strong);
 	}
 	.chapters {
 		list-style: none;
 		margin: 0;
 		padding: 0;
 		display: grid;
-		gap: 4px;
+		border: 1px solid var(--line);
+		border-radius: 12px;
+		overflow: hidden;
 	}
 	.chapters li {
 		display: flex;
 		align-items: center;
-		gap: 8px;
-		min-height: 40px;
+		gap: 10px;
+		min-height: 46px;
+		padding: 4px 10px;
 		font-size: 0.9rem;
+	}
+	.chapters li + li {
+		border-top: 1px solid var(--line);
 	}
 	.num {
 		display: grid;
 		place-items: center;
 		width: 26px;
 		height: 26px;
-		border-radius: 8px;
-		background: var(--accent-soft);
-		color: var(--accent-strong);
-		font-weight: 800;
-		font-size: 0.8rem;
+		border-radius: 7px;
+		background: var(--surface-2);
+		border: 1px solid var(--line);
+		color: var(--text);
+		font-weight: 700;
+		font-size: 0.78rem;
+		font-variant-numeric: tabular-nums;
+		flex-shrink: 0;
 	}
 	.as-button {
-		border: 0;
 		cursor: pointer;
 	}
 	.book-actions {
 		border-top: 1px solid var(--line);
-		padding-top: 12px;
+		padding-top: 14px;
+		gap: 8px;
 	}
 	.try-note {
 		display: flex;
 		align-items: center;
-		gap: 6px;
-		margin-bottom: 4px;
+		gap: 8px;
+		margin-bottom: 8px;
+		padding: 10px 14px;
+		border-radius: 12px;
+		background: var(--surface-2);
+		border: 1px solid var(--line);
+	}
+	.try-note :global(svg) {
+		color: var(--accent-strong);
 	}
 	.try {
 		max-width: 820px;
 	}
 	.inbox {
 		list-style: none;
-		margin: 8px 0 0;
+		margin: 10px 0 0;
 		padding: 0;
 		display: grid;
 	}
@@ -402,33 +454,62 @@
 		display: flex;
 		align-items: center;
 		gap: 12px;
-		padding: 12px 4px;
+		padding: 14px 2px;
 		border-top: 1px solid var(--line);
+	}
+	.inbox li > :global(svg) {
+		color: var(--ok);
 	}
 	.times {
 		display: grid;
 		place-items: center;
-		min-width: 40px;
+		min-width: 42px;
 		height: 32px;
-		border-radius: 10px;
+		border-radius: 9px;
 		background: var(--warm-soft);
+		border: 1px solid var(--warm-line);
 		color: var(--warm);
-		font-weight: 800;
+		font-weight: 700;
 		font-size: 0.85rem;
+		font-variant-numeric: tabular-nums;
 	}
 	.q {
-		margin: 0;
+		margin: 0 0 2px;
 		font-weight: 600;
+	}
+	.legend {
+		display: flex;
+		gap: 18px;
+		margin: 0;
+		font-size: 0.82rem;
+		color: var(--muted);
+	}
+	.legend span {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+	}
+	.swatch {
+		width: 10px;
+		height: 10px;
+		border-radius: 3px;
+		background: var(--accent);
+	}
+	.swatch.miss {
+		background: var(--warm);
 	}
 	.insight {
 		display: grid;
-		gap: 6px;
-		padding-top: 12px;
+		gap: 8px;
+		padding-top: 14px;
 		border-top: 1px solid var(--line);
+	}
+	.insight strong {
+		font-weight: 600;
 	}
 	.bar {
 		position: relative;
-		height: 12px;
+		height: 10px;
 		border-radius: 999px;
 		background: var(--surface-2);
 		overflow: hidden;

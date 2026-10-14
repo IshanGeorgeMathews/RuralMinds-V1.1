@@ -2,6 +2,8 @@
 	import '../app.css';
 	import '#lib/prefs.svelte.js'; // applies text size and theme before the first paint
 	import favicon from '#lib/assets/favicon.svg';
+	import ConfirmDialog from '#lib/components/ConfirmDialog.svelte';
+	import Toaster from '#lib/components/Toaster.svelte';
 	import type { LayoutProps } from './$types';
 
 	let { children }: LayoutProps = $props();
@@ -12,3 +14,6 @@
 </svelte:head>
 
 {@render children()}
+
+<Toaster />
+<ConfirmDialog />

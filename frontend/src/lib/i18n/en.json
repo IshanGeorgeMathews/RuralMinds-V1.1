@@ -333,5 +333,13 @@
 	"error.notes": "Study notes are not ready yet.",
 	"admin.teacher_tests": "Teacher tests",
 	"upload.last_page_range": "The last page must be after the last chapter start and inside the PDF.",
-	"notes.show_all": "Show all {n} key points"
+	"notes.show_all": "Show all {n} key points",
+	"label.ai_short": "AI explanation",
+	"label.approved_short": "Teacher-approved",
+	"answer.sources": "From your textbook",
+	"login.brand_title": "Your textbook, explained simply.",
+	"login.trust.book": "Every answer comes from your textbook, with the page to check",
+	"login.trust.offline": "Works without internet, on your school's own computer",
+	"login.trust.teacher": "Teachers check and approve answers",
+	"common.confirm": "Confirm"
 }

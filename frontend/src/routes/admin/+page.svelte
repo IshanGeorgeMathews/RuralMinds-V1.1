@@ -3,6 +3,7 @@
 	import { api, ApiError } from '#lib/api.js';
 	import ConsoleShell from '#lib/components/ConsoleShell.svelte';
 	import Icon from '#lib/components/Icon.svelte';
+	import { confirmAction } from '#lib/feedback.svelte.js';
 	import { t } from '#lib/i18n/index.svelte.js';
 	import { requireRole } from '#lib/session.svelte.js';
 
@@ -73,7 +74,7 @@
 	}
 
 	async function restart(): Promise<void> {
-		if (!confirm(t('admin.restart_confirm'))) return;
+		if (!(await confirmAction(t('admin.restart_confirm'), { confirmLabel: t('admin.restart') }))) return;
 		restarting = true;
 		await run(() => api.post('/api/admin/model/restart'));
 		restarting = false;
@@ -129,43 +130,51 @@
 
 <ConsoleShell role={t('admin.title')} items={TABS.map((id) => ({ id, icon: ICONS[id], label: t(`admin.tab.${id}`) }))} current={tab} onselect={open} title={t(`admin.tab.${tab}`)}>
 	{#if errorKey}<p class="error no-print">{t(errorKey)}</p>{/if}
-	{#if notice}<p class="badge ok notice no-print">{notice}</p>{/if}
+	<!-- Stays on screen (not a toast): it can carry a one-time password. -->
+	{#if notice}<p class="notice no-print" role="status"><Icon name="check" size={18} /><span class="grow">{notice}</span>
+		<button class="btn ghost small icon" onclick={() => (notice = '')} aria-label={t('common.close')}><Icon name="close" size={16} /></button></p>{/if}
 
 	{#if tab === 'overview' && overview}
 		{@const usage = overview.usage}
 		{@const model = overview.model}
+		{@const on = !!controls?.answering_enabled}
 		<div class="stack">
-			<section class="card stack">
-				<div class="row">
-					<h2 class="grow">{t('admin.model')}</h2>
-					<span class="badge" class:ok={controls?.answering_enabled} class:bad={!controls?.answering_enabled}>
-						{controls?.answering_enabled ? t('admin.answering_on') : t('admin.answering_off')}
-					</span>
+			<section class="card status" class:paused={!on}>
+				<div class="status-main">
+					<span class="status-icon"><Icon name={on ? 'play' : 'pause'} size={22} /></span>
+					<div class="grow">
+						<p class="eyebrow">{t('admin.model')}</p>
+						<h2>{on ? t('admin.answering_on') : t('admin.answering_off')}</h2>
+						<p class="mono model-file">{model.model ? String(model.model).split(/[\\/]/).pop() : '—'}</p>
+					</div>
+					<div class="row status-actions">
+						{#if on}
+							<button class="btn danger" onclick={() => saveControls({ answering_enabled: false })}><Icon name="pause" size={18} />{t('admin.pause')}</button>
+						{:else}
+							<button class="btn accent" onclick={() => saveControls({ answering_enabled: true })}><Icon name="play" size={18} />{t('admin.resume')}</button>
+						{/if}
+						<button class="btn" disabled={restarting} onclick={restart}>
+							{#if restarting}<span class="spinner"></span>{:else}<Icon name="refresh" size={18} />{/if}
+							{restarting ? t('admin.restarting') : t('admin.restart')}
+						</button>
+					</div>
 				</div>
-				<p class="mono">{model.model ? String(model.model).split(/[\\/]/).pop() : '—'}</p>
-				<div class="row">
-					<span class="badge" class:ok={model.chat} class:bad={!model.chat}>{t('admin.model_chat')}: {model.chat ? t('admin.running') : t('admin.stopped')}</span>
-					<span class="badge" class:ok={model.embed} class:bad={!model.embed}>{t('admin.model_embed')}: {model.embed ? t('admin.running') : t('admin.stopped')}</span>
-					{#if model.slots}<span class="badge">{t('admin.busy_slots', { busy: model.busy_slots, slots: model.slots })}</span>{/if}
-				</div>
-				<div class="row">
-					{#if controls?.answering_enabled}
-						<button class="btn danger" onclick={() => saveControls({ answering_enabled: false })}>⏸ {t('admin.pause')}</button>
-					{:else}
-						<button class="btn primary" onclick={() => saveControls({ answering_enabled: true })}>▶ {t('admin.resume')}</button>
-					{/if}
-					<button class="btn" disabled={restarting} onclick={restart}>↻ {restarting ? t('admin.restarting') : t('admin.restart')}</button>
+				<div class="services">
+					<span><span class="status-dot" class:off={!model.chat}></span>{t('admin.model_chat')}: {model.chat ? t('admin.running') : t('admin.stopped')}</span>
+					<span><span class="status-dot" class:off={!model.embed}></span>{t('admin.model_embed')}: {model.embed ? t('admin.running') : t('admin.stopped')}</span>
+					{#if model.slots}<span class="tabular"><Icon name="server" size={15} />{t('admin.busy_slots', { busy: model.busy_slots, slots: model.slots })}</span>{/if}
 				</div>
 				<p class="muted small">{t('settings.model_note')}</p>
 			</section>
 
+			<!-- Measured from this server's own answer log, not claimed. -->
 			<section class="tiles">
-				<div class="card tile"><span>{t('admin.questions')}</span><strong>{usage.questions}</strong><small>{t('admin.last_days', { days: usage.days })}</small></div>
-				<div class="card tile"><span>{t('admin.answered')}</span><strong>{usage.outcomes.answered ?? 0}</strong></div>
-				<div class="card tile"><span>{t('admin.refused')}</span><strong>{usage.outcomes.refused ?? 0}</strong></div>
-				<div class="card tile"><span>{t('admin.cached')}</span><strong>{usage.outcomes.cached ?? 0}</strong></div>
-				<div class="card tile"><span>{t('admin.first_word')}</span><strong>{seconds(usage.first_word_ms.p50)}</strong><small>p95 {seconds(usage.first_word_ms.p95)}</small></div>
-				<div class="card tile"><span>{t('admin.total_time')}</span><strong>{seconds(usage.total_ms.p50)}</strong><small>p95 {seconds(usage.total_ms.p95)}</small></div>
+				<div class="kpi"><span>{t('admin.questions')}</span><strong>{usage.questions}</strong><small>{t('admin.last_days', { days: usage.days })}</small></div>
+				<div class="kpi"><span>{t('admin.answered')}</span><strong>{usage.outcomes.answered ?? 0}</strong></div>
+				<div class="kpi"><span>{t('admin.refused')}</span><strong>{usage.outcomes.refused ?? 0}</strong></div>
+				<div class="kpi"><span>{t('admin.cached')}</span><strong>{usage.outcomes.cached ?? 0}</strong></div>
+				<div class="kpi"><span>{t('admin.first_word')}</span><strong>{seconds(usage.first_word_ms.p50)}</strong><small>p95 {seconds(usage.first_word_ms.p95)}</small></div>
+				<div class="kpi"><span>{t('admin.total_time')}</span><strong>{seconds(usage.total_ms.p50)}</strong><small>p95 {seconds(usage.total_ms.p95)}</small></div>
 			</section>
 
 			<section class="card stack">
@@ -188,27 +197,36 @@
 			<div class="two">
 				<section class="card">
 					<h3>{t('admin.by_language')}</h3>
-					{#each Object.entries(usage.by_language) as [language, count] (language)}
-						<p class="row"><span class="grow">{t(`medium.${language}`)}</span><strong>{count}</strong></p>
-					{:else}<p class="muted">{t('admin.no_data')}</p>{/each}
+					<ul class="facts">
+						{#each Object.entries(usage.by_language) as [language, count] (language)}
+							<li><span class="grow">{t(`medium.${language}`)}</span><strong>{count}</strong></li>
+						{:else}<li class="muted">{t('admin.no_data')}</li>{/each}
+					</ul>
 				</section>
 				<section class="card">
 					<h3>{t('admin.by_class')}</h3>
-					{#each Object.entries(usage.by_class) as [label, count] (label)}
-						<p class="row"><span class="grow">{label === 'teacher' ? t('admin.teacher_tests') : label}</span><strong>{count}</strong></p>
-					{:else}<p class="muted">{t('admin.no_data')}</p>{/each}
+					<ul class="facts">
+						{#each Object.entries(usage.by_class) as [label, count] (label)}
+							<li><span class="grow">{label === 'teacher' ? t('admin.teacher_tests') : label}</span><strong>{count}</strong></li>
+						{:else}<li class="muted">{t('admin.no_data')}</li>{/each}
+					</ul>
 				</section>
 				<section class="card">
 					<h3>{t('admin.disk')}</h3>
-					{#each Object.entries(overview.disk) as [name, bytes] (name)}
-						<p class="row"><span class="grow">{name === 'free' ? t('admin.disk_free') : name}</span><strong>{mb(Number(bytes))}</strong></p>
-					{/each}
+					<ul class="facts">
+						{#each Object.entries(overview.disk) as [name, bytes] (name)}
+							<li><span class="grow">{name === 'free' ? t('admin.disk_free') : name}</span><strong>{mb(Number(bytes))}</strong></li>
+						{/each}
+					</ul>
 				</section>
 				<section class="card">
-					<p class="row"><span class="grow">{t('admin.students')}</span><strong>{overview.accounts.student?.total ?? 0}</strong></p>
-					<p class="row"><span class="grow">{t('admin.teachers')}</span><strong>{overview.accounts.teacher?.total ?? 0}</strong></p>
-					<p class="row"><span class="grow">{t('admin.books')}</span><strong>{Object.values(overview.books).reduce((a: number, b) => a + Number(b), 0)}</strong></p>
-					<p class="row"><span class="grow">{t('admin.unanswered')}</span><strong>{overview.unanswered}</strong></p>
+					<h3>{t('admin.tab.accounts')}</h3>
+					<ul class="facts">
+						<li><span class="grow">{t('admin.students')}</span><strong>{overview.accounts.student?.total ?? 0}</strong></li>
+						<li><span class="grow">{t('admin.teachers')}</span><strong>{overview.accounts.teacher?.total ?? 0}</strong></li>
+						<li><span class="grow">{t('admin.books')}</span><strong>{Object.values(overview.books).reduce((a: number, b) => a + Number(b), 0)}</strong></li>
+						<li><span class="grow">{t('admin.unanswered')}</span><strong>{overview.unanswered}</strong></li>
+					</ul>
 				</section>
 			</div>
 		</div>
@@ -219,19 +237,26 @@
 				<label class="field"><span>{t('classes.section')}</span><input bind:value={newClass.section} maxlength="4" /></label>
 				<label class="field"><span>{t('classes.medium')}</span>
 					<select bind:value={newClass.medium}><option value="en">{t('medium.en')}</option><option value="ml">{t('medium.ml')}</option></select></label>
-				<button class="btn primary">＋ {t('classes.add')}</button>
+				<button class="btn primary"><Icon name="plus" size={18} />{t('classes.add')}</button>
 			</form>
-			{#each classes as klass (klass.id)}
-				<div class="card row">
-					<strong class="grow">{klass.label} · {t(`medium.${klass.medium}`)}</strong>
-					<span class="muted">{t('classes.students', { n: klass.students })}</span>
-					<button class="btn small danger" onclick={() => run(async () => { await api.del(`/api/admin/classes/${klass.id}`); await loadClasses(); })}>{t('classes.delete')}</button>
-				</div>
-			{/each}
+			{#if classes.length}
+				<ul class="list-group">
+					{#each classes as klass (klass.id)}
+						<li class="class-row">
+							<span class="class-tag">{klass.label}</span>
+							<span class="grow">
+								<strong>{t(`medium.${klass.medium}`)}</strong>
+								<small class="muted tabular">{t('classes.students', { n: klass.students })}</small>
+							</span>
+							<button class="btn small danger" onclick={() => run(async () => { await api.del(`/api/admin/classes/${klass.id}`); await loadClasses(); })}><Icon name="trash" size={15} />{t('classes.delete')}</button>
+						</li>
+					{/each}
+				</ul>
+			{/if}
 		</div>
 	{:else if tab === 'accounts'}
 		<div class="stack">
-			<p class="muted small no-print">🔒 {t('accounts.privacy')}</p>
+			<p class="muted small no-print privacy"><Icon name="shield" size={16} />{t('accounts.privacy')}</p>
 			<div class="two no-print">
 				<form class="card" onsubmit={(event) => (event.preventDefault(), createStudents())}>
 					<h3>{t('accounts.bulk_title')}</h3>
@@ -255,7 +280,7 @@
 			{#if slips.length}
 				<section class="card stack">
 					<div class="row no-print"><strong class="grow">{t('accounts.created')}</strong>
-						<button class="btn" onclick={() => window.print()}>🖨 {t('accounts.print')}</button>
+						<button class="btn" onclick={() => window.print()}><Icon name="printer" size={18} />{t('accounts.print')}</button>
 						<button class="btn ghost" onclick={() => (slips = [])}>{t('common.close')}</button></div>
 					<div class="slips">
 						{#each slips as slip (slip.username)}
@@ -285,7 +310,7 @@
 						<option value="true">{t('accounts.enabled')}</option><option value="false">{t('accounts.disabled')}</option>
 					</select>
 					<input bind:value={filters.q} placeholder={t('accounts.search')} class="narrow" />
-					<button class="btn">🔍</button>
+					<button class="btn icon" aria-label={t('accounts.search')}><Icon name="search" size={18} /></button>
 				</form>
 				<div class="table-scroll">
 					<table>
@@ -301,7 +326,7 @@
 										<button class="btn small" onclick={() => resetPassword(user)}>{t('accounts.reset')}</button>
 										<button class="btn small" onclick={() => run(async () => { await api.post(`/api/admin/users/${user.id}`, { enabled: !user.enabled }); await loadUsers(); })}>
 											{user.enabled ? t('accounts.disable') : t('accounts.enable')}</button>
-										<button class="btn small danger" onclick={() => confirm(t('accounts.delete_confirm', { name: user.username })) && run(async () => { await api.del(`/api/admin/users/${user.id}`); await loadUsers(); })}>✕</button>
+										<button class="btn small danger" onclick={async () => (await confirmAction(t('accounts.delete_confirm', { name: user.username }), { danger: true, confirmLabel: t('accounts.delete') })) && run(async () => { await api.del(`/api/admin/users/${user.id}`); await loadUsers(); })} aria-label={t('accounts.delete')}><Icon name="trash" size={16} /></button>
 									</td>
 								</tr>
 							{/each}
@@ -312,7 +337,10 @@
 		</div>
 	{:else if tab === 'settings' && controls}
 		<form class="card stack" onsubmit={(event) => (event.preventDefault(), saveControls())}>
-			<label class="row"><input type="checkbox" bind:checked={controls.answering_enabled} /> {t('settings.answering')}</label>
+			<label class="switch-row">
+				<span class="grow"><strong>{t('settings.answering')}</strong></span>
+				<input class="switch" type="checkbox" role="switch" bind:checked={controls.answering_enabled} />
+			</label>
 			<fieldset class="field"><span>{t('settings.languages')}</span>
 				<div class="row">
 					{#each ['en', 'ml'] as language (language)}
@@ -344,58 +372,148 @@
 </ConsoleShell>
 
 <style>
-	main {
-		padding-bottom: 40px;
-	}
 	.notice {
-		display: inline-block;
-		padding: 6px 12px;
-		margin: 0 0 10px;
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		padding: 6px 6px 6px 14px;
+		margin: 0 0 14px;
+		border-radius: 12px;
+		background: var(--ok-soft);
+		border: 1px solid color-mix(in srgb, var(--ok) 25%, transparent);
+		color: var(--text);
+		font-weight: 550;
 	}
-	.mono {
-		font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace;
+	.notice > :global(svg:first-child) {
+		color: var(--ok);
 	}
 	.small {
 		font-size: 0.85rem;
 		margin: 0;
 	}
+
+	/* Answering status: the one control that matters during a demo. */
+	.status {
+		display: grid;
+		gap: 14px;
+		padding: 20px;
+		border-color: color-mix(in srgb, var(--ok) 30%, var(--line));
+		background:
+			radial-gradient(60% 120% at 0% 0%, color-mix(in srgb, var(--ok) 9%, transparent), transparent 70%),
+			var(--surface);
+	}
+	.status.paused {
+		border-color: color-mix(in srgb, var(--danger) 35%, var(--line));
+		background:
+			radial-gradient(60% 120% at 0% 0%, color-mix(in srgb, var(--danger) 9%, transparent), transparent 70%),
+			var(--surface);
+	}
+	.status-main {
+		display: flex;
+		align-items: flex-start;
+		gap: 14px;
+		flex-wrap: wrap;
+	}
+	.status-icon {
+		display: grid;
+		place-items: center;
+		width: 48px;
+		height: 48px;
+		border-radius: 14px;
+		background: var(--ok-soft);
+		color: var(--ok);
+		flex-shrink: 0;
+	}
+	.paused .status-icon {
+		background: var(--danger-soft);
+		color: var(--danger);
+	}
+	.status h2 {
+		margin: 2px 0 2px;
+		font-size: 1.35rem;
+	}
+	.model-file {
+		margin: 0;
+		font-size: 0.82rem;
+		color: var(--muted);
+		overflow-wrap: anywhere;
+	}
+	.status-actions {
+		gap: 8px;
+	}
+	.services {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px 20px;
+		padding-top: 12px;
+		border-top: 1px solid var(--line);
+		font-size: 0.86rem;
+		font-weight: 550;
+	}
+	.services > span {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+	}
+	.services :global(svg) {
+		color: var(--muted);
+	}
+
 	.tiles {
 		display: grid;
 		gap: 10px;
-		grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-	}
-	.tile {
-		display: grid;
-		gap: 2px;
-	}
-	.tile span,
-	.tile small {
-		color: var(--muted);
-		font-size: 0.85rem;
-	}
-	.tile strong {
-		font-size: 1.6rem;
+		grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
 	}
 	.two {
 		display: grid;
 		gap: 14px;
 		grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
 	}
-	.two p.row {
-		margin: 6px 0;
+	.two h3,
+	.stack > h3 {
+		font-size: 0.76rem;
+		font-weight: 650;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--muted);
+		margin: 0 0 6px;
+	}
+	.facts {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+	.facts li {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding: 9px 0;
+		font-size: 0.94rem;
+	}
+	.facts li + li {
+		border-top: 1px solid var(--line);
+	}
+	.facts strong {
+		font-variant-numeric: tabular-nums;
+		font-weight: 650;
 	}
 	.bars {
 		display: grid;
-		gap: 6px;
+		gap: 8px;
 	}
 	.bar-row {
 		display: grid;
-		grid-template-columns: 48px 1fr 40px;
-		gap: 8px;
+		grid-template-columns: 52px 1fr 40px;
+		gap: 10px;
 		align-items: center;
+		font-variant-numeric: tabular-nums;
+	}
+	.bar-row > :last-child {
+		text-align: right;
+		font-weight: 600;
 	}
 	.bar {
-		height: 14px;
+		height: 10px;
 		background: var(--surface-2);
 		border-radius: 999px;
 		overflow: hidden;
@@ -403,8 +521,77 @@
 	.bar span {
 		display: block;
 		height: 100%;
-		background: var(--accent);
+		border-radius: 999px;
+		background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 70%, var(--primary)));
 	}
+
+	.class-row {
+		display: flex;
+		align-items: center;
+		gap: 14px;
+		padding: 12px 14px;
+	}
+	.class-row strong {
+		display: block;
+		font-weight: 600;
+	}
+	.class-row small {
+		display: block;
+		font-size: 0.82rem;
+	}
+	.class-tag {
+		display: grid;
+		place-items: center;
+		min-width: 48px;
+		height: 40px;
+		padding: 0 8px;
+		border-radius: 10px;
+		background: var(--accent-softer);
+		border: 1px solid var(--accent-soft);
+		color: var(--accent-strong);
+		font-weight: 700;
+	}
+
+	.switch-row {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		padding: 4px 0 14px;
+		border-bottom: 1px solid var(--line);
+		cursor: pointer;
+	}
+	.switch {
+		appearance: none;
+		position: relative;
+		width: 46px !important;
+		height: 28px !important;
+		border-radius: 999px;
+		background: var(--surface-3);
+		border: 1px solid var(--line-strong);
+		cursor: pointer;
+		transition: background 0.15s;
+		flex-shrink: 0;
+	}
+	.switch::after {
+		content: '';
+		position: absolute;
+		top: 2px;
+		left: 2px;
+		width: 22px;
+		height: 22px;
+		border-radius: 50%;
+		background: #fff;
+		box-shadow: 0 1px 3px rgb(0 0 0 / 0.25);
+		transition: transform 0.18s;
+	}
+	.switch:checked {
+		background: var(--accent);
+		border-color: var(--accent);
+	}
+	.switch:checked::after {
+		transform: translateX(18px);
+	}
+
 	.narrow {
 		width: auto;
 		flex: 1 1 140px;
@@ -413,6 +600,19 @@
 		border: 0;
 		padding: 0;
 		margin: 0 0 14px;
+	}
+	.privacy {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		margin: 0;
+		padding: 10px 14px;
+		border-radius: 12px;
+		background: var(--surface-2);
+		border: 1px solid var(--line);
+	}
+	.privacy :global(svg) {
+		color: var(--accent-strong);
 	}
 	tr.off {
 		opacity: 0.55;
@@ -429,9 +629,9 @@
 	.slip {
 		display: grid;
 		gap: 2px;
-		border: 1px dashed var(--line);
+		border: 1px dashed var(--line-strong);
 		border-radius: 10px;
-		padding: 10px;
+		padding: 12px;
 		font-size: 0.9rem;
 		break-inside: avoid;
 	}

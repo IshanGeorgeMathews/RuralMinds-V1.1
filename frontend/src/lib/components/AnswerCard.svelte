@@ -4,6 +4,7 @@
 	import { renderMarkdown, splitSections } from '#lib/markdown.js';
 	import type { Mode, Turn } from '#lib/study.svelte.js';
 	import Icon from './Icon.svelte';
+	import Logo from './Logo.svelte';
 	import NotesCard from './NotesCard.svelte';
 	import PageViewer from './PageViewer.svelte';
 
@@ -27,6 +28,7 @@
 
 	const working = $derived(['searching', 'queued', 'writing'].includes(turn.status));
 	const failed = $derived(['refused', 'blocked', 'error'].includes(turn.status));
+	const approved = $derived(turn.label === 'teacher_approved');
 	// While streaming, split the raw text the same way the server will.
 	const parts = $derived(
 		turn.status === 'writing' || turn.status === 'stopped'
@@ -72,17 +74,37 @@
 	<p class="question" lang={turn.language || undefined}>{turn.shown}</p>
 
 	<div class="answer" class:failed aria-busy={working}>
-		<div class="avatar" aria-hidden="true"><Icon name="sparkle" size={18} /></div>
-		<div class="bubble">
+		<header class="head">
+			<Logo size={26} />
+			<span class="who">{t('app.name')}</span>
+			{#if turn.status === 'done'}
+				<!-- Rule 5: every answer is labelled, before the student reads it. -->
+				<span class="badge" class:ok={approved}>
+					<Icon name={approved ? 'check' : 'sparkle'} size={13} />
+					{t(approved ? 'label.approved_short' : 'label.ai_short')}
+				</span>
+			{/if}
+		</header>
+
+		<div class="body">
 			{#if turn.status === 'searching' || turn.status === 'queued'}
-				<div class="steps" aria-live="polite">
-					<p class="step on"><span class="dot"></span>{turn.status === 'queued' ? t('step.queued', { n: turn.queuePosition ?? 1 }) : t('step.searching')}</p>
+				<div class="progress" aria-live="polite">
+					{#if turn.status === 'queued'}
+						<p class="queue"><Icon name="users" size={16} />{t('step.queued', { n: turn.queuePosition ?? 1 })}</p>
+					{/if}
+					<ol class="steps">
+						<li class:on={turn.status === 'searching'}>
+							<span class="step-mark">{#if turn.status === 'searching'}<span class="spinner"></span>{/if}</span>
+							{t('step.searching')}
+						</li>
+						<li><span class="step-mark"></span>{t('step.writing')}</li>
+					</ol>
 					<div class="skeleton line"></div>
 					<div class="skeleton line short"></div>
 				</div>
 			{:else if failed}
 				<div class="failed-body">
-					<Icon name={turn.status === 'refused' ? 'search' : 'alert'} />
+					<span class="failed-icon"><Icon name={turn.status === 'refused' ? 'search' : 'alert'} size={18} /></span>
 					<p>{t(turn.messageKey ?? 'error.generic')}</p>
 				</div>
 			{:else if turn.status === 'notes' && turn.notes}
@@ -94,7 +116,7 @@
 				</div>
 				{#if parts.example}
 					<aside class="box example" lang={turn.language || undefined}>
-						<p class="box-title"><Icon name="lightbulb" size={18} />{t(turn.mode === 'story' ? 'answer.story_box' : 'answer.example_box')}</p>
+						<p class="box-title"><Icon name="lightbulb" size={17} />{t(turn.mode === 'story' ? 'answer.story_box' : 'answer.example_box')}</p>
 						<div class="prose">{@html renderMarkdown(parts.example, false)}</div>
 						<p class="box-note">{t('answer.not_from_book')}</p>
 					</aside>
@@ -102,7 +124,7 @@
 				{#if parts.answers}
 					<div class="box answers">
 						{#if showAnswers}
-							<p class="box-title"><Icon name="check" size={18} />{t('answer.quiz_answers')}</p>
+							<p class="box-title"><Icon name="check" size={17} />{t('answer.quiz_answers')}</p>
 							<!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
 							<div class="prose" onclick={openCitation}>{@html renderMarkdown(parts.answers, turn.status === 'done')}</div>
 						{:else}
@@ -114,32 +136,39 @@
 				{/if}
 				{#if parts.check}
 					<div class="box check" lang={turn.language || undefined}>
-						<p class="box-title"><Icon name="question" size={18} />{t('answer.check_yourself')}</p>
+						<p class="box-title"><Icon name="question" size={17} />{t('answer.check_yourself')}</p>
 						<p>{parts.check}</p>
 					</div>
 				{/if}
 				{#if turn.status === 'writing'}
-					<p class="step"><span class="dot"></span>{t('step.writing')}</p>
+					<p class="writing"><span class="dot"></span>{t('step.writing')}</p>
 				{:else if turn.status === 'stopped'}
 					<p class="muted small">{t('step.stopped')}</p>
 				{/if}
 				{#if turn.status === 'done'}
 					{#if turn.citations.length}
-						<div class="sources">
-							<span class="muted small">{t('answer.from_your_book')}</span>
-							{#each turn.citations as citation (citation.marker)}
-								<button class="chip soft" onclick={() => (opened = citation)}>
-									<Icon name="page" size={16} />{pageLabel(citation)}
-								</button>
-							{/each}
-						</div>
+						<section class="sources" aria-label={t('answer.sources')}>
+							<p class="eyebrow">{t('answer.sources')}</p>
+							<div class="source-row">
+								{#each turn.citations as citation (citation.marker)}
+									<button class="source" onclick={() => (opened = citation)}>
+										<span class="source-num">{citation.marker.slice(1)}</span>
+										<span class="source-text">
+											<strong class="tabular">{pageLabel(citation)}</strong>
+											<small>{citation.chapter_title}</small>
+										</span>
+										<Icon name="page" size={18} />
+									</button>
+								{/each}
+							</div>
+						</section>
 					{/if}
 					<div class="foot">
-						<span class="label" class:approved={turn.label === 'teacher_approved'}>
-							{#if turn.label === 'teacher_approved'}<Icon name="check" size={16} />{/if}
+						<span class="label" class:approved>
+							{#if approved}<Icon name="check" size={15} />{/if}
 							{t(`label.${turn.label ?? 'ai_explanation'}`)}
 						</span>
-						<button class="btn ghost small" onclick={copy} aria-label={t('answer.copy')}>
+						<button class="btn ghost small icon" onclick={copy} aria-label={t('answer.copy')}>
 							<Icon name={copied ? 'check' : 'copy'} size={16} />
 						</button>
 					</div>
@@ -182,7 +211,7 @@
 <style>
 	.turn {
 		display: grid;
-		gap: 10px;
+		gap: 14px;
 	}
 	.question {
 		justify-self: end;
@@ -190,87 +219,176 @@
 		margin: 0;
 		padding: 10px 16px;
 		border-radius: 20px 20px 6px 20px;
-		background: var(--accent);
-		color: var(--on-accent);
-		font-weight: 600;
+		background: var(--surface-3);
+		color: var(--text);
+		font-weight: 500;
 		white-space: pre-wrap;
-		box-shadow: var(--shadow-sm);
+		overflow-wrap: anywhere;
 	}
 	.answer {
 		display: grid;
-		grid-template-columns: 34px 1fr;
 		gap: 10px;
-		align-items: start;
 	}
-	.avatar {
+	.head {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		flex-wrap: wrap;
+	}
+	.who {
+		font-weight: 650;
+		font-size: 0.92rem;
+		margin-right: 2px;
+	}
+	.body {
+		min-width: 0;
+		display: grid;
+		gap: 14px;
+		padding-left: 34px;
+	}
+	@media (max-width: 480px) {
+		.body {
+			padding-left: 0;
+		}
+	}
+
+	/* Progress */
+	.progress {
+		display: grid;
+		gap: 10px;
+		padding: 14px 16px;
+		border: 1px solid var(--line);
+		border-radius: 14px;
+		background: var(--surface);
+	}
+	.queue {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		justify-self: start;
+		margin: 0 0 2px;
+		padding: 4px 12px;
+		border-radius: 999px;
+		background: var(--warm-soft);
+		border: 1px solid var(--warm-line);
+		color: var(--warm);
+		font-weight: 650;
+		font-size: 0.86rem;
+	}
+	.steps {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: grid;
+		gap: 8px;
+	}
+	.steps li {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		color: var(--faint);
+		font-size: 0.9rem;
+	}
+	.steps li.on {
+		color: var(--text);
+		font-weight: 550;
+	}
+	.step-mark {
+		display: grid;
+		place-items: center;
+		width: 18px;
+		height: 18px;
+		border-radius: 50%;
+		border: 1.5px solid var(--line-strong);
+		color: var(--accent);
+	}
+	.on .step-mark {
+		border: 0;
+	}
+	.line {
+		height: 11px;
+		border-radius: 6px;
+	}
+	.line.short {
+		width: 60%;
+	}
+
+	/* Refusal / error: calm, not alarming */
+	.failed-body {
+		display: flex;
+		gap: 12px;
+		align-items: flex-start;
+		padding: 14px 16px;
+		border: 1px solid var(--line);
+		border-radius: 14px;
+		background: var(--surface);
+	}
+	.failed-icon {
 		display: grid;
 		place-items: center;
 		width: 34px;
 		height: 34px;
-		border-radius: 12px;
-		background: linear-gradient(135deg, var(--accent), var(--accent-strong));
-		color: #fff;
-	}
-	.bubble {
-		min-width: 0;
-		display: grid;
-		gap: 12px;
-		background: var(--surface);
-		border: 1px solid var(--line);
-		border-radius: 6px 20px 20px 20px;
-		padding: 14px 16px;
-		box-shadow: var(--shadow);
-	}
-	.failed .bubble {
+		border-radius: 10px;
 		background: var(--surface-2);
-		box-shadow: none;
-	}
-	.failed-body {
-		display: flex;
-		gap: 10px;
-		align-items: flex-start;
 		color: var(--muted);
+		flex-shrink: 0;
 	}
 	.failed-body p {
-		margin: 0;
+		margin: 6px 0 0;
 		color: var(--text);
 	}
+
+	/* Answer text */
 	.prose {
 		font-size: 1.02rem;
+		line-height: 1.65;
 	}
 	.prose :global(p) {
-		margin: 0 0 0.55rem;
+		margin: 0 0 0.7rem;
 	}
 	.prose :global(p:last-child) {
 		margin-bottom: 0;
 	}
 	.prose :global(ul),
 	.prose :global(ol) {
-		margin: 0.2rem 0 0.55rem;
+		margin: 0.2rem 0 0.7rem;
 		padding-left: 1.3rem;
 	}
 	.prose :global(li) {
-		margin: 0.2rem 0;
+		margin: 0.3rem 0;
+	}
+	.prose :global(li::marker) {
+		color: var(--faint);
 	}
 	.prose :global(strong) {
-		color: var(--accent-strong);
+		font-weight: 650;
+		color: var(--text);
 	}
 	.prose :global(.cite) {
 		display: inline-grid;
 		place-items: center;
-		min-width: 20px;
-		height: 20px;
+		min-width: 19px;
+		height: 19px;
 		margin: 0 1px 0 3px;
 		padding: 0 5px;
-		border: 0;
+		border: 1px solid var(--accent-soft);
 		border-radius: 6px;
-		background: var(--accent-soft);
+		background: var(--accent-softer);
 		color: var(--accent-strong);
-		font-size: 0.7rem;
-		font-weight: 800;
-		vertical-align: super;
+		font-size: 0.68rem;
+		font-weight: 700;
+		line-height: 1;
+		vertical-align: 0.25em;
 		cursor: pointer;
+		transition: background 0.15s;
 	}
+	.prose :global(.cite:hover) {
+		background: var(--accent);
+		border-color: var(--accent);
+		color: var(--on-accent);
+	}
+
+	/* Boxes */
 	.box {
 		border-radius: 14px;
 		padding: 12px 14px;
@@ -281,9 +399,9 @@
 	.box-title {
 		display: flex;
 		align-items: center;
-		gap: 6px;
-		font-weight: 750;
-		font-size: 0.88rem;
+		gap: 7px;
+		font-weight: 650;
+		font-size: 0.86rem;
 		margin-bottom: 6px !important;
 	}
 	.example {
@@ -294,8 +412,8 @@
 		color: var(--warm);
 	}
 	.box-note {
-		margin-top: 6px !important;
-		font-size: 0.78rem;
+		margin-top: 8px !important;
+		font-size: 0.76rem;
 		color: var(--muted);
 	}
 	.check {
@@ -308,61 +426,24 @@
 		background: var(--accent-softer);
 		border: 1px solid var(--accent-soft);
 	}
-	.sources {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 6px;
-		align-items: center;
-	}
-	.foot {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		gap: 8px;
-		border-top: 1px solid var(--line);
-		padding-top: 8px;
-		margin-top: -2px;
-	}
-	.label {
-		display: inline-flex;
-		align-items: center;
-		gap: 6px;
-		font-size: 0.78rem;
-		color: var(--muted);
-	}
-	.label.approved {
-		color: var(--ok);
-		font-weight: 700;
-	}
-	.steps {
-		display: grid;
-		gap: 8px;
-	}
-	.line {
-		height: 12px;
-		border-radius: 6px;
-	}
-	.line.short {
-		width: 60%;
-	}
-	.step {
+	.writing {
 		display: flex;
 		align-items: center;
 		gap: 10px;
 		margin: 0;
 		color: var(--muted);
-		font-size: 0.9rem;
+		font-size: 0.88rem;
 	}
 	.dot {
-		width: 9px;
-		height: 9px;
+		width: 8px;
+		height: 8px;
 		border-radius: 50%;
 		background: var(--accent);
 		animation: pulse 1.2s ease-in-out infinite;
 	}
 	.caret {
 		display: inline-block;
-		width: 8px;
+		width: 7px;
 		height: 1.05em;
 		margin-left: 2px;
 		vertical-align: text-bottom;
@@ -370,12 +451,109 @@
 		border-radius: 2px;
 		animation: blink 1s steps(2) infinite;
 	}
+
+	/* Sources: the proof. Large enough to tap, each opens the real page. */
+	.sources {
+		display: grid;
+		gap: 8px;
+	}
+	.source-row {
+		display: flex;
+		gap: 8px;
+		overflow-x: auto;
+		padding-bottom: 2px;
+		scrollbar-width: none;
+	}
+	.source {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		min-width: 176px;
+		max-width: 240px;
+		padding: 10px 12px;
+		border: 1px solid var(--line);
+		border-radius: 12px;
+		background: var(--surface);
+		box-shadow: var(--shadow-xs);
+		color: var(--text);
+		text-align: left;
+		cursor: pointer;
+		flex-shrink: 0;
+		transition:
+			border-color 0.15s,
+			background 0.15s;
+	}
+	.source:hover {
+		border-color: var(--accent);
+		background: var(--accent-softer);
+	}
+	.source > :global(svg) {
+		color: var(--faint);
+	}
+	.source-num {
+		display: grid;
+		place-items: center;
+		width: 22px;
+		height: 22px;
+		border-radius: 6px;
+		background: var(--accent-softer);
+		border: 1px solid var(--accent-soft);
+		color: var(--accent-strong);
+		font-size: 0.72rem;
+		font-weight: 700;
+		flex-shrink: 0;
+	}
+	.source-text {
+		flex: 1;
+		min-width: 0;
+		display: grid;
+	}
+	.source-text strong {
+		font-size: 0.86rem;
+		font-weight: 650;
+	}
+	.source-text small {
+		font-size: 0.76rem;
+		color: var(--muted);
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.foot {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 8px;
+		border-top: 1px solid var(--line);
+		padding-top: 8px;
+	}
+	.label {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		margin: 0;
+		font-size: 0.76rem;
+		color: var(--muted);
+	}
+	.label.approved {
+		color: var(--ok);
+		font-weight: 650;
+	}
 	.follow {
 		display: flex;
 		gap: 8px;
 		overflow-x: auto;
-		padding: 0 0 4px 44px;
+		padding: 0 0 4px 34px;
 		scrollbar-width: none;
+	}
+	@media (max-width: 480px) {
+		.follow {
+			padding-left: 0;
+		}
+	}
+	.follow .chip :global(svg) {
+		color: var(--accent-strong);
 	}
 	.inspect {
 		font-size: 0.82rem;
