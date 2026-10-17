@@ -7,6 +7,7 @@ itself is pinned (rule 3): the admin can see it, pause answering, and restart th
 import asyncio
 import os
 import re
+import socket
 import sqlite3
 import subprocess
 from dataclasses import asdict
@@ -42,7 +43,25 @@ async def overview(request: Request, user: Admin, conn: Conn, days: int = 14) ->
         "disk": uploads.disk_report(),
         "model": await stats.model_status(request.app.state.http),
         "controls": asdict(load_controls(conn)),
+        "phone_urls": _phone_urls(request.url.port or 80),
     }
+
+
+# Windows Mobile Hotspot always gives the laptop this address on its own network.
+_HOTSPOT_IP = "192.168.137.1"
+
+
+def _phone_urls(port: int) -> list[str]:
+    """Addresses phones can type. Admin pages only open on the laptop, so the browser's own
+    host is "localhost", which on a phone means the phone itself."""
+    try:
+        infos = socket.getaddrinfo(socket.gethostname(), None, socket.AF_INET)
+    except OSError:
+        return []
+    ips = {str(info[4][0]) for info in infos}
+    usable = [ip for ip in ips if not ip.startswith(("127.", "169.254."))]
+    usable.sort(key=lambda ip: (ip != _HOTSPOT_IP, ip))  # the hotspot is the demo network
+    return [f"http://{ip}:{port}" for ip in usable]
 
 
 # ---------- controls and model ----------

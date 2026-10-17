@@ -18,7 +18,7 @@ Read this first, every session. Deeper detail lives in `docs/` — read the rele
 - **Name:** RuralMinds
 - **What it does:** An offline-first learning server for rural schools. Teachers load textbook PDFs; students connect their phones to the school's local Wi-Fi (no internet) and ask questions; a small local LLM answers using RAG over the textbook, **always citing chapter and page**, and refusing when the textbook doesn't cover it.
 - **Who it's for:** Grade 8–10 students (maths + science first) in rural government schools, used in a supervised "RuralMinds hour" at school or a village study point. Teachers approve content and cached answers.
-- **Context:** Entry for MyBharat Hack for Social Cause (HSC) 2027, Kerala round. **Submission deadline: Thu 15 Oct 2026.** Judges value a *working, provably offline demo* with *measured* numbers over ambition.
+- **Context:** Entry for MyBharat Hack for Social Cause (HSC) 2027, Kerala round. **Submission deadline: Tue 27 Oct 2026** (moved from 15 Oct; see `docs/DECISIONS.md` 2026-10-17). Judges value a *working, provably offline demo* with *measured* numbers over ambition.
 - **North star:** A phone in airplane mode (Wi-Fi only) asks a textbook question and gets a correct, cited, checkable answer from a box in the room. Everything else is secondary.
 
 ## 2. Non-negotiable rules (break these and the project fails)
@@ -144,7 +144,8 @@ I'm an engineering student and still learning, and we are on a hard deadline.
 
 ## 11. Current focus
 <!-- Update as the project moves -->
-- **Now (until 15 Oct):** Phase 0 — Kerala SCERT Class 8 Social Science Part 1 in **English and Malayalam** (Malayalam via OCR) → hybrid retrieval → streamed answer with `[Sn]` citations rendered as chapter + page → refusal path + unanswered list → exact-match cache + teacher screen → measured EN vs ML eval, bench, power and recovery numbers. Day plan: `docs/SYSTEM_DESIGN.md` §4. Added 13 Oct (DECISIONS): accounts for students/teachers/admin (username + class only), teacher PDF upload with validation and power-cut-safe ingestion, admin controls (pause, language/class limits, stats).
+- **Now (17 → 27 Oct):** measurement first (v2 eval set with frozen test split, standard metrics + CIs, answer-quality rubric, server bench), then fixes, topic-less requests + creativity limits, Manglish, load control + exam-revision chips, Science Pt1 EN with tables. Order and details: DECISIONS 2026-10-17.
+- **Done by 15 Oct:** Phase 0 — Kerala SCERT Class 8 Social Science Part 1 in **English and Malayalam** (Malayalam via OCR) → hybrid retrieval → streamed answer with `[Sn]` citations rendered as chapter + page → refusal path + unanswered list → exact-match cache + teacher screen → measured EN vs ML eval, bench, power and recovery numbers. Day plan: `docs/SYSTEM_DESIGN.md` §4. Added 13 Oct (DECISIONS): accounts for students/teachers/admin (username + class only), teacher PDF upload with validation and power-cut-safe ingestion, admin controls (pause, language/class limits, stats).
 - **Next (Phase 1):** Maths + Science in English (Basic Science Pt1 first, then Maths via OCR), then Malayalam; JSON schema + SymPy + hint-first; Manglish via IndicXlit; Linux node with dnsmasq.
 - **Known risks:** Malayalam OCR quality and prefill latency, Windows hotspot without internet (fallback: Ubuntu), small-model citation compliance, SCERT textbook licence unconfirmed.
 

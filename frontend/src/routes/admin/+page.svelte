@@ -27,6 +27,8 @@
 	let notice = $state('');
 	let restarting = $state(false);
 	let slips = $state<{ username: string; password: string }[]>([]);
+	// The laptop's Wi-Fi address; this page's own host is localhost, which a phone can't reach.
+	let phoneUrl = $state('');
 	let filters = $state({ role: '', class_id: '', enabled: '', q: '' });
 	let newClass = $state({ grade: 8, section: 'A', medium: 'en' });
 	let bulk = $state({ class_id: 0, count: 30 });
@@ -45,6 +47,7 @@
 		run(async () => {
 			overview = await api.get('/api/admin/overview');
 			controls = overview.controls;
+			phoneUrl = overview.phone_urls?.[0] ?? `http://${location.host}`;
 		});
 	const loadClasses = () => run(async () => (classes = await api.get('/api/admin/classes')));
 	const loadUsers = () =>
@@ -163,6 +166,7 @@
 					<span><span class="status-dot" class:off={!model.chat}></span>{t('admin.model_chat')}: {model.chat ? t('admin.running') : t('admin.stopped')}</span>
 					<span><span class="status-dot" class:off={!model.embed}></span>{t('admin.model_embed')}: {model.embed ? t('admin.running') : t('admin.stopped')}</span>
 					{#if model.slots}<span class="tabular"><Icon name="server" size={15} />{t('admin.busy_slots', { busy: model.busy_slots, slots: model.slots })}</span>{/if}
+					{#each overview.phone_urls ?? [] as url (url)}<span><Icon name="globe" size={15} />{t('accounts.slip_site')} <b class="mono">{url}</b></span>{/each}
 				</div>
 				<p class="muted small">{t('settings.model_note')}</p>
 			</section>
@@ -286,7 +290,7 @@
 						{#each slips as slip (slip.username)}
 							<div class="slip">
 								<strong>RuralMinds</strong>
-								<span>{t('accounts.slip_site')} http://{location.host}</span>
+								<span>{t('accounts.slip_site')} {phoneUrl}</span>
 								<span>{t('login.username')}: <b class="mono">{slip.username}</b></span>
 								<span>{t('login.password')}: <b class="mono">{slip.password}</b></span>
 							</div>

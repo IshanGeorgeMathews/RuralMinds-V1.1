@@ -232,7 +232,15 @@ async def answer_stream(
         return
     search_text = await _search_text(conn, client, request)
     filters = Filters(request.medium, request.subject, request.chapter_no, request.document_id)
-    hits = await retrieve(conn, search_text, filters, CANDIDATE_POOL)
+    try:
+        hits = await retrieve(conn, search_text, filters, CANDIDATE_POOL)
+    except httpx.HTTPError:
+        # Search embeds the question; if the embedding server is down, say so instead of
+        # dropping the stream (the phone would then blame its own Wi-Fi).
+        log.exception("embedding server request failed")
+        _log(conn, request, "error", clock)
+        yield event("error", message_key="error.model")
+        return
     gate = replace(check_gate(hits), search_query=search_text)
     if not gate.passed:
         yield _refuse(conn, request, gate, clock)
