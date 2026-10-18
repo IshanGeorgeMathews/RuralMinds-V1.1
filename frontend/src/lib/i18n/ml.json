@@ -223,6 +223,8 @@
 	"unanswered.dismiss": "കഴിഞ്ഞു",
 	"unanswered.reason.gate": "പുസ്തകത്തിൽ കണ്ടില്ല",
 	"unanswered.reason.not_in_textbook": "പുസ്തകത്തിൽ ഉത്തരമില്ല",
+	"unanswered.reason.admits_missing": "പുസ്തകത്തിൽ ഇല്ലെന്ന് ഉത്തരം പറഞ്ഞു",
+	"unanswered.reason.wrong_script": "ഉത്തരം മറ്റൊരു ഭാഷയിലായിരുന്നു",
 	"unanswered.reason.no_valid_citation": "ഉത്തരത്തിന് ഉറവിടമില്ല",
 	"approved.empty": "ഇതുവരെ അംഗീകരിച്ച ഉത്തരങ്ങളില്ല. ‘AI പരീക്ഷിക്കൂ’ എന്നതിൽ നല്ല ഉത്തരങ്ങൾ അംഗീകരിക്കൂ.",
 	"approved.remove": "നീക്കം ചെയ്യൂ",

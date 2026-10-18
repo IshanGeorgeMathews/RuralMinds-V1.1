@@ -134,6 +134,8 @@
 	"unanswered.dismiss": "Done",
 	"unanswered.reason.gate": "Not found in the book",
 	"unanswered.reason.not_in_textbook": "Book does not answer it",
+	"unanswered.reason.admits_missing": "Answer said the book lacks it",
+	"unanswered.reason.wrong_script": "Answer was in another language",
 	"unanswered.reason.no_valid_citation": "Answer had no source",
 	"approved.empty": "No approved answers yet. Approve good answers in “Try the AI”.",
 	"approved.remove": "Remove",

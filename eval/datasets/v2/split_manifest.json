@@ -1,0 +1,53 @@
+{
+  "seed": "ruralminds-eval-v2",
+  "dev_share": 0.3,
+  "forced_dev": [
+    "intent-037",
+    "ss-en-001",
+    "ss-en-007",
+    "ss-en-013",
+    "ss-en-015",
+    "ss-en-020",
+    "ss-en-021",
+    "ss-en-035",
+    "ss-en-040",
+    "ss-en-077"
+  ],
+  "files": {
+    "eval/datasets/v2/ss_en.jsonl": {
+      "dev": 31,
+      "test": 72,
+      "test_sha256": "3fd3c3b2ed14a6bbffdb9cdc3802f30fd5cf6579df91b75653908082844e0b2a"
+    },
+    "eval/datasets/v2/sci_en.jsonl": {
+      "dev": 21,
+      "test": 50,
+      "test_sha256": "069d3973dbf595e66da4c142c568c1cd7c8c271c5bc45f0eb5429956fd3a0422"
+    },
+    "eval/datasets/v2/ss_ml.jsonl": {
+      "dev": 14,
+      "test": 38,
+      "test_sha256": "91d8ec7438402258db9e4385448dd86d11203165365c183e0cdd7513b7bc6d8b"
+    },
+    "eval/datasets/v2/manglish.jsonl": {
+      "dev": 16,
+      "test": 24,
+      "test_sha256": "59770a2584113cdcb0a2cbdb1dcaea8b064047c13e4c10f66907a762d87e4176"
+    },
+    "eval/datasets/v2/refusal.jsonl": {
+      "dev": 9,
+      "test": 24,
+      "test_sha256": "c0164dd62c7718448f9bbc0f30ae77ec407f20cf9445669d056c5f9087ef9dba"
+    },
+    "eval/datasets/v2/intents.jsonl": {
+      "dev": 11,
+      "test": 26,
+      "test_sha256": "0f4334debb4f467d460d403eb283f6ce5f21b3e0cc65eab1a55d1c5690954bb3"
+    },
+    "data/eval-private/refusal_indicquest.jsonl": {
+      "dev": 5,
+      "test": 13,
+      "test_sha256": "ca96e455be132357fa0673bf7d0d905c8cf6cdc3307c0012a2ab30c2aa71ed2b"
+    }
+  }
+}

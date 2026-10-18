@@ -7,6 +7,7 @@ target-version = "py312"
 
 [tool.pytest.ini_options]
 testpaths = ["apps/api/tests"]
+pythonpath = ["."]  # so tests can import the eval package from the repo root
 asyncio_mode = "auto"
 
 

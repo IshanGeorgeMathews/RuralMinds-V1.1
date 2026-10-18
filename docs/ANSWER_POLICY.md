@@ -35,6 +35,7 @@ When the best retrieval score is below `REFUSAL_THRESHOLD`, or no retrieved chun
 > "I couldn't find this in your <subject> textbook for Class <n>. Try choosing a different chapter, or ask your teacher. I've saved this question for your teacher."
 - Log the question (no student id) to the `unanswered` table → teacher dashboard.
 - Never answer from general model knowledge as if it were the textbook.
+- **Time-sensitive questions are refused** ("Who is the current President / Chief Minister / Prime Minister?", "this year's…"): office holders and current figures change, and the book only records what was true when it was printed. Refuse even when the book asks the same question as an activity, and even when the model "knows" an answer (18 Oct).
 
 ## 5. Maths safety
 - The model returns `expression` and `final_number` in JSON when there is arithmetic.

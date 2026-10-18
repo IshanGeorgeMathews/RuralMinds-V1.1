@@ -133,3 +133,34 @@ def test_prompt_files_exist_with_version_line(language: str) -> None:
 
     assert "NOT_IN_TEXTBOOK" in system_prompt(language)
     assert not system_prompt(language).startswith("version:")
+
+
+# ---------- layer 2: each refusal cause is counted separately ----------
+def _finish_with(raw_text: str, language: str = "en", debug: bool = False) -> dict:
+    from ruralminds.answer import Clock, _finish
+    from ruralminds.db import connect, init_schema
+
+    conn = connect(":memory:")
+    init_schema(conn)
+    request = AskRequest("q", language, language, document_id=1, debug=debug)
+    return _finish(conn, request, check_gate([_hit(1)]), [_hit(1)], raw_text, Clock())
+
+
+@pytest.mark.parametrize(
+    ("raw_text", "language", "reason"),
+    [
+        (SENTINEL, "en", "not_in_textbook"),
+        ("The sources do not mention the boiling point of water.", "en", "admits_missing"),
+        ("हड़प्पा के नगरों में ढकी हुई नालियाँ थीं और सड़कें सीधी थीं [S1].", "ml", "wrong_script"),
+        ("Harappan cities had covered drains.", "en", "no_valid_citation"),
+    ],
+)
+def test_each_refusal_cause_has_its_own_reason(raw_text: str, language: str, reason: str) -> None:
+    result = _finish_with(raw_text, language)
+    assert result["event"] == "refused" and result["data"]["reason"] == reason
+
+
+def test_refused_text_goes_to_the_eval_never_to_phones() -> None:
+    hindi = "हड़प्पा के नगरों में ढकी हुई नालियाँ थीं और सड़कें सीधी थीं [S1]."
+    assert "raw_text" not in _finish_with(hindi, "ml")["data"]
+    assert _finish_with(hindi, "ml", debug=True)["data"]["raw_text"] == hindi

@@ -61,6 +61,9 @@ class AskRequest:
     class_id: int = 0  # only for class-level counts; 0 = teacher or eval. Never a student id.
     use_cache: bool = True  # the eval turns it off so it measures the model, not the cache
     mode: str | None = None  # a quick-action chip; None = detect from the question
+    # The eval keeps a refused answer's model text to see why it was refused (e.g. Hindi);
+    # phones never receive it.
+    debug: bool = False
 
 
 @dataclass
@@ -79,7 +82,8 @@ class Gate:
     top_rrf: float | None
     candidates: int
     passed: bool
-    reason: str | None = None  # gate | not_in_textbook | no_valid_citation | model_error
+    # gate | not_in_textbook (model's sentinel) | admits_missing | wrong_script | no_valid_citation
+    reason: str | None = None
     search_query: str | None = None  # what was searched (after removing request words / rewriting)
     # Every candidate's location and ranks, so the eval can compute recall@k from the event.
     retrieved: list[dict[str, object]] = field(default_factory=list)
@@ -382,21 +386,16 @@ def _finish(
     clock: Clock,
 ) -> dict[str, object]:
     """Layer 2: the model's own "not in the sources" signal, then marker validation."""
-    if SENTINEL in raw_text:
-        gate = replace(gate, passed=False, reason="not_in_textbook")
-        return _refuse(conn, request, gate, clock)
     parts = tutor.split_sections(raw_text)
-    if tutor.admits_missing(parts.explanation) or tutor.wrong_script(
-        parts.explanation, request.language
-    ):
-        gate = replace(gate, passed=False, reason="not_in_textbook")
-        return _refuse(conn, request, gate, clock)
+    reason = _model_refusal(raw_text, parts, request.language)
+    if reason is not None:
+        return _refuse(conn, request, replace(gate, passed=False, reason=reason), clock, raw_text)
     text, cited = validate_markers(parts.explanation, len(sources))
     answers, cited_in_answers = validate_markers(parts.answers, len(sources))
     cited = list(dict.fromkeys(cited + cited_in_answers))
     if not cited:
         gate = replace(gate, passed=False, reason="no_valid_citation")
-        return _refuse(conn, request, gate, clock)
+        return _refuse(conn, request, gate, clock, raw_text)
     _log(conn, request, "answered", clock)
     return event(
         "done",
@@ -414,13 +413,37 @@ def _finish(
     )
 
 
+def _model_refusal(raw_text: str, parts: tutor.Sections, language: str) -> str | None:
+    """Why the model's answer must not be shown, kept apart so each cause can be counted:
+    its own sentinel, an admission that the sources lack the answer (the rest would be its own
+    knowledge), or an answer mostly in another script (e.g. Hindi for a Malayalam question)."""
+    if SENTINEL in raw_text:
+        return "not_in_textbook"
+    if tutor.admits_missing(parts.explanation):
+        return "admits_missing"
+    if tutor.wrong_script(parts.explanation, language):
+        return "wrong_script"
+    return None
+
+
 def _refuse(
-    conn: sqlite3.Connection, request: AskRequest, gate: Gate, clock: Clock
+    conn: sqlite3.Connection,
+    request: AskRequest,
+    gate: Gate,
+    clock: Clock,
+    raw_text: str | None = None,
 ) -> dict[str, object]:
     if request.class_id:  # students only: teacher tests and the eval stay out of the inbox
         _save_unanswered(conn, request, gate)
     _log(conn, request, "refused", clock)
-    return event("refused", reason=gate.reason, message_key="refusal.not_found", gate=asdict(gate))
+    extra = {"raw_text": raw_text} if request.debug and raw_text else {}
+    return event(
+        "refused",
+        reason=gate.reason,
+        message_key="refusal.not_found",
+        gate=asdict(gate),
+        **extra,
+    )
 
 
 def _save_unanswered(conn: sqlite3.Connection, request: AskRequest, gate: Gate) -> None:

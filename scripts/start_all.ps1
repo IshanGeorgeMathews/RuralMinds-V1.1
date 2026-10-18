@@ -81,7 +81,9 @@ Start-LlamaServer 'llm' ([uri](Get-Setting $config 'LLM_URL' 'http://127.0.0.1:8
     '-m', (Get-Setting $config 'CHAT_MODEL_PATH' ''), '-ngl', (Get-Setting $config 'LLM_GPU_LAYERS' '0'),
     '-c', (Get-Setting $config 'LLM_CTX' '8192'), '-np', (Get-Setting $config 'LLM_PARALLEL' '2'),
     '-t', $threads, '-ctk', $kvType, '-ctv', $kvType, '-fa', (Get-Setting $config 'LLM_FLASH_ATTN' 'auto'),
-    '--cache-reuse', '256', '--reasoning', 'off', '--no-mmproj'
+    '--cache-reuse', '256', '--reasoning', 'off', '--no-mmproj',
+    # Token counters at 127.0.0.1:8080/metrics for eval/bench.py (decode and prompt tokens/s).
+    '--metrics'
 )
 
 if ($ModelsOnly) { return }
