@@ -186,3 +186,44 @@ def test_third_script_catches_one_stray_word_only() -> None:
     assert tutor.third_script("രാജ്യസഭയും ലോകസഭയും ഈ പാർലമെന്റിനെ 구성 ചെയ്യുന്നു")
     assert tutor.third_script("ഇത് కలగ ആണ്")  # Telugu
     assert not tutor.third_script("ഹാരപ്പ (Harappa) BCE 2600 – café")
+
+
+def test_notes_wait_while_a_student_answer_is_generating() -> None:
+    import asyncio
+
+    import httpx
+
+    from ruralminds.notes import wait_for_idle_model
+
+    replies = iter(
+        [[{"is_processing": True}, {"is_processing": False}], [{"is_processing": False}] * 2]
+    )
+    calls = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        calls.append(request.url.path)
+        return httpx.Response(200, json=next(replies))
+
+    async def scenario() -> None:
+        async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
+            await wait_for_idle_model(client, poll_s=0)
+
+    asyncio.run(scenario())
+    assert calls == ["/slots", "/slots"]  # waited once, then went ahead
+
+
+def test_notes_go_ahead_when_slots_cannot_be_read() -> None:
+    import asyncio
+
+    import httpx
+
+    from ruralminds.notes import wait_for_idle_model
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        raise httpx.ConnectError("no server")
+
+    async def scenario() -> None:
+        async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
+            await wait_for_idle_model(client, poll_s=0)
+
+    asyncio.run(scenario())

@@ -27,6 +27,7 @@ export type Turn = {
 	language: string;
 	status: 'searching' | 'queued' | 'writing' | 'done' | 'notes' | 'refused' | 'blocked' | 'error' | 'stopped';
 	queuePosition?: number;
+	queueEta?: number | null; // seconds, from the measured answer rate; null = not known yet
 	raw: string;
 	text: string;
 	example: string;
@@ -177,6 +178,7 @@ function apply(turn: Turn, event: string, data: Record<string, any>): void {
 	if (event === 'queued') {
 		turn.status = 'queued';
 		turn.queuePosition = data.position;
+		turn.queueEta = data.eta_s ?? null;
 	} else if (event === 'token') {
 		turn.status = 'writing';
 		turn.raw += data.text;

@@ -50,7 +50,12 @@ class Settings(BaseSettings):
     # best cosine similarity is below this. Placeholder: calibrate on the eval dev split.
     refusal_threshold: float = 0.5
     llm_parallel: int = 2  # must match llama-server -np; sizes the answer queue
-    max_queue: int = 30
+    max_queue: int = 30  # hard cap on phones waiting in line
+    # Turn a question away when its predicted wait is longer (the estimate comes from the
+    # measured gap between finished answers; bench 19 Oct: ~3 answers/min on the demo laptop).
+    max_wait_s: int = 180
+    queue_update_s: float = 3.0  # how often a waiting phone gets its live place in line
+    one_question_ttl_s: int = 300  # backstop for the one-question-per-phone guard
     max_question_chars: int = 500
     history_turns: int = 2
 

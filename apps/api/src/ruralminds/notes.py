@@ -106,6 +106,21 @@ def parse_points(reply: str, group: list[ChunkText]) -> list[dict[str, object]]:
     return points
 
 
+async def wait_for_idle_model(client: httpx.AsyncClient, poll_s: float = 2.0) -> None:
+    """Students first: before each model call, wait until no llama-server slot is busy.
+    Notes run in their own process and cannot join the API's answer queue, so this is how
+    they step aside (W5, 19 Oct). Known gap: while a notes call runs, the API still counts
+    that slot as free; llama-server then queues the student's request itself, briefly."""
+    while True:
+        try:
+            slots = (await client.get(f"{settings.llm_url}/slots", timeout=5)).json()
+        except (httpx.HTTPError, ValueError):
+            return  # cannot tell (e.g. /slots disabled): don't block notes forever
+        if not any(slot.get("is_processing") for slot in slots):
+            return
+        await asyncio.sleep(poll_s)
+
+
 async def chapter_points(
     client: httpx.AsyncClient, chunks: list[ChunkText], language: str
 ) -> list[dict[str, object]]:
@@ -119,6 +134,7 @@ async def chapter_points(
                 "content": f"Language: {_LANGUAGE[language]}\n\nSources:\n{sources}",
             },
         ]
+        await wait_for_idle_model(client)
         points.extend(parse_points(await complete(messages, client, max_tokens=320), group))
     return points
 
@@ -131,6 +147,7 @@ async def overview(
         {"role": "system", "content": load_prompt("notes_overview_v1")},
         {"role": "user", "content": f"Language: {_LANGUAGE[language]}\n\nKey points:\n{listing}"},
     ]
+    await wait_for_idle_model(client)
     return normalize(_MARKER.sub("", await complete(messages, client, max_tokens=260))).strip()
 
 

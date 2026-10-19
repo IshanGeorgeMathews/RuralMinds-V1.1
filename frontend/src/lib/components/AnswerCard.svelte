@@ -27,6 +27,13 @@
 	let copied = $state(false);
 
 	const working = $derived(['searching', 'queued', 'writing'].includes(turn.status));
+
+	// Rounded on purpose: the estimate comes from recent answer times, not a promise.
+	function queueText(n: number, eta: number | null | undefined): string {
+		if (eta == null) return t('step.queued', { n });
+		if (eta < 60) return t('step.queued_soon', { n });
+		return t('step.queued_eta', { n, m: Math.round(eta / 60) });
+	}
 	const failed = $derived(['refused', 'blocked', 'error'].includes(turn.status));
 	const approved = $derived(turn.label === 'teacher_approved');
 	// While streaming, split the raw text the same way the server will.
@@ -90,7 +97,7 @@
 			{#if turn.status === 'searching' || turn.status === 'queued'}
 				<div class="progress" aria-live="polite">
 					{#if turn.status === 'queued'}
-						<p class="queue"><Icon name="users" size={16} />{t('step.queued', { n: turn.queuePosition ?? 1 })}</p>
+						<p class="queue"><Icon name="users" size={16} />{queueText(turn.queuePosition ?? 1, turn.queueEta)}</p>
 					{/if}
 					<ol class="steps">
 						<li class:on={turn.status === 'searching'}>

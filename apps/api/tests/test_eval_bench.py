@@ -20,6 +20,7 @@ def test_goodput_counts_fast_answers_and_fast_refusals_only() -> None:
     ]
     level = summarise_level(results, wall=60.0, slo=15.0)
     assert level["goodput"] == 0.5
+    assert level["shed"] == 1 and level["goodput_admitted"] == round(2 / 3, 3)
     assert level["answers_per_min"] == 2.0
     assert level["events"] == {"busy": 1, "done": 2, "refused": 1}
     assert level["ttft_s"]["p50"] == 4.0

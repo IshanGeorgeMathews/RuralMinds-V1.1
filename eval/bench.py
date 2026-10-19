@@ -295,6 +295,7 @@ async def run_open(
 
 def summarise_level(results: list[dict], wall: float, slo: float) -> dict:
     answered = [r for r in results if r["event"] in ANSWER_EVENTS]
+    admitted = [r for r in results if r["event"] != "busy"]
     good = [
         r
         for r in results
@@ -310,6 +311,10 @@ def summarise_level(results: list[dict], wall: float, slo: float) -> dict:
         },
         "answers_per_min": round(len(answered) / wall * 60, 2),
         "goodput": round(len(good) / len(results), 3) if results else None,
+        # Shedding (W5) turns some questions away at once: report it apart, and goodput over
+        # the questions that were let in, or shedding would read as a quality drop.
+        "shed": sum(r["event"] == "busy" for r in results),
+        "goodput_admitted": round(len(good) / len(admitted), 3) if admitted else None,
         "ttft_s": {f"p{p}": percentile(ttfts, p / 100) for p in (50, 95, 99)},
         "total_s": {f"p{p}": percentile(totals, p / 100) for p in (50, 95, 99)},
         "wall_s": round(wall, 1),

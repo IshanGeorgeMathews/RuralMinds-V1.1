@@ -15,6 +15,7 @@ import logging
 import re
 import sqlite3
 import time
+from collections import deque
 from collections.abc import AsyncIterator
 from dataclasses import asdict, dataclass, field, replace
 
@@ -195,29 +196,86 @@ def citation(number: int, hit: RetrievedChunk) -> dict[str, object]:
     }
 
 
+class Ticket:
+    """One phone's place in the answer queue."""
+
+    def __init__(self) -> None:
+        self.admitted = asyncio.Event()
+
+
 class AnswerQueue:
-    """Admits as many answers as llama-server has slots; the rest wait in line (bounded)."""
+    """Admits as many answers as llama-server has slots; the rest wait in line, first come
+    first served. A finished answer hands its slot straight to the next ticket, and `leave`
+    is the single exit for every path (answered, refused, phone gone while waiting or after
+    admission), so a slot can never leak (W5, 19 Oct)."""
 
-    def __init__(self, slots: int, max_waiting: int) -> None:
-        self._slots = asyncio.Semaphore(slots)
+    def __init__(self, slots: int, max_waiting: int, max_wait_s: float | None = None) -> None:
+        self._free = slots
+        self._line: deque[Ticket] = deque()
         self._max_waiting = max_waiting
-        self.waiting = 0
+        self._max_wait_s = max_wait_s
+        # Seconds between finished answers while others waited: the measured service rate.
+        # Two slots share one GPU (bench 19 Oct), so slots x answer time would overstate it.
+        self._gaps: deque[float] = deque(maxlen=8)
+        self._last_busy_finish: float | None = None
 
-    def full(self) -> bool:
-        return self.waiting >= self._max_waiting
-
-    async def __aenter__(self) -> None:
-        self.waiting += 1
-        try:
-            await self._slots.acquire()
-        finally:
-            self.waiting -= 1
-
-    async def __aexit__(self, *exc_info: object) -> None:
-        self._slots.release()
+    @property
+    def waiting(self) -> int:
+        return len(self._line)
 
     def busy(self) -> bool:
-        return self._slots.locked()
+        return self._free == 0
+
+    def position(self, ticket: Ticket) -> int:
+        return self._line.index(ticket) + 1 if ticket in self._line else 0
+
+    def eta_s(self, position: int) -> int | None:
+        """Predicted wait for a place in line; None until a few answers were timed."""
+        if position <= 0 or len(self._gaps) < 3:
+            return None
+        return round(position * sum(self._gaps) / len(self._gaps))
+
+    def full(self) -> bool:
+        """Turn a new question away: the line is at its cap, or the predicted wait for one
+        more place exceeds max_wait_s (a student would rather read notes than wait longer)."""
+        if self.waiting >= self._max_waiting:
+            return True
+        eta = self.eta_s(self.waiting + 1) if self.busy() else None
+        return self._max_wait_s is not None and eta is not None and eta > self._max_wait_s
+
+    def join(self) -> Ticket:
+        ticket = Ticket()
+        if self._free > 0 and not self._line:
+            self._free -= 1
+            ticket.admitted.set()
+        else:
+            self._line.append(ticket)
+        return ticket
+
+    async def wait(self, ticket: Ticket, seconds: float) -> bool:
+        """Wait up to `seconds` for a slot; True once admitted. Holds nothing while waiting."""
+        try:
+            await asyncio.wait_for(ticket.admitted.wait(), seconds)
+        except TimeoutError:
+            pass
+        return ticket.admitted.is_set()
+
+    def leave(self, ticket: Ticket) -> None:
+        if not ticket.admitted.is_set():
+            if ticket in self._line:
+                self._line.remove(ticket)
+            return
+        self._time_finish()
+        if self._line:
+            self._line.popleft().admitted.set()  # hand the slot over directly
+        else:
+            self._free += 1
+
+    def _time_finish(self) -> None:
+        now = time.perf_counter()
+        if self._line and self._last_busy_finish is not None:
+            self._gaps.append(now - self._last_busy_finish)
+        self._last_busy_finish = now if self._line else None
 
 
 async def answer_stream(
@@ -243,42 +301,85 @@ async def answer_stream(
         gate = Gate(None, False, None, 0, passed=False, reason="time_sensitive")
         yield _refuse(conn, request, gate, clock, message_key="refusal.time_sensitive")
         return
-    search_text = await _search_text(conn, client, request)
-    filters = Filters(request.medium, request.subject, request.chapter_no, request.document_id)
-    try:
-        hits = await retrieve(conn, search_text, filters, CANDIDATE_POOL)
-    except httpx.HTTPError:
-        # Search embeds the question; if the embedding server is down, say so instead of
-        # dropping the stream (the phone would then blame its own Wi-Fi).
-        log.exception("embedding server request failed")
-        _log(conn, request, "error", clock)
-        yield event("error", message_key="error.model")
-        return
+    async for item in _answer_from_book(conn, client, queue, request, clock):
+        yield item
+
+
+async def _answer_from_book(
+    conn: sqlite3.Connection,
+    client: httpx.AsyncClient,
+    queue: AnswerQueue,
+    request: AskRequest,
+    clock: Clock,
+) -> AsyncIterator[dict[str, object]]:
+    """Search, gate, then generate. The queue slot is taken just before the first model call:
+    before the search rewrite for a question in another language (the rewrite is a model call
+    too), otherwise after the gate, so refusals stay instant under load. The finally block is
+    the one exit that gives the place in line or the slot back, whatever happens."""
     rewritten = tutor.question_language(request.question) != request.medium
-    gate = replace(check_gate(hits, rewritten), search_query=search_text)
-    if not gate.passed:
-        yield _refuse(conn, request, gate, clock)
-        return
-    sources = pack_sources(hits, settings.max_context_tokens)
-    if queue.full():
-        yield event("busy", message_key="error.busy")
-        return
-    if queue.busy():
-        yield event("queued", position=queue.waiting + 1)
-    parts: list[str] = []
-    async with queue:
+    ticket: Ticket | None = None
+    try:
+        if rewritten:
+            ticket = queue.join() if not queue.full() else None
+            if ticket is None:
+                yield event("busy", message_key="error.busy")
+                return
+            async for item in _wait_for_slot(queue, ticket):
+                yield item
+        search_text = await _search_text(conn, client, request)
+        filters = Filters(request.medium, request.subject, request.chapter_no, request.document_id)
         try:
-            messages = build_messages(request, sources)
-            stream = chat_stream(messages, client, tutor.MAX_TOKENS.get(request.mode or "", None))
-            async for piece in _release_tokens(stream, parts):
-                clock.first_token = clock.first_token or time.perf_counter()
-                yield event("token", text=piece)
+            hits = await retrieve(conn, search_text, filters, CANDIDATE_POOL)
         except httpx.HTTPError:
-            log.exception("llama-server request failed")
+            # Search embeds the question; if the embedding server is down, say so instead of
+            # dropping the stream (the phone would then blame its own Wi-Fi).
+            log.exception("embedding server request failed")
             _log(conn, request, "error", clock)
             yield event("error", message_key="error.model")
             return
-    yield _finish(conn, request, gate, sources, "".join(parts), clock)
+        gate = replace(check_gate(hits, rewritten), search_query=search_text)
+        if not gate.passed:
+            final = _refuse(conn, request, gate, clock)
+        else:
+            if ticket is None:
+                ticket = queue.join() if not queue.full() else None
+                if ticket is None:
+                    yield event("busy", message_key="error.busy")
+                    return
+                async for item in _wait_for_slot(queue, ticket):
+                    yield item
+            sources = pack_sources(hits, settings.max_context_tokens)
+            parts: list[str] = []
+            try:
+                async for piece in _release_tokens(_chat(client, request, sources), parts):
+                    clock.first_token = clock.first_token or time.perf_counter()
+                    yield event("token", text=piece)
+            except httpx.HTTPError:
+                log.exception("llama-server request failed")
+                _log(conn, request, "error", clock)
+                yield event("error", message_key="error.model")
+                return
+            final = _finish(conn, request, gate, sources, "".join(parts), clock)
+    finally:
+        if ticket is not None:
+            queue.leave(ticket)
+    yield final  # after the slot is free: a slow phone never holds it
+
+
+async def _wait_for_slot(queue: AnswerQueue, ticket: Ticket) -> AsyncIterator[dict[str, object]]:
+    """Every 3 s while waiting: the live place in line and a wait estimate (also keeps the
+    phone's connection alive). Nothing is held while waiting."""
+    while not ticket.admitted.is_set():
+        position = queue.position(ticket)
+        yield event("queued", position=position, eta_s=queue.eta_s(position))
+        await queue.wait(ticket, settings.queue_update_s)
+
+
+def _chat(
+    client: httpx.AsyncClient, request: AskRequest, sources: list[RetrievedChunk]
+) -> AsyncIterator[str]:
+    messages = build_messages(request, sources)
+    return chat_stream(messages, client, tutor.MAX_TOKENS.get(request.mode or "", None))
 
 
 def _with_mode(request: AskRequest) -> AskRequest:

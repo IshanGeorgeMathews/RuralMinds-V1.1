@@ -119,3 +119,38 @@ def test_form_posts_are_rejected(client) -> None:
 
 def test_android_connectivity_check(client) -> None:
     assert client.get("/generate_204").status_code == 204
+
+
+def test_one_question_in_flight_per_phone_with_a_backstop(monkeypatch) -> None:
+    from ruralminds import api_common
+
+    asking: dict[str, float] = {}
+    assert api_common._start_asking(asking, "phone-a")
+    assert not api_common._start_asking(asking, "phone-a")  # second question while waiting
+    assert api_common._start_asking(asking, "phone-b")  # other phones are unaffected
+    asking["phone-a"] -= api_common.settings.one_question_ttl_s + 1  # cleanup never ran
+    assert api_common._start_asking(asking, "phone-a")
+
+
+def test_closing_the_response_frees_the_phone_and_closes_the_answer() -> None:
+    import asyncio
+
+    from ruralminds import api_common
+
+    closed = []
+
+    async def answer():
+        try:
+            yield {"event": "queued", "data": {"position": 1}}
+            yield {"event": "token", "data": {"text": "never sent"}}
+        finally:
+            closed.append(True)
+
+    async def scenario() -> dict[str, float]:
+        asking = {"phone-a": 0.0}
+        events = api_common._closing(answer(), asking, "phone-a")
+        await events.__anext__()
+        await events.aclose()  # the phone went away mid-wait
+        return asking
+
+    assert asyncio.run(scenario()) == {} and closed == [True]

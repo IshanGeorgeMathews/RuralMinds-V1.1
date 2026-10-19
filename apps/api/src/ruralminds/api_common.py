@@ -1,16 +1,20 @@
 """Pieces shared by the student, teacher and admin routers."""
 
+import hashlib
 import json
 import sqlite3
+import time
 from collections.abc import AsyncIterator
+from contextlib import aclosing
 from typing import Literal
 
 from fastapi import HTTPException, Request
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
-from . import tutor
-from .answer import AskRequest, Turn, answer_stream
+from . import auth, tutor
+from .answer import AskRequest, Turn, answer_stream, event
+from .config import settings
 
 
 class TurnIn(BaseModel):
@@ -60,12 +64,45 @@ def stream_answer(
         mode=body.mode,
     )
     state = request.app.state
-    events: AsyncIterator[dict[str, object]] = answer_stream(state.db, state.http, state.queue, ask)
+    key = hashlib.sha256((request.cookies.get(auth.COOKIE) or "").encode()).hexdigest()
+    if not _start_asking(state.asking, key):
+        events = _single(event("busy", message_key="error.one_at_a_time"))
+    else:
+        events = _closing(answer_stream(state.db, state.http, state.queue, ask), state.asking, key)
     return StreamingResponse(
         (_sse(item) async for item in events),
         media_type="text/event-stream",
         headers={"Cache-Control": "no-store", "X-Accel-Buffering": "no"},
     )
+
+
+def _start_asking(asking: dict[str, float], key: str) -> bool:
+    """One question in flight per signed-in phone, so one phone cannot fill the line (D5).
+    In memory, keyed by a hash of the session token, never stored. The TTL is a backstop:
+    a stream that never ran its cleanup cannot lock a student out for long."""
+    now = time.monotonic()
+    started = asking.get(key)
+    if started is not None and now - started < settings.one_question_ttl_s:
+        return False
+    asking[key] = now
+    return True
+
+
+async def _closing(
+    events: AsyncIterator[dict[str, object]], asking: dict[str, float], key: str
+) -> AsyncIterator[dict[str, object]]:
+    """Close the answer stream whenever the response ends (phone gone included), so its
+    queue place or slot is given back at once, not when the garbage collector gets to it."""
+    async with aclosing(events) as stream:
+        try:
+            async for item in stream:
+                yield item
+        finally:
+            asking.pop(key, None)
+
+
+async def _single(item: dict[str, object]) -> AsyncIterator[dict[str, object]]:
+    yield item
 
 
 def chapters(conn: sqlite3.Connection, doc_id: int) -> list[dict[str, object]]:

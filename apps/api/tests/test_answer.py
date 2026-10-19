@@ -119,19 +119,85 @@ def test_normal_answer_streams_from_first_safe_piece() -> None:
 
 
 # ---------- queue ----------
-def test_queue_counts_waiters_and_caps_them() -> None:
-    async def scenario() -> tuple[int, bool]:
-        queue = AnswerQueue(slots=1, max_waiting=1)
-        await queue.__aenter__()
-        waiter = asyncio.create_task(queue.__aenter__())
-        await asyncio.sleep(0)
-        seen = (queue.waiting, queue.full())
-        await queue.__aexit__(None, None, None)
-        await waiter
-        await queue.__aexit__(None, None, None)
-        return seen
+def test_queue_is_first_come_first_served_with_direct_handoff() -> None:
+    async def scenario() -> list[int]:
+        queue = AnswerQueue(slots=1, max_waiting=5)
+        first, second, third = queue.join(), queue.join(), queue.join()
+        assert first.admitted.is_set() and not second.admitted.is_set()
+        positions = [queue.position(second), queue.position(third)]
+        queue.leave(first)  # the slot goes straight to the next in line
+        assert second.admitted.is_set() and queue.position(third) == 1
+        queue.leave(second)
+        queue.leave(third)
+        return positions + [queue.waiting, int(queue.busy())]
 
-    assert asyncio.run(scenario()) == (1, True)
+    assert asyncio.run(scenario()) == [1, 2, 0, 0]
+
+
+def test_phone_gone_while_waiting_leaves_the_line_and_keeps_the_slot_count() -> None:
+    async def scenario() -> None:
+        queue = AnswerQueue(slots=1, max_waiting=5)
+        holder, gone, behind = queue.join(), queue.join(), queue.join()
+        queue.leave(gone)  # disconnected before its turn
+        assert queue.position(behind) == 1 and queue.waiting == 1
+        queue.leave(holder)
+        assert behind.admitted.is_set()
+        queue.leave(behind)
+        assert not queue.busy()  # one slot, free again: nothing leaked
+
+    asyncio.run(scenario())
+
+
+def test_slot_handed_to_a_phone_that_is_gone_comes_back() -> None:
+    async def scenario() -> None:
+        queue = AnswerQueue(slots=1, max_waiting=5)
+        holder, gone = queue.join(), queue.join()
+        queue.leave(holder)  # hands over to `gone`, which never uses it
+        assert gone.admitted.is_set() and queue.busy()
+        queue.leave(gone)
+        assert not queue.busy()
+
+    asyncio.run(scenario())
+
+
+def test_queue_turns_away_at_the_cap_and_on_a_long_predicted_wait() -> None:
+    async def scenario() -> None:
+        queue = AnswerQueue(slots=1, max_waiting=2, max_wait_s=60)
+        holder = queue.join()
+        assert not queue.full() and queue.eta_s(1) is None  # no timings yet: no estimate
+        queue.join(), queue.join()
+        assert queue.full()  # the cap
+        queue._gaps.extend([40.0, 40.0, 40.0])  # answers finishing 40 s apart
+        assert queue.eta_s(1) == 40
+        queue._max_waiting = 10
+        assert queue.full()  # a third place would wait ~120 s > 60 s
+        queue.leave(holder)
+
+    asyncio.run(scenario())
+
+
+def test_closing_the_stream_while_waiting_gives_the_place_back(monkeypatch) -> None:
+    from ruralminds import answer
+
+    async def never_called(*args, **kwargs):  # pragma: no cover - must not be reached
+        raise AssertionError("searched without a slot")
+
+    monkeypatch.setattr(answer, "_search_text", never_called)
+    monkeypatch.setattr(settings, "queue_update_s", 0.01)
+
+    async def scenario() -> None:
+        queue = AnswerQueue(slots=1, max_waiting=5)
+        holder = queue.join()
+        request = AskRequest("ഹാരപ്പ എന്താണ്?", "ml", "en")  # Malayalam on an English book
+        stream = answer._answer_from_book(None, None, queue, request, answer.Clock())
+        first = await stream.__anext__()
+        assert first["event"] == "queued" and first["data"]["position"] == 1
+        await stream.aclose()  # the phone went away
+        assert queue.waiting == 0
+        queue.leave(holder)
+        assert not queue.busy()
+
+    asyncio.run(scenario())
 
 
 @pytest.mark.parametrize("language", ["en", "ml"])
