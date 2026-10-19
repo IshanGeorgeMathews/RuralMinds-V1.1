@@ -220,3 +220,53 @@ CREATE TABLE IF NOT EXISTS answer_log (
     total_ms      INTEGER
 );
 CREATE INDEX IF NOT EXISTS idx_answer_log_day ON answer_log(day, class_id);
+
+-- Revision question bank (v4). Per book and chapter, not per exam: every class that uses the
+-- book shares it, and an approved question stays valid for the next exam on that chapter.
+-- A book replaced by a new version gets a new sha256, and its old answers stop being served.
+CREATE TABLE IF NOT EXISTS revision_questions (
+    id            INTEGER PRIMARY KEY,
+    document_id   INTEGER NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
+    doc_sha256    TEXT NOT NULL,              -- book version the answer was checked against
+    chapter_no    INTEGER NOT NULL,
+    language      TEXT NOT NULL,              -- the book's medium
+    question      TEXT NOT NULL,
+    normalised_q  TEXT NOT NULL,
+    source        TEXT NOT NULL CHECK (source IN ('drafted','teacher')),
+    -- pending: waiting for the model | draft: answered, waiting for a teacher |
+    -- not_in_book: the pipeline refused it | failed: model error or server busy (retry)
+    status        TEXT NOT NULL DEFAULT 'pending'
+                  CHECK (status IN ('pending','draft','approved','rejected','not_in_book','failed')),
+    answer_json   TEXT,                       -- the answer event: text, citations, example...
+    -- generated: as the pipeline wrote it | edited: teacher reworded it, citations kept |
+    -- written: the teacher's own answer, no page citation (DECISIONS 20 Oct)
+    answer_kind   TEXT CHECK (answer_kind IN ('generated','edited','written')),
+    created_by    INTEGER REFERENCES users(id) ON DELETE SET NULL,  -- staff only
+    approved_by   INTEGER REFERENCES users(id) ON DELETE SET NULL,
+    created_at    TEXT NOT NULL DEFAULT (datetime('now')),
+    updated_at    TEXT NOT NULL DEFAULT (datetime('now')),
+    UNIQUE (document_id, chapter_no, normalised_q)
+);
+CREATE INDEX IF NOT EXISTS idx_revision_book ON revision_questions(document_id, chapter_no, status);
+
+-- An exam: which classes revise which chapters of one book, and when. Chips show from
+-- visible_from until the end of exam_on (server date). Two classes on different books (e.g.
+-- English and Malayalam medium) need two portions: they have different question banks.
+CREATE TABLE IF NOT EXISTS exam_portions (
+    id                 INTEGER PRIMARY KEY,
+    title              TEXT NOT NULL,
+    document_id        INTEGER NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
+    chapters           TEXT NOT NULL,         -- JSON list of chapter numbers
+    visible_from       TEXT NOT NULL,         -- YYYY-MM-DD
+    exam_on            TEXT NOT NULL,         -- YYYY-MM-DD
+    drafts_per_chapter INTEGER NOT NULL DEFAULT 6 CHECK (drafts_per_chapter BETWEEN 0 AND 20),
+    created_by         INTEGER REFERENCES users(id) ON DELETE SET NULL,
+    created_at         TEXT NOT NULL DEFAULT (datetime('now')),
+    CHECK (visible_from <= exam_on)
+);
+
+CREATE TABLE IF NOT EXISTS exam_portion_classes (
+    portion_id    INTEGER NOT NULL REFERENCES exam_portions(id) ON DELETE CASCADE,
+    class_id      INTEGER NOT NULL REFERENCES classes(id) ON DELETE CASCADE,
+    PRIMARY KEY (portion_id, class_id)
+);

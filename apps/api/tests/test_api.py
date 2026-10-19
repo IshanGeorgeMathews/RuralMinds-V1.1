@@ -154,3 +154,53 @@ def test_closing_the_response_frees_the_phone_and_closes_the_answer() -> None:
         return asking
 
     assert asyncio.run(scenario()) == {} and closed == [True]
+
+
+def test_teacher_exam_to_student_chip_end_to_end(client) -> None:
+    from datetime import date, timedelta
+
+    conn = connect(settings.db_path)
+    conn.execute(
+        "INSERT INTO teacher_classes VALUES ((SELECT id FROM users WHERE username = 'teacher'), 1)"
+    )
+    conn.commit()
+    conn.close()
+    today = date.today()
+    login(client, "teacher")
+    exam = {
+        "title": "Term exam",
+        "document_id": 1,
+        "chapters": [1],
+        "class_ids": [1],
+        "visible_from": today.isoformat(),
+        "exam_on": (today + timedelta(days=5)).isoformat(),
+    }
+    assert client.post("/api/teacher/exams", json=exam | {"class_ids": [2]}).status_code == 400
+    assert client.post("/api/teacher/exams", json=exam).status_code == 200
+    question = {
+        "document_id": 1,
+        "chapter_no": 1,
+        "question": "Name a rock shelter site.",
+        "answer": "Bhimbetka.",
+    }
+    question_id = client.post("/api/teacher/revision", json=question).json()["id"]
+    listing = client.get("/api/teacher/exams").json()
+    assert listing["today"] == today.isoformat()
+    assert listing["portions"][0]["progress"] == {"approved": 1}
+    client.post("/api/logout")
+
+    login(client, "8a-01")
+    active = client.get("/api/revision").json()
+    assert active[0]["questions"] == [
+        {"id": question_id, "chapter_no": 1, "question": "Name a rock shelter site."}
+    ]
+    answer = client.post(f"/api/revision/{question_id}/answer").json()
+    assert answer["text"] == "Bhimbetka." and answer["label"] == "teacher_written"
+    assert client.post("/api/revision/999/answer").status_code == 404
+
+
+def test_teacher_cannot_touch_another_teachers_book_bank(client) -> None:
+    login(client, "teacher")  # no classes allocated in this fixture
+    question = {"document_id": 1, "chapter_no": 1, "question": "Anything?", "answer": "x"}
+    assert client.post("/api/teacher/revision", json=question).status_code == 403
+    assert client.get("/api/teacher/revision/1/1").status_code == 403

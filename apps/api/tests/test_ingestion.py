@@ -164,3 +164,24 @@ def test_running_chapter_title_dropped_even_with_ocr_errors() -> None:
     assert drop_running_titles(text, titles) == (
         "ഭൂപടത്തിലെ ദിശകൾ കണ്ടെത്താം.\nEarly human life was hard."
     )
+
+
+def test_v3_database_upgrades_to_v4_and_keeps_its_data(tmp_path) -> None:
+    """A v3 file (today's school servers) must start on the new code: the v2->v3 column
+    additions must not run again (they failed with 'duplicate column')."""
+    path = tmp_path / "v3.db"
+    conn = connect(path)
+    init_schema(conn)
+    conn.executescript(
+        "DROP TABLE revision_questions; DROP TABLE exam_portion_classes; DROP TABLE exam_portions;"
+        "INSERT INTO classes (grade, section, medium) VALUES (8, 'A', 'en');"
+        "PRAGMA user_version = 3;"
+    )
+    conn.close()
+    conn = connect(path)
+    init_schema(conn)
+    assert conn.execute("PRAGMA user_version").fetchone()[0] == 4
+    assert conn.execute("SELECT count(*) FROM classes").fetchone()[0] == 1
+    assert conn.execute("SELECT count(*) FROM exam_portions").fetchone()[0] == 0
+    init_schema(conn)  # starting again on a v4 file changes nothing
+    assert conn.execute("SELECT count(*) FROM classes").fetchone()[0] == 1

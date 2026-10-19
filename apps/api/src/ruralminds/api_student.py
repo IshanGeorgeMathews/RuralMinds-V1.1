@@ -9,7 +9,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel, Field
 
-from . import auth
+from . import auth, exams
 from .api_common import AskIn, book_row, chapters, db, stream_answer
 from .auth import User, require_role
 from .notes import notes_answer
@@ -106,6 +106,23 @@ async def ask(body: AskIn, request: Request, user: Student, conn: Conn) -> Strea
     if body.document_id not in allowed:
         raise HTTPException(403, detail="book.not_allowed")
     return stream_answer(request, body, book_row(conn, body.document_id), user.class_id or 0)
+
+
+@router.get("/api/revision", tags=["student"])
+async def revision(user: Student, conn: Conn) -> list[dict]:
+    """This class's exams being revised now, with their approved questions (no answers)."""
+    allowed = {row["id"] for row in student_books(conn, user.class_id)}
+    active = exams.student_revision(conn, user.class_id, exams.today())
+    return [portion for portion in active if portion["document_id"] in allowed]
+
+
+@router.post("/api/revision/{question_id}/answer", tags=["student"])
+async def revision_answer(question_id: int, user: Student, conn: Conn) -> dict:
+    """Asked only after the student tried (attempt-first). No model call: approved text."""
+    answer = exams.student_answer(conn, user.class_id, question_id, exams.today())
+    if answer is None:
+        raise HTTPException(404, detail="exam.not_found")
+    return answer
 
 
 @router.get("/api/notes/{doc_id}/{chapter_no}", tags=["student"])

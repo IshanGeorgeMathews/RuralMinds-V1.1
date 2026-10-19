@@ -1,5 +1,6 @@
 """Teacher routes: upload and manage books, try the AI, approve answers, see class activity."""
 
+import asyncio
 import sqlite3
 from typing import Annotated, Literal
 
@@ -7,7 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
-from . import cache, stats, uploads
+from . import cache, exams, stats, uploads
 from .api_common import AskIn, book_row, chapters, class_label, db, stream_answer
 from .auth import User, require_role
 from .config import settings
@@ -279,3 +280,161 @@ async def regenerate_notes(doc_id: int, body: RegenerateIn, user: Teacher, conn:
     book = book_row(conn, doc_id)
     uploads.start_notes_process(book["book_id"], doc_id, force=True, chapter=body.chapter_no)
     return {"status": "started"}
+
+
+# ---------- exam revision (W5 part 2) ----------
+class PortionBody(BaseModel):
+    title: str = Field(min_length=1, max_length=120)
+    document_id: int
+    chapters: list[int] = Field(min_length=1, max_length=30)
+    class_ids: list[int] = Field(min_length=1, max_length=40)
+    visible_from: str = Field(pattern=r"^\d{4}-\d{2}-\d{2}$")
+    exam_on: str = Field(pattern=r"^\d{4}-\d{2}-\d{2}$")
+    drafts_per_chapter: int = Field(default=6, ge=0, le=20)
+
+
+class QuestionBody(BaseModel):
+    document_id: int
+    chapter_no: int
+    question: str = Field(min_length=3, max_length=500)
+    # The teacher's own answer: approved at once, labelled as hers, with no page citation.
+    answer: str = Field(default="", max_length=4000)
+
+
+class ApproveQuestionBody(BaseModel):
+    text: str | None = Field(default=None, max_length=4000)  # the teacher's rewording
+
+
+def _exam_error(error: exams.ExamError) -> HTTPException:
+    return HTTPException(400, detail=str(error))
+
+
+def _my_book(conn: sqlite3.Connection, user: User, document_id: int) -> None:
+    """A teacher works on the banks of books her classes use (the admin on every book)."""
+    book_row(conn, document_id)
+    if user.role == "admin":
+        return
+    ids = my_class_ids(conn, user)
+    marks = ",".join("?" * len(ids)) or "NULL"
+    found = conn.execute(
+        f"SELECT 1 FROM class_books WHERE document_id = ? AND class_id IN ({marks})",
+        (document_id, *ids),
+    ).fetchone()
+    if found is None:
+        raise HTTPException(403, detail="auth.forbidden")
+
+
+def _answer_later(request: Request, question_id: int) -> None:
+    """Answer through the normal queue in the background; the teacher's list shows 'pending'
+    until it is done. Tasks are kept referenced so they are not garbage-collected mid-way."""
+    state = request.app.state
+    task = asyncio.create_task(
+        exams.answer_question(state.db, state.http, state.queue, question_id)
+    )
+    state.tasks.add(task)
+    task.add_done_callback(state.tasks.discard)
+
+
+@router.get("/exams")
+async def exam_portions(user: Teacher, conn: Conn) -> dict:
+    return {"today": exams.today(), "portions": exams.portions_for(conn, my_class_ids(conn, user))}
+
+
+@router.post("/exams")
+async def create_portion(body: PortionBody, user: Teacher, conn: Conn) -> dict:
+    data = exams.PortionIn(**body.model_dump())
+    try:
+        exams.check_portion(conn, data, my_class_ids(conn, user))
+    except exams.ExamError as error:
+        raise _exam_error(error) from error
+    return {"id": exams.save_portion(conn, data, user.id)}
+
+
+@router.put("/exams/{portion_id}")
+async def update_portion(portion_id: int, body: PortionBody, user: Teacher, conn: Conn) -> dict:
+    _my_portion(conn, user, portion_id)
+    data = exams.PortionIn(**body.model_dump())
+    try:
+        exams.check_portion(conn, data, my_class_ids(conn, user))
+    except exams.ExamError as error:
+        raise _exam_error(error) from error
+    return {"id": exams.save_portion(conn, data, user.id, portion_id)}
+
+
+@router.delete("/exams/{portion_id}", status_code=204)
+async def delete_portion(portion_id: int, user: Teacher, conn: Conn) -> None:
+    _my_portion(conn, user, portion_id)
+    exams.delete_portion(conn, portion_id)
+
+
+def _my_portion(conn: sqlite3.Connection, user: User, portion_id: int) -> None:
+    ids = my_class_ids(conn, user)
+    marks = ",".join("?" * len(ids)) or "NULL"
+    found = conn.execute(
+        f"SELECT 1 FROM exam_portion_classes WHERE portion_id = ? AND class_id IN ({marks})",
+        (portion_id, *ids),
+    ).fetchone()
+    if found is None:
+        raise HTTPException(404, detail="exam.not_found")
+
+
+@router.get("/revision/{document_id}/{chapter_no}")
+async def revision_bank(document_id: int, chapter_no: int, user: Teacher, conn: Conn) -> list:
+    _my_book(conn, user, document_id)
+    return exams.bank(conn, document_id, chapter_no)
+
+
+@router.post("/revision")
+async def add_revision_question(
+    body: QuestionBody, request: Request, user: Teacher, conn: Conn
+) -> dict:
+    _my_book(conn, user, body.document_id)
+    try:
+        question_id = exams.add_question(
+            conn,
+            body.document_id,
+            body.chapter_no,
+            body.question,
+            user.id,
+            written_answer=body.answer or None,
+        )
+    except exams.ExamError as error:
+        raise _exam_error(error) from error
+    if not body.answer.strip():
+        _answer_later(request, question_id)
+    return {"id": question_id}
+
+
+def _my_question(conn: sqlite3.Connection, user: User, question_id: int) -> None:
+    try:
+        row = exams.question_row(conn, question_id)
+    except exams.ExamError as error:
+        raise HTTPException(404, detail=str(error)) from error
+    _my_book(conn, user, row["document_id"])
+
+
+@router.post("/revision/{question_id}/approve")
+async def approve_revision(
+    question_id: int, body: ApproveQuestionBody, user: Teacher, conn: Conn
+) -> dict:
+    _my_question(conn, user, question_id)
+    try:
+        exams.approve(conn, question_id, user.id, body.text)
+    except exams.ExamError as error:
+        raise _exam_error(error) from error
+    return {"status": "approved"}
+
+
+@router.post("/revision/{question_id}/reject")
+async def reject_revision(question_id: int, user: Teacher, conn: Conn) -> dict:
+    _my_question(conn, user, question_id)
+    exams.reject(conn, question_id)
+    return {"status": "rejected"}
+
+
+@router.post("/revision/{question_id}/retry")
+async def retry_revision(question_id: int, request: Request, user: Teacher, conn: Conn) -> dict:
+    _my_question(conn, user, question_id)
+    exams.retry(conn, question_id)
+    _answer_later(request, question_id)
+    return {"status": "pending"}

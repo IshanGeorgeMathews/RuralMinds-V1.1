@@ -3,6 +3,7 @@
 	import { api, ApiError, type Book } from '#lib/api.js';
 	import ChatView from '#lib/components/ChatView.svelte';
 	import ConsoleShell from '#lib/components/ConsoleShell.svelte';
+	import ExamRevision from '#lib/components/ExamRevision.svelte';
 	import Icon from '#lib/components/Icon.svelte';
 	import UploadWizard from '#lib/components/UploadWizard.svelte';
 	import { confirmAction, toast } from '#lib/feedback.svelte.js';
@@ -21,7 +22,7 @@
 		subjects: string[];
 		boards: string[];
 	};
-	type Tab = 'library' | 'upload' | 'try' | 'inbox' | 'approved' | 'insights';
+	type Tab = 'library' | 'upload' | 'try' | 'revision' | 'inbox' | 'approved' | 'insights';
 
 	let tab = $state<Tab>('library');
 	let data = $state<Overview | null>(null);
@@ -38,6 +39,7 @@
 		{ id: 'library' as Tab, icon: 'book', label: t('teacher.tab.books') },
 		{ id: 'upload' as Tab, icon: 'upload', label: t('teacher.tab.upload') },
 		{ id: 'try' as Tab, icon: 'sparkle', label: t('teacher.tab.try') },
+		{ id: 'revision' as Tab, icon: 'quiz', label: t('teacher.tab.revision') },
 		{ id: 'inbox' as Tab, icon: 'inbox', label: t('teacher.tab.unanswered'), count: inbox.length },
 		{ id: 'approved' as Tab, icon: 'check', label: t('teacher.tab.approved') },
 		{ id: 'insights' as Tab, icon: 'chart', label: t('teacher.tab.activity') }
@@ -58,7 +60,7 @@
 			if (next === 'inbox') inbox = await api.get('/api/teacher/unanswered');
 			if (next === 'approved') approved = await api.get('/api/teacher/approved');
 			if (next === 'insights') activity = await api.get('/api/teacher/activity');
-			if (next === 'library' || next === 'try') await refresh();
+			if (next === 'library' || next === 'try' || next === 'revision') await refresh();
 			if (next === 'try' && data && (study.endpoint !== '/api/teacher/ask' || !study.loaded)) {
 				setBooks(data.books, '/api/teacher/ask');
 			}
@@ -212,6 +214,8 @@
 	{:else if tab === 'try'}
 		<p class="muted small try-note"><Icon name="eye" size={16} />{t('try.note')}</p>
 		{#if data.books.length}<div class="try"><ChatView teacherMode /></div>{/if}
+	{:else if tab === 'revision'}
+		<ExamRevision books={data.books} classes={data.classes} />
 	{:else if tab === 'inbox'}
 		<section class="card">
 			<p class="muted small">{t('inbox.intro')}</p>

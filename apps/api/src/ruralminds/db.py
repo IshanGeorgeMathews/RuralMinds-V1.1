@@ -9,8 +9,9 @@ import sqlite_vec
 log = logging.getLogger("ruralminds.db")
 
 SCHEMA_FILE = Path(__file__).with_name("schema.sql")
-SCHEMA_VERSION = 3
+SCHEMA_VERSION = 4
 
+# v3 -> v4 (20 Oct): revision question bank and exam portions; new tables only.
 # v1 -> v2: accounts, uploads, settings, answer_log; chunk_vectors gains document_id.
 # vec0 tables cannot be ALTERed, so the vectors are parked in a plain table and copied back:
 # no re-embedding. One transaction, so a power cut leaves the v1 file untouched.
@@ -67,7 +68,10 @@ def init_schema(conn: sqlite3.Connection) -> None:
         return
     # Older file: run every step it is missing, then the schema, in one transaction.
     log.warning("upgrading database schema from version %d to %d", version, SCHEMA_VERSION)
-    before = (_V1_TO_V2_BEFORE if version < 2 else "") + _V2_TO_V3_BEFORE
+    # Each step only for files older than it: re-running v2->v3's ADD COLUMNs on a v3 file
+    # would fail ("duplicate column") and the server would not start. v3 -> v4 only adds
+    # tables (revision bank, exam portions), which the schema's CREATE IF NOT EXISTS makes.
+    before = (_V1_TO_V2_BEFORE if version < 2 else "") + (_V2_TO_V3_BEFORE if version < 3 else "")
     after = _V1_TO_V2_AFTER if version < 2 else ""
     stamp = f"PRAGMA user_version = {SCHEMA_VERSION};"
     conn.executescript(f"BEGIN;{before}{schema}{after}{stamp}COMMIT;")

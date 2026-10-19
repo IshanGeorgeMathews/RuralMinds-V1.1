@@ -18,6 +18,7 @@
 	import AnswerCard from './AnswerCard.svelte';
 	import Icon from './Icon.svelte';
 	import Logo from './Logo.svelte';
+	import RevisionChips from './RevisionChips.svelte';
 	import Sheet from './Sheet.svelte';
 	import { toast } from '#lib/feedback.svelte.js';
 
@@ -105,6 +106,7 @@
 				<Logo size={56} />
 				<h2>{t('ask.welcome_title')}</h2>
 				<p class="muted">{t('ask.welcome_body')}</p>
+				{#if !teacherMode && study.bookId}<RevisionChips bookId={study.bookId} chapterNo={study.chapterNo} />{/if}
 				<div class="suggestions">
 					{#if !chapter}
 						<button class="suggestion" onclick={() => (picking = true)}>

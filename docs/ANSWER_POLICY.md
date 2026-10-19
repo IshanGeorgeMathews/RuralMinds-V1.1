@@ -12,6 +12,9 @@ This is the contract for how RuralMinds answers. Prompts, code and tests must fo
 ## 1a. Tutor, not a text retriever (13 Oct)
 Students use RuralMinds to *understand*, so answers explain in the model's own simple words and must not copy book sentences. Facts about the topic still come only from the retrieved sources, each with a source marker. **One labelled exception:** an everyday example, comparison or story frame may come from outside the book, shown in its own box marked "Example to help you understand — not from your book"; it may not state facts about the topic and never carries a citation. Modes: explain (default), simpler, example, story, quiz (answers hidden until tapped), summary (served from chapter study notes). Prompt: `prompts/system_v2_tutor_{en,ml}.md`.
 
+## 1c. Exam revision answers (20 Oct)
+Revision chips show a teacher's chosen questions for a class's exam. Each answer is one of: the pipeline's cited answer, approved as is (`Teacher-approved`); the same answer reworded by the teacher, with its textbook pages kept (`Teacher-approved`); or **the teacher's own answer, which has no page citation and is labelled `Teacher's answer`** — the one exception to "every answer cites chapter and page" (DECISIONS 2026-10-20). Students see the question first and open the answer after trying (attempt-first). Teacher-written answers are served only as revision chips, never to a typed question, where students expect page citations.
+
 ## 1b. Languages (13 Oct)
 - The **UI language** is a Settings choice and never changes answers.
 - The **answer language** is the student's "Answer in" setting: Auto (default: the question's language; Manglish → Malayalam), English or Malayalam.

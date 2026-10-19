@@ -23,6 +23,7 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     app.state.http = httpx.AsyncClient()
     app.state.queue = AnswerQueue(settings.llm_parallel, settings.max_queue, settings.max_wait_s)
     app.state.asking = {}  # session-token hash -> start time of its question in flight
+    app.state.tasks = set()  # background answers for teachers' revision questions
     app.state.throttle = LoginThrottle(
         settings.login_max_failures, settings.login_window_minutes * 60
     )

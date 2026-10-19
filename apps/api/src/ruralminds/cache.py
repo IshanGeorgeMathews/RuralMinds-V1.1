@@ -79,6 +79,21 @@ def approve(
         )
 
 
+def withdraw(
+    conn: sqlite3.Connection, question: str, language: str, document_id: int, chapter_no: int | None
+) -> None:
+    """A teacher took back an approved answer: it stops answering typed questions too."""
+    book = _book(conn, document_id)
+    if book is None:
+        return
+    with conn:
+        conn.execute(
+            "UPDATE answer_cache SET status = 'rejected', updated_at = datetime('now')"
+            " WHERE cache_key = ? AND status = 'approved'",
+            (cache_key(question, language, book["sha256"], chapter_no),),
+        )
+
+
 def set_status(conn: sqlite3.Connection, entry_id: int, status: str) -> bool:
     with conn:
         cursor = conn.execute(
