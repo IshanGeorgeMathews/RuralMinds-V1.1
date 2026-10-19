@@ -86,3 +86,7 @@ logs/
 
 # Self-authored eval sets stay local until redistribution rights are confirmed (eval/README.md)
 eval/datasets/*.jsonl
+
+# Research reports and notes (private; contain local paths)
+reports/
+research_notes/

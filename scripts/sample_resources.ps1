@@ -12,16 +12,19 @@ param(
 
 $ErrorActionPreference = 'Stop'
 New-Item -ItemType Directory -Force (Split-Path -Parent $Out) | Out-Null
-'time,cpu_percent,mem_used_mb,llama_ws_mb,python_ws_mb,gpu_3d_percent,on_battery,discharge_w' |
+'time,cpu_percent,mem_used_mb,llama_ws_mb,python_ws_mb,gpu_3d_percent,gpu_compute_percent,on_battery,discharge_w' |
     Set-Content -Path $Out -Encoding utf8
 
 $totalMb = (Get-CimInstance Win32_ComputerSystem).TotalPhysicalMemory / 1MB
 
-function Get-Gpu3dPercent {
-    # Sum over the iGPU's 3D engines; missing counter (no GPU driver support) -> empty value.
+function Get-GpuPercent([string]$engineType) {
+    # Busiest engine of one type, summed over processes. llama.cpp's Vulkan backend runs on the
+    # Compute engines, not 3D, so both are sampled. Missing counter (no driver support) -> empty.
     try {
-        $samples = (Get-Counter '\GPU Engine(*engtype_3D)\Utilization Percentage' -ErrorAction Stop).CounterSamples
-        return [math]::Round(($samples | Measure-Object CookedValue -Sum).Sum, 1)
+        $samples = (Get-Counter "\GPU Engine(*engtype_$engineType*)\Utilization Percentage" -ErrorAction Stop).CounterSamples
+        $perEngine = $samples | Group-Object { ($_.InstanceName -split '_engtype_')[0] -replace '^pid_\d+_', '' } |
+            ForEach-Object { ($_.Group | Measure-Object CookedValue -Sum).Sum }
+        return [math]::Round(($perEngine | Measure-Object -Maximum).Maximum, 1)
     } catch { return '' }
 }
 
@@ -50,7 +53,8 @@ while ($true) {
         [math]::Round($totalMb - $freeMb, 0),
         (Get-WorkingSetMb 'llama-server'),
         (Get-WorkingSetMb 'python'),
-        (Get-Gpu3dPercent),
+        (Get-GpuPercent '3D'),
+        (Get-GpuPercent 'Compute'),
         $battery[0],
         $battery[1]
     ) -join ','
