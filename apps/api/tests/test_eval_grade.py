@@ -1,6 +1,14 @@
 """Grading helpers: judge replies parsed safely, samples cover every kind, agreement and means."""
 
-from eval.grade import agreement, parse_scores, stratified_sample, summary
+from eval.grade import (
+    agreement,
+    grade_value,
+    judged_row,
+    parse_scores,
+    read_sheet,
+    stratified_sample,
+    summary,
+)
 
 
 def test_parse_scores_keeps_known_in_range_values_only() -> None:
@@ -27,3 +35,33 @@ def test_agreement_and_summary() -> None:
     assert report["tone"]["n"] == 1  # blank human grades are skipped
     means = summary(human)
     assert means["correct"]["mean"] == 0.5  # (1.0 + 0.0) / 2 on the 0-1 scale
+
+
+def test_unparsed_judge_reply_never_keeps_the_human_grade() -> None:
+    human_row = {"id": "x", "question": "q", "correct": "2", "flawed": "1", "tone": "3"}
+    judged = judged_row(human_row, "sorry, I cannot grade this")
+    assert judged["correct"] == "" and judged["flawed"] == "" and judged["tone"] == ""
+    judged = judged_row(human_row, '{"correct": 1}')
+    assert judged["correct"] == "1" and judged["flawed"] == ""
+    assert human_row["correct"] == "2"  # the human sheet is not modified
+
+
+def test_human_sheet_layout_is_read(tmp_path) -> None:
+    sheet = tmp_path / "human.csv"
+    sheet.write_text("id,relevant,mistakes_found,Note\nx,0,1,off topic\n", encoding="utf-8-sig")
+    row = read_sheet(sheet)[0]
+    assert row["flawed"] == "1"  # the grader's flag column
+    assert grade_value(row["relevant"], [1, 2, 3]) == 1  # out of range: clamped
+    assert grade_value("", [1, 2, 3]) is None
+
+
+def test_judge_usable_needs_every_gate_criterion() -> None:
+    human = [
+        {"id": str(n), "correct": str(n % 3), "faithful": "2", "flawed": str(n % 2)}
+        for n in range(6)
+    ]
+    report = agreement(human, [dict(row) for row in human])
+    assert report["correct"]["passes"] and report["flawed"]["passes"]
+    assert report["judge_usable"]["usable"]
+    report = agreement(human, [{**row, "flawed": str(1 - int(row["flawed"]))} for row in human])
+    assert not report["judge_usable"]["usable"]

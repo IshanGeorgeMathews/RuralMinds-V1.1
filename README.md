@@ -78,7 +78,7 @@ copy .env.example .env                       # then set the model paths (below)
 uv run python -m ruralminds.ingest --book ss8-pt1-en   # books are listed in apps/api/books.toml
 uv run python -m ruralminds.notes --book ss8-pt1-en    # chapter study notes
 uv run python -m ruralminds.admin init       # admin password + one-time recovery code
-uv run python -m ruralminds.admin demo       # optional: demo classes, students, teacher
+       # optional: demo classes, students, teacher
 ```
 
 Phones on the laptop's Wi-Fi open `http://<laptop-ip>:8000`. Admin pages open only on the laptop itself (`http://localhost:8000/admin`).
