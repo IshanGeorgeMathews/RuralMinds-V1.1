@@ -89,7 +89,12 @@ def prepare_db() -> str:
 
 
 def start_api(port: int) -> subprocess.Popen:
-    env = {**os.environ, "RURALMINDS_DB_PATH": BENCH_DB.as_posix()}
+    # The revision worker would generate between levels and skew them: off for the bench.
+    env = {
+        **os.environ,
+        "RURALMINDS_DB_PATH": BENCH_DB.as_posix(),
+        "RURALMINDS_REVISION_WORKER": "false",
+    }
     command = [
         sys.executable,
         "-m",

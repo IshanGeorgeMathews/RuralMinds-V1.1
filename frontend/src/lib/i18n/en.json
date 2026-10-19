@@ -417,5 +417,7 @@
 	"exam.not_found": "This revision question is not available any more.",
 	"exam.no_answer_yet": "There is no answer to approve yet.",
 	"book.not_found": "This book is not on the server any more.",
-	"book.not_allowed": "This book is not available for your class."
+	"book.not_allowed": "This book is not available for your class.",
+	"revision.suggested": "Suggested questions: {ready} of {wanted} ready to check",
+	"revision.suggested_when": "prepared one by one while no student is asking"
 }

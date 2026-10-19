@@ -141,6 +141,24 @@ def _portion_view(conn: sqlite3.Connection, row: sqlite3.Row) -> dict:
         "drafts_per_chapter": row["drafts_per_chapter"],
         "classes": [dict(c) for c in classes],
         "progress": bank_counts(conn, row["document_id"], chapters),
+        "suggested": suggested_progress(conn, row, chapters),
+    }
+
+
+def suggested_progress(conn: sqlite3.Connection, row: sqlite3.Row, chapters: list[int]) -> dict:
+    """How far the idle-time worker is with this exam's suggested questions, for the
+    teacher's progress line: wanted, ready to check (or done), being prepared."""
+    marks = ",".join("?" * len(chapters)) or "NULL"
+    ready, preparing = conn.execute(
+        "SELECT sum(status IN ('draft', 'approved')), sum(status = 'pending')"
+        " FROM revision_questions WHERE source = 'drafted' AND document_id = ?"
+        f" AND chapter_no IN ({marks})",
+        (row["document_id"], *chapters),
+    ).fetchone()
+    return {
+        "wanted": row["drafts_per_chapter"] * len(chapters),
+        "ready": ready or 0,
+        "preparing": preparing or 0,
     }
 
 

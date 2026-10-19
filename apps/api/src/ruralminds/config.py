@@ -56,6 +56,11 @@ class Settings(BaseSettings):
     max_wait_s: int = 180
     queue_update_s: float = 3.0  # how often a waiting phone gets its live place in line
     one_question_ttl_s: int = 300  # backstop for the one-question-per-phone guard
+    # Exam revision: draft and answer suggested questions only when no student has asked for
+    # this long. Off for tests and the bench (it would generate between measurements).
+    revision_worker: bool = True
+    revision_idle_s: int = 45
+    revision_poll_s: float = 15.0
     max_question_chars: int = 500
     history_turns: int = 2
 

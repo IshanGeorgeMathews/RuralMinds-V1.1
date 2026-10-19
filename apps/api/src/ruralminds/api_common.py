@@ -64,6 +64,7 @@ def stream_answer(
         mode=body.mode,
     )
     state = request.app.state
+    state.last_ask = time.monotonic()  # the revision worker waits until phones are quiet
     key = hashlib.sha256((request.cookies.get(auth.COOKIE) or "").encode()).hexdigest()
     if not _start_asking(state.asking, key):
         events = _single(event("busy", message_key="error.one_at_a_time"))

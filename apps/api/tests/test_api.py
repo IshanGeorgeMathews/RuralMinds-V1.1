@@ -15,6 +15,7 @@ PASSWORD = "kite42"
 @pytest.fixture
 def client(tmp_path: Path, monkeypatch):
     monkeypatch.setattr(settings, "db_path", tmp_path / "test.db")
+    monkeypatch.setattr(settings, "revision_worker", False)
     monkeypatch.setattr(settings, "books_file", tmp_path / "none.toml")
     for name in ("books_dir", "uploads_dir", "ocr_cache_dir", "page_cache_dir"):
         monkeypatch.setattr(settings, name, tmp_path / name)

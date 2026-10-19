@@ -11,6 +11,7 @@ from .auth import LoginThrottle
 from .config import settings
 from .db import connect, init_schema
 from .ingest import load_books, sync_manifest_chapters
+from .revision_worker import RevisionWorker
 from .uploads import JobRunner
 
 
@@ -24,6 +25,11 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     app.state.queue = AnswerQueue(settings.llm_parallel, settings.max_queue, settings.max_wait_s)
     app.state.asking = {}  # session-token hash -> start time of its question in flight
     app.state.tasks = set()  # background answers for teachers' revision questions
+    app.state.answering = set()  # revision question ids being answered right now
+    app.state.last_ask = 0.0  # time.monotonic() of the last question from a phone
+    app.state.revision = RevisionWorker(app.state) if settings.revision_worker else None
+    if app.state.revision is not None:
+        app.state.revision.start()
     app.state.throttle = LoginThrottle(
         settings.login_max_failures, settings.login_window_minutes * 60
     )
@@ -31,6 +37,8 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     app.state.jobs.start()  # resumes uploads interrupted by a power cut, cleans orphans
     yield
     await app.state.jobs.stop()
+    if app.state.revision is not None:
+        await app.state.revision.stop()
     await app.state.http.aclose()
     app.state.db.close()
 

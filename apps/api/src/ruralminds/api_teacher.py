@@ -328,11 +328,13 @@ def _answer_later(request: Request, question_id: int) -> None:
     """Answer through the normal queue in the background; the teacher's list shows 'pending'
     until it is done. Tasks are kept referenced so they are not garbage-collected mid-way."""
     state = request.app.state
+    state.answering.add(question_id)  # so the idle worker does not answer it a second time
     task = asyncio.create_task(
         exams.answer_question(state.db, state.http, state.queue, question_id)
     )
     state.tasks.add(task)
     task.add_done_callback(state.tasks.discard)
+    task.add_done_callback(lambda _: state.answering.discard(question_id))
 
 
 @router.get("/exams")

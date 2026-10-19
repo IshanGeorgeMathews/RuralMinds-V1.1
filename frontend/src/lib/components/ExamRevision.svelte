@@ -20,6 +20,7 @@
 		drafts_per_chapter: number;
 		classes: { id: number; grade: number; section: string }[];
 		progress: Record<string, number>;
+		suggested: { wanted: number; ready: number; preparing: number };
 	};
 	type Item = {
 		id: number;
@@ -37,7 +38,7 @@
 
 	let today = $state('');
 	let portions = $state<Portion[]>([]);
-	let form = $state<(Omit<Portion, 'id' | 'book_title' | 'classes' | 'progress'> & { id: number | null; class_ids: number[] }) | null>(null);
+	let form = $state<(Omit<Portion, 'id' | 'book_title' | 'classes' | 'progress' | 'suggested'> & { id: number | null; class_ids: number[] }) | null>(null);
 	let review = $state<{ portion: Portion; chapter: number } | null>(null);
 	let items = $state<Item[]>([]);
 	let draft = $state({ question: '', answer: '', own: false });
@@ -47,10 +48,15 @@
 	const eligible = $derived(classes.filter((c) => c.mine && formBook?.class_ids.includes(c.id)));
 	const pending = $derived(items.some((item) => item.status === 'pending'));
 
+	// Suggested questions are made in idle time, one model call at a time: keep the
+	// progress line and the open review list fresh while some are still to come.
+	const preparing = $derived(portions.some((p) => p.exam_on >= today && p.suggested.ready < p.suggested.wanted));
+
 	onMount(() => {
 		load();
-		const timer = setInterval(() => pending && review && loadBank(), 4000);
-		return () => clearInterval(timer);
+		const bank = setInterval(() => (pending || preparing) && review && loadBank(), 4000);
+		const list = setInterval(() => preparing && load(), 10000);
+		return () => (clearInterval(bank), clearInterval(list));
 	});
 
 	async function guard(action: () => Promise<unknown>): Promise<boolean> {
@@ -170,6 +176,13 @@
 							{t('revision.exam_on', { date: portion.exam_on })}
 							{#if left >= 0}({left === 0 ? t('revision.exam_today') : t('revision.days_left', { n: left })}){:else}({t('revision.over')}){/if}
 						</p>
+						{#if portion.suggested.wanted > 0 && left >= 0}
+							<p class="small suggest">
+								{#if portion.suggested.ready < portion.suggested.wanted}<span class="spinner"></span>{:else}<Icon name="check" size={15} />{/if}
+								{t('revision.suggested', { ready: portion.suggested.ready, wanted: portion.suggested.wanted })}
+								{#if portion.suggested.ready < portion.suggested.wanted}<span class="muted">· {t('revision.suggested_when')}</span>{/if}
+							</p>
+						{/if}
 						<p class="badges">
 							<span class="badge ok">{t('revision.count.approved', { n: portion.progress.approved ?? 0 })}</span>
 							{#if portion.progress.draft}<span class="badge warn">{t('revision.count.to_check', { n: portion.progress.draft })}</span>{/if}
@@ -329,6 +342,12 @@
 	.portion p,
 	.item p {
 		margin: 0;
+	}
+	.suggest {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+		align-items: center;
 	}
 	.badges {
 		display: flex;
