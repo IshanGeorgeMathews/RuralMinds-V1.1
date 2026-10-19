@@ -149,10 +149,12 @@ def judge_messages(row: dict) -> list[dict[str, str]]:
 
 
 def parse_scores(reply: str) -> dict[str, int]:
-    """First JSON object in the reply, keeping only known criteria with in-range values."""
-    match = re.search(r"\{.*?\}", reply, re.DOTALL)
+    """Last JSON object in the reply (after any <think> block), keeping only known criteria
+    with in-range values. Reasoning judges may quote example JSON before their verdict."""
+    reply = re.sub(r"<think>.*?</think>", "", reply, flags=re.DOTALL)
+    found = re.findall(r"\{[^{}]*\}", reply)
     try:
-        raw = json.loads(match.group()) if match else {}
+        raw = json.loads(found[-1]) if found else {}
     except json.JSONDecodeError:
         return {}
     return {
@@ -171,17 +173,30 @@ def judged_row(row: dict, reply: str) -> dict:
     return judged
 
 
-def judge(sheet: Path, judge_url: str, out: Path) -> dict[str, int]:
+def judge(
+    sheet: Path, judge_url: str, out: Path, model: str | None = None, max_tokens: int = 160
+) -> dict[str, int]:
+    """Saves after every row and resumes from `out`: a long Malayalam prompt can take minutes
+    on the iGPU, and a crash must not lose the rows already judged. `model` names the judge
+    on a server that hosts several (Ollama); reasoning judges need a larger max_tokens."""
+    done = {row["id"]: row for row in read_sheet(out)} if out.exists() else {}
     rows = []
     histories = item_histories()  # sheets exported before 19 Oct have no history column
-    with httpx.Client(timeout=300) as client:
+    with httpx.Client(timeout=1200) as client:
         for row in read_sheet(sheet):
+            if row["id"] in done:
+                rows.append(done[row["id"]])
+                continue
             row["history"] = row.get("history") or histories.get(row["id"], "")
-            payload = {"messages": judge_messages(row), "temperature": 0.0, "max_tokens": 160}
+            payload = {
+                "messages": judge_messages(row),
+                "temperature": 0.0,
+                "max_tokens": max_tokens,
+            } | ({"model": model} if model else {})
             reply = client.post(f"{judge_url}/v1/chat/completions", json=payload)
             reply.raise_for_status()
             rows.append(judged_row(row, reply.json()["choices"][0]["message"]["content"]))
-    write_sheet(rows, out)
+            write_sheet(rows, out)
     return {name: sum(not r[name] for r in rows) for name in CRITERIA} | {"rows": len(rows)}
 
 
@@ -208,7 +223,16 @@ def write_sheet(rows: list[dict], path: Path) -> None:
         writer.writerows({k: row.get(k, "") for k in INFO + list(ALL_CRITERIA)} for row in rows)
 
 
-def agreement(human: list[dict], machine: list[dict]) -> dict[str, dict]:
+def calibration_half(row_id: str) -> str:
+    """Seeded split of the calibration rows: judges are compared on `select`, and only the
+    chosen judge's kappa on `confirm` is reported, so choosing does not inflate it."""
+    digest = hashlib.sha256(f"judge-half:{row_id}".encode()).hexdigest()
+    return "select" if int(digest, 16) % 2 == 0 else "confirm"
+
+
+def agreement(human: list[dict], machine: list[dict], half: str = "all") -> dict[str, dict]:
+    if half != "all":
+        human = [row for row in human if calibration_half(row["id"]) == half]
     by_id = {row["id"]: row for row in machine}
     report: dict[str, dict] = {}
     for name, labels in ALL_CRITERIA.items():
@@ -257,20 +281,25 @@ def main() -> None:
     jud = sub.add_parser("judge")
     jud.add_argument("sheet", type=Path)
     jud.add_argument("--judge-url", required=True)
+    jud.add_argument("--judge-model", help="model name on a multi-model server (Ollama)")
+    jud.add_argument("--max-tokens", type=int, default=160)
     jud.add_argument("--out", type=Path, required=True)
     agr = sub.add_parser("agreement")
     agr.add_argument("human", type=Path)
     agr.add_argument("judge", type=Path)
+    agr.add_argument("--half", choices=["all", "select", "confirm"], default="all")
     summ = sub.add_parser("summary")
     summ.add_argument("sheet", type=Path)
     args = parser.parse_args()
     if args.action == "export":
         print(export(args.result, args.sample, args.out), "rows ->", args.out)
     elif args.action == "judge":
-        print("missing grades per criterion:", judge(args.sheet, args.judge_url, args.out))
+        missing = judge(args.sheet, args.judge_url, args.out, args.judge_model, args.max_tokens)
+        print("missing grades per criterion:", missing)
         print("judged ->", args.out)
     elif args.action == "agreement":
-        print(json.dumps(agreement(read_sheet(args.human), read_sheet(args.judge)), indent=2))
+        report = agreement(read_sheet(args.human), read_sheet(args.judge), args.half)
+        print(json.dumps(report, indent=2))
     else:
         print(json.dumps(summary(read_sheet(args.sheet)), indent=2))
 

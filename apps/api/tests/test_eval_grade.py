@@ -2,6 +2,7 @@
 
 from eval.grade import (
     agreement,
+    calibration_half,
     grade_value,
     judged_row,
     parse_scores,
@@ -65,3 +66,15 @@ def test_judge_usable_needs_every_gate_criterion() -> None:
     assert report["judge_usable"]["usable"]
     report = agreement(human, [{**row, "flawed": str(1 - int(row["flawed"]))} for row in human])
     assert not report["judge_usable"]["usable"]
+
+
+def test_reasoning_judge_reply_uses_the_final_verdict() -> None:
+    reply = '<think>format is {"correct": 0}</think>Example {"correct": 1}. Verdict: {"correct": 2}'
+    assert parse_scores(reply) == {"correct": 2}
+
+
+def test_calibration_halves_are_stable_and_both_used() -> None:
+    ids = [f"item-{n}" for n in range(40)]
+    halves = [calibration_half(i) for i in ids]
+    assert set(halves) == {"select", "confirm"}
+    assert halves == [calibration_half(i) for i in ids]
