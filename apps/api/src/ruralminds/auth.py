@@ -65,17 +65,27 @@ def new_password(length: int = 6) -> str:
 _DUMMY_HASH = hash_password(secrets.token_hex(8))
 
 
-def authenticate(conn: sqlite3.Connection, username: str, password: str) -> User | None:
-    row = conn.execute(
+def find_login(conn: sqlite3.Connection, username: str) -> sqlite3.Row | None:
+    return conn.execute(
         "SELECT id, username, role, class_id, pw_hash, enabled FROM users WHERE username = ?",
         (username.strip(),),
     ).fetchone()
+
+
+def check_login(row: sqlite3.Row | None, password: str) -> User | None:
+    """The slow scrypt part, with no database access: safe to run in a worker thread. The
+    shared connection must stay on the event loop (concurrent logins through it from threads
+    failed with 'bad parameter or other API misuse' in the 19 Oct bench)."""
     if row is None:
         verify_password(password, _DUMMY_HASH)
         return None
     if not verify_password(password, row["pw_hash"]) or not row["enabled"]:
         return None
     return User(row["id"], row["username"], row["role"], row["class_id"])
+
+
+def authenticate(conn: sqlite3.Connection, username: str, password: str) -> User | None:
+    return check_login(find_login(conn, username), password)
 
 
 class LoginThrottle:
@@ -186,7 +196,10 @@ def current_user(request: Request) -> User | None:
 def require_role(*roles: str) -> Callable[[Request], User]:
     """Dependency: the signed-in user, if their role is allowed; admin only from this machine."""
 
-    def dependency(request: Request) -> User:
+    # async on purpose: FastAPI runs a plain `def` dependency in a worker thread, and this one
+    # reads the shared sqlite connection; concurrent requests then used it from several threads
+    # at once ('bad parameter or other API misuse', bench 19 Oct). On the event loop they queue.
+    async def dependency(request: Request) -> User:
         user = current_user(request)
         if user is None:
             raise HTTPException(401, detail="auth.required")

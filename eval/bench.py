@@ -1,12 +1,19 @@
 """Load bench: real HTTP + SSE requests against the API at rising concurrency.
 
-    uv run python -m eval.bench --levels 1 2 4 8
+    uv run python -m eval.bench --levels 1 2 4 8                 # closed loop
+    uv run python -m eval.bench --levels --rates 2 4 --duration 360  # open loop only
     uv run python -m eval.bench --retrieval          # whole-book vs one-chapter search time
 
 Needs both llama-servers running (scripts/start_all.ps1 -ModelsOnly). The bench copies the
 database to data/bench-run.db, adds a bench class and student there, starts its own API on a
 spare port against that copy, and stops it at the end: the live database and its usage stats are
-never touched. Questions come from the eval dev split (Social Science EN/ML, Science EN).
+never touched. Questions come from the eval dev split (Social Science EN/ML, Science EN,
+Manglish), each asked at most once per run (QuestionDeck), so no answer is sped up by the
+prompt cache of an earlier identical question.
+
+Closed loop (--levels): N phones that each ask again as soon as their answer ends; shows the
+ceiling. Open loop (--rates): students arrive at random (Poisson) at R per minute whatever
+the queue is doing, like a class; shows whether a class asking at that rate is served.
 
 Per level (standard serving metrics, as in MLPerf Inference's server scenario):
   TTFT and end-to-end time p50/p95/p99; answers per minute; goodput = share of requests that
@@ -20,8 +27,10 @@ CSV with --resources and each level's window is summarised from it.
 import argparse
 import asyncio
 import csv
+import hashlib
 import json
 import os
+import random
 import re
 import secrets
 import subprocess
@@ -39,8 +48,10 @@ from ruralminds.db import connect
 BENCH_DB = Path("data/bench-run.db")
 BENCH_USER = "bench-student"
 QUESTION_FILES = [
-    Path("eval/datasets/v2") / n for n in ("ss_en.jsonl", "ss_ml.jsonl", "sci_en.jsonl")
+    Path("eval/datasets/v2") / n
+    for n in ("ss_en.jsonl", "ss_ml.jsonl", "sci_en.jsonl", "manglish.jsonl")
 ]
+SEED = "ruralminds-bench"
 ANSWER_EVENTS = ("done", "notes")
 
 
@@ -115,11 +126,39 @@ def load_questions() -> list[dict]:
         for line in path.read_text(encoding="utf-8").splitlines()
         if line
     ]
-    usable = [i for i in items if i.get("split") == "dev" and i.get("status") != "dropped"]
+    usable = [
+        i
+        for i in items
+        if i.get("split") == "dev" and i.get("status") != "dropped" and i.get("answerable", True)
+    ]
     return [
         {"question": i["question"], "document_id": doc_ids[i["book_id"]], "lang": i["lang"]}
         for i in usable
     ]
+
+
+class QuestionDeck:
+    """Each request takes a question not yet asked in this run, in a seeded order: a repeat
+    would be answered partly from llama-server's prompt cache and look faster than a real one
+    (levels 1-2 of the first bench on 19 Oct did). When the deck runs out it reshuffles and
+    counts the repeats, so a report can say how many there were."""
+
+    def __init__(self, questions: list[dict]) -> None:
+        self._questions = sorted(
+            questions, key=lambda q: hashlib.sha256(f"{SEED}:{q['question']}".encode()).digest()
+        )
+        self._next = 0
+        self.repeats = 0
+
+    def __len__(self) -> int:
+        return len(self._questions)
+
+    def draw(self) -> dict:
+        if self._next >= len(self._questions):
+            self.repeats += 1
+        question = self._questions[self._next % len(self._questions)]
+        self._next += 1
+        return question
 
 
 # ---------- one request ----------
@@ -150,18 +189,43 @@ async def ask_once(client: httpx.AsyncClient, base: str, question: dict) -> dict
     }
 
 
-async def user_loop(
-    base: str, password: str, questions: list[dict], count: int, offset: int
-) -> list[dict]:
-    async with httpx.AsyncClient() as client:
-        login = await client.post(
-            f"{base}/api/login", json={"username": BENCH_USER, "password": password}
-        )
-        login.raise_for_status()
-        return [
-            await ask_once(client, base, questions[(offset + n) % len(questions)])
-            for n in range(count)
-        ]
+async def signed_in_client(base: str, password: str) -> httpx.AsyncClient:
+    """One simulated phone: its own client and session cookie."""
+    client = httpx.AsyncClient()
+    login = await client.post(
+        f"{base}/api/login", json={"username": BENCH_USER, "password": password}
+    )
+    login.raise_for_status()
+    return client
+
+
+async def user_loop(base: str, password: str, deck: QuestionDeck, count: int) -> list[dict]:
+    """Closed loop: a phone that asks its next question as soon as the last answer ends."""
+    client = await signed_in_client(base, password)
+    try:
+        return [await ask_once(client, base, deck.draw()) for _ in range(count)]
+    finally:
+        await client.aclose()
+
+
+def arrival_times(rate_per_min: float, duration_s: float, seed: str) -> list[float]:
+    """Poisson arrivals (exponential gaps), seeded so every run asks at the same moments."""
+    rng = random.Random(seed)
+    times, moment = [], rng.expovariate(rate_per_min / 60)
+    while moment < duration_s:
+        times.append(moment)
+        moment += rng.expovariate(rate_per_min / 60)
+    return times
+
+
+async def one_arrival(base: str, password: str, question: dict, delay: float) -> dict:
+    """Open loop: a student who asks once at a random moment, whatever the queue is doing."""
+    await asyncio.sleep(delay)
+    client = await signed_in_client(base, password)
+    try:
+        return await ask_once(client, base, question)
+    finally:
+        await client.aclose()
 
 
 # ---------- one level ----------
@@ -190,30 +254,46 @@ def token_rates(before: dict, after: dict) -> dict:
     }
 
 
-async def run_level(
-    base: str, password: str, questions: list[dict], users: int, per_user: int, slo: float
-) -> dict:
+async def measured(label: dict, requests, slo: float) -> dict:
+    """Run one level's requests and add llama-server token rates and the time window."""
     async with httpx.AsyncClient() as client:
         before = await llama_metrics(client)
         started_at, started = datetime.now(), time.perf_counter()
-        batches = await asyncio.gather(
-            *(user_loop(base, password, questions, per_user, u * per_user) for u in range(users))
-        )
+        batches = await asyncio.gather(*requests)
         wall = time.perf_counter() - started
         after = await llama_metrics(client)
+    results = [r for batch in batches for r in (batch if isinstance(batch, list) else [batch])]
+    window = [
+        started_at.isoformat(timespec="seconds"),
+        datetime.now().isoformat(timespec="seconds"),
+    ]
     return (
-        summarise_level(users, [r for batch in batches for r in batch], wall, slo)
+        label
+        | summarise_level(results, wall, slo)
         | token_rates(before, after)
-        | {
-            "window": [
-                started_at.isoformat(timespec="seconds"),
-                datetime.now().isoformat(timespec="seconds"),
-            ]
-        }
+        | {"window": window}
     )
 
 
-def summarise_level(users: int, results: list[dict], wall: float, slo: float) -> dict:
+async def run_level(
+    base: str, password: str, deck: QuestionDeck, users: int, per_user: int, slo: float
+) -> dict:
+    requests = [user_loop(base, password, deck, per_user) for _ in range(users)]
+    return await measured({"mode": "closed", "concurrency": users}, requests, slo)
+
+
+async def run_open(
+    base: str, password: str, deck: QuestionDeck, rate: float, duration: float, slo: float
+) -> dict:
+    """Students arrive at `rate` per minute for `duration` seconds; the level ends when the
+    last of them is answered, so the wait of a backed-up queue is included."""
+    times = arrival_times(rate, duration, f"{SEED}:{rate}")
+    requests = [one_arrival(base, password, deck.draw(), t) for t in times]
+    label = {"mode": "open", "rate_per_min": rate, "duration_s": duration, "arrivals": len(times)}
+    return await measured(label, requests, slo)
+
+
+def summarise_level(results: list[dict], wall: float, slo: float) -> dict:
     answered = [r for r in results if r["event"] in ANSWER_EVENTS]
     good = [
         r
@@ -224,7 +304,6 @@ def summarise_level(users: int, results: list[dict], wall: float, slo: float) ->
     ttfts = [r["ttft_s"] for r in answered if r["ttft_s"] is not None]
     totals = [r["total_s"] for r in answered]
     return {
-        "concurrency": users,
         "requests": len(results),
         "events": {
             e: sum(r["event"] == e for r in results) for e in sorted({r["event"] for r in results})
@@ -277,21 +356,23 @@ async def retrieval_timing(rounds: int) -> dict:
 
 
 # ---------- main ----------
-async def bench(
-    levels: list[int], per_user: int, slo: float, port: int, resources: Path | None
-) -> dict:
+async def bench(args: argparse.Namespace) -> dict:
     password = prepare_db()
-    api = start_api(port)
-    base = f"http://127.0.0.1:{port}"
+    api = start_api(args.port)
+    base = f"http://127.0.0.1:{args.port}"
     try:
         await wait_healthy(base)
-        questions = load_questions()
-        await user_loop(base, password, questions, 1, 0)  # warm-up, not measured
+        deck = QuestionDeck(load_questions())
+        await user_loop(base, password, deck, 1)  # warm-up, not measured
+        runs = [run_level(base, password, deck, u, args.per_user, args.slo) for u in args.levels]
+        runs += [
+            run_open(base, password, deck, rate, args.duration, args.slo) for rate in args.rates
+        ]
         results = []
-        for users in levels:
-            level = await run_level(base, password, questions, users, per_user, slo)
-            if resources and resources.exists():
-                level["resources"] = resource_summary(resources, level["window"])
+        for run in runs:  # one at a time: levels must not overlap
+            level = await run
+            if args.resources and args.resources.exists():
+                level["resources"] = resource_summary(args.resources, level["window"])
             print(json.dumps(level), flush=True)
             results.append(level)
     finally:
@@ -299,19 +380,25 @@ async def bench(
         api.wait(timeout=30)
     return {
         "run_at": datetime.now().isoformat(timespec="seconds"),
-        "slo_first_word_s": slo,
+        "slo_first_word_s": args.slo,
         "llm_parallel": settings.llm_parallel,
-        "per_user": per_user,
+        "per_user": args.per_user,
+        "questions_in_deck": len(deck),
+        "repeated_questions": deck.repeats,
         "levels": results,
     }
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Load bench for the RuralMinds API")
-    parser.add_argument("--levels", type=int, nargs="+", default=[1, 2, 4, 8])
+    parser.add_argument("--levels", type=int, nargs="*", default=[1, 2, 4, 8])
     parser.add_argument(
-        "--per-user", type=int, default=3, help="questions each simulated phone asks"
+        "--per-user", type=int, default=2, help="questions each simulated phone asks"
     )
+    parser.add_argument(
+        "--rates", type=float, nargs="*", default=[], help="open loop: arrivals per minute"
+    )
+    parser.add_argument("--duration", type=float, default=360, help="open loop: seconds")
     parser.add_argument("--slo", type=float, default=15.0, help="first-word target in seconds")
     parser.add_argument("--port", type=int, default=8010)
     parser.add_argument(
@@ -326,7 +413,7 @@ def main() -> None:
     if args.retrieval:
         report = {"retrieval_ms": asyncio.run(retrieval_timing(30))}
     else:
-        report = asyncio.run(bench(args.levels, args.per_user, args.slo, args.port, args.resources))
+        report = asyncio.run(bench(args))
     args.out.mkdir(parents=True, exist_ok=True)
     path = args.out / f"{args.label}-{datetime.now():%Y%m%d-%H%M}.json"
     path.write_text(json.dumps(report, indent=2), encoding="utf-8")

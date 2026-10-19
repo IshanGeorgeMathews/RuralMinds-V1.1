@@ -18,6 +18,7 @@ COLUMNS = [
     ("false refusal", lambda s: _rate(s["refusal"]["false_refusal_rate"])),
     ("intent", lambda s: _rate(s.get("intent_correct"))),
     ("right chapter", lambda s: _rate(s.get("chapter_correct"))),
+    ("3rd script", lambda s: _rate(s.get("third_script"))),
     ("1st word p50/p95", lambda s: f"{s['ttft_s']['p50']}/{s['ttft_s']['p95']}"),
 ]
 

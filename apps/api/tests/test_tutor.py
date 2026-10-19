@@ -152,3 +152,37 @@ def test_answers_in_the_wrong_script_are_caught() -> None:
     assert tutor.wrong_script(hindi, "ml") and tutor.wrong_script(hindi, "en")
     assert not tutor.wrong_script("ഹരപ്പൻ നഗരങ്ങളിൽ മൂടിയ ഓടകൾ ഉണ്ടായിരുന്നു (Harappa)", "ml")
     assert not tutor.wrong_script("Harappan cities had covered drains to carry water.", "en")
+
+
+@pytest.mark.parametrize(
+    "question",
+    [
+        "Who is the Chief Minister of Kerala now?",
+        "Who is the present President of India?",
+        "Name the current Prime Minister",
+        "kerala ippozhathe mukhyamanthri aaranu?",
+        "കേരളത്തിന്റെ ഇപ്പോഴത്തെ മുഖ്യമന്ത്രി ആരാണ്?",
+    ],
+)
+def test_who_holds_an_office_now_is_time_sensitive(question: str) -> None:
+    assert tutor.time_sensitive(question)
+
+
+@pytest.mark.parametrize(
+    "question",
+    [
+        "What are the powers of the President?",  # no "now": the book answers this
+        "Who elects the Chief Minister?",  # no "now"
+        "Who were the rulers present at the Kalinga war?",  # "present", but no office
+        "How is the Prime Minister chosen now?",  # how, not who
+        "രാഷ്ട്രപതിയുടെ അധികാരങ്ങൾ എന്തൊക്കെ?",
+    ],
+)
+def test_book_questions_about_offices_are_not_time_sensitive(question: str) -> None:
+    assert not tutor.time_sensitive(question)
+
+
+def test_third_script_catches_one_stray_word_only() -> None:
+    assert tutor.third_script("രാജ്യസഭയും ലോകസഭയും ഈ പാർലമെന്റിനെ 구성 ചെയ്യുന്നു")
+    assert tutor.third_script("ഇത് కలగ ആണ്")  # Telugu
+    assert not tutor.third_script("ഹാരപ്പ (Harappa) BCE 2600 – café")

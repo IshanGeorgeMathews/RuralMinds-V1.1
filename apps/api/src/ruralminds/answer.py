@@ -82,7 +82,8 @@ class Gate:
     top_rrf: float | None
     candidates: int
     passed: bool
-    # gate | not_in_textbook (model's sentinel) | admits_missing | wrong_script | no_valid_citation
+    # gate | time_sensitive | not_in_textbook (model's sentinel) | admits_missing | wrong_script
+    # | no_valid_citation
     reason: str | None = None
     search_query: str | None = None  # what was searched (after removing request words / rewriting)
     # Every candidate's location and ranks, so the eval can compute recall@k from the event.
@@ -97,18 +98,22 @@ def system_prompt(language: str) -> str:
     return load_prompt(f"{PROMPT_VERSION}_{language}")
 
 
-def check_gate(hits: list[RetrievedChunk]) -> Gate:
+def check_gate(hits: list[RetrievedChunk], rewritten: bool = False) -> Gate:
     """Layer 1: refuse without calling the model when retrieval clearly found nothing.
 
     Cosine similarity alone cannot separate on- from off-topic here (both sit around 0.44),
     but an off-topic question rarely shares a keyword with the book, so we need both signals
-    to be weak. Cross-lingual questions never get keyword hits and rely on similarity alone.
+    to be weak. A question that was rewritten into the book's language (Manglish, or English
+    on a Malayalam book) skips this layer: the rewrite loses words, and on dev the gate's only
+    effect on such questions was 2 false refusals; the model's own NOT_IN_TEXTBOOK refuses the
+    off-book ones. A stricter keyword rule (>= 2 matched terms) was measured and rejected:
+    it refused 7/14 must-refuse dev items the model already refuses, and 4/90 answerable ones.
     """
     similarities = [hit.similarity for hit in hits if hit.similarity is not None]
     top_similarity = max(similarities, default=None)
     keyword_hit = any(hit.fts_rank is not None for hit in hits)
     strong_vector = top_similarity is not None and top_similarity >= settings.refusal_threshold
-    passed = bool(hits) and (keyword_hit or strong_vector)
+    passed = bool(hits) and (keyword_hit or strong_vector or rewritten)
     return Gate(
         top_similarity=round(top_similarity, 4) if top_similarity is not None else None,
         keyword_hit=keyword_hit,
@@ -234,6 +239,10 @@ async def answer_stream(
         _log(conn, request, "cached", clock)
         yield ready
         return
+    if tutor.time_sensitive(request.question):
+        gate = Gate(None, False, None, 0, passed=False, reason="time_sensitive")
+        yield _refuse(conn, request, gate, clock, message_key="refusal.time_sensitive")
+        return
     search_text = await _search_text(conn, client, request)
     filters = Filters(request.medium, request.subject, request.chapter_no, request.document_id)
     try:
@@ -245,7 +254,8 @@ async def answer_stream(
         _log(conn, request, "error", clock)
         yield event("error", message_key="error.model")
         return
-    gate = replace(check_gate(hits), search_query=search_text)
+    rewritten = tutor.question_language(request.question) != request.medium
+    gate = replace(check_gate(hits, rewritten), search_query=search_text)
     if not gate.passed:
         yield _refuse(conn, request, gate, clock)
         return
@@ -432,6 +442,7 @@ def _refuse(
     gate: Gate,
     clock: Clock,
     raw_text: str | None = None,
+    message_key: str = "refusal.not_found",
 ) -> dict[str, object]:
     if request.class_id:  # students only: teacher tests and the eval stay out of the inbox
         _save_unanswered(conn, request, gate)
@@ -440,7 +451,7 @@ def _refuse(
     return event(
         "refused",
         reason=gate.reason,
-        message_key="refusal.not_found",
+        message_key=message_key,
         gate=asdict(gate),
         **extra,
     )

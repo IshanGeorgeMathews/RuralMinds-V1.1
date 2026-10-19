@@ -150,3 +150,15 @@ def test_weighted_kappa_penalises_far_disagreements_more() -> None:
     # chance = sum w_ij * row_i * col_j / n = (2 + 0.75 + 1) / 3 = 1.25
     # -> kappa = 1 - 0.25 / 1.25 = 0.8
     assert weighted_kappa([1, 2, 3], [1, 3, 3], [1, 2, 3]) == 0.8
+
+
+def test_third_script_is_scored_on_shown_answers_only() -> None:
+    from eval.run import score
+
+    item = {"id": "s1", "lang": "ml", "question": "q", "answerable": True, "gold_pages": [59]}
+    shown = {"event": "done", "data": {"text": "രണ്ട് സഭകൾ 구성 ചെയ്യുന്നു", "citations": []}}
+    assert score(item, shown, ttft=1.0, total=2.0)["third_script"] is True
+    clean = {"event": "done", "data": {"text": "രണ്ട് സഭകൾ (Lok Sabha)", "citations": []}}
+    assert score(item, clean, ttft=1.0, total=2.0)["third_script"] is False
+    refused = {"event": "refused", "data": {"reason": "gate"}}
+    assert "third_script" not in score(item, refused, ttft=None, total=1.0)

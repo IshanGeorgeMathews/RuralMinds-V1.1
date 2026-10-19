@@ -54,6 +54,13 @@ def test_gate_refuses_when_nothing_retrieved() -> None:
     assert not check_gate([]).passed
 
 
+def test_rewritten_question_skips_the_gate_but_not_an_empty_search() -> None:
+    weak = [_hit(1, fts=None, sim=settings.refusal_threshold - 0.1)]
+    assert not check_gate(weak).passed
+    assert check_gate(weak, rewritten=True).passed  # the model decides (NOT_IN_TEXTBOOK)
+    assert not check_gate([], rewritten=True).passed
+
+
 # ---------- packing ----------
 def test_pack_respects_token_budget_but_keeps_best_chunk() -> None:
     assert [h.chunk_id for h in pack_sources([_hit(1, 300), _hit(2, 300), _hit(3, 100)], 450)] == [

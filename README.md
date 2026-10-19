@@ -49,7 +49,7 @@ All numbers below were measured on one laptop: Ryzen 7 7730U, 14 GB RAM, model r
 | Full answer time, English / Malayalam | 13–28 s / 30–40 s | `tutor-final-gemma-quiet-*.json` |
 | Power cut during a book upload | resumed where it stopped (98 → 51 → 35 OCR pages left across two kills) | [`docs/DECISIONS.md`](docs/DECISIONS.md), 13 Oct |
 
-**Not measured yet:** how many phones the laptop serves at once, and power draw in watts. We do not quote estimates for these.
+**Load (bench on battery, 19 Oct, `eval/results/bench-gemma4-e2b-np2-battery-20261019-2250.json`):** the demo laptop produces about 3 answers per minute however many phones ask. With 1–2 phones asking nonstop, every first word arrived within 15 s; with 4 phones, 2 of 8 did. Students arriving at random at 2 questions per minute were all served within 15 s (5 arrivals: a small sample); at 4 per minute a queue built up (first word median 39 s). Battery draw under load was 11–13 W, about 0.07–0.08 Wh per answer. The server needs the laptop to itself: with other apps filling the RAM, generation ran at half speed. The final bench repeats this on mains power with more questions.
 
 **Known limits:**
 - One kind of off-syllabus question can still slip through. "At what temperature does water boil?" finds the geography pages about the Earth's temperature and gets answered.

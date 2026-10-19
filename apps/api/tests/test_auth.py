@@ -1,3 +1,5 @@
+import inspect
+
 import pytest
 
 from ruralminds import auth, cache
@@ -113,3 +115,8 @@ def test_no_table_links_questions_to_accounts(conn) -> None:
         assert not columns & {"user_id", "student_id", "username", "session", "device", "ip"}
     user_columns = {row[1] for row in conn.execute("PRAGMA table_info(users)")}
     assert not user_columns & {"name", "phone", "email", "aadhaar", "apaar", "dob"}
+
+
+def test_role_check_runs_on_the_event_loop_not_in_a_thread() -> None:
+    # FastAPI runs sync dependencies in a thread pool; this one reads the shared connection.
+    assert inspect.iscoroutinefunction(auth.require_role("student"))

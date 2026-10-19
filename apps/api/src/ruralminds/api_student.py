@@ -37,8 +37,10 @@ async def login(body: LoginIn, request: Request, response: Response, conn: Conn)
     throttle: auth.LoginThrottle = request.app.state.throttle
     if throttle.blocked(body.username):
         raise HTTPException(429, detail="auth.throttled")
-    # scrypt takes ~50 ms of CPU: run it off the event loop so answers keep streaming.
-    user = await asyncio.to_thread(auth.authenticate, conn, body.username, body.password)
+    # scrypt takes ~50 ms of CPU: run it off the event loop so answers keep streaming. Only the
+    # hash goes to the thread; the shared sqlite connection is never used from two threads.
+    row = auth.find_login(conn, body.username)
+    user = await asyncio.to_thread(auth.check_login, row, body.password)
     if user is None:
         throttle.failed(body.username)
         raise HTTPException(401, detail="auth.invalid")

@@ -23,6 +23,7 @@ import httpx
 
 from eval.metrics import mean_with_ci, percentile, rate, refusal_report, retrieval_scores
 from eval.split import verify as verify_split
+from ruralminds import tutor
 from ruralminds.answer import PROMPT_VERSION, AnswerQueue, AskRequest, Turn, answer_stream
 from ruralminds.config import settings
 from ruralminds.db import connect
@@ -106,6 +107,10 @@ def score(item: dict, final: dict, ttft: float | None, total: float) -> dict:
         "refusal_correct": refused != item["answerable"],
         "grade": None,  # filled in by human graders: 0 wrong, 1 partly right, 2 right
     }
+    if not refused:
+        # Script fidelity: a letter outside Latin and Malayalam in what the phone showed.
+        shown = (result["answer"], result["example"], result["check"], result["quiz_answers"])
+        result["third_script"] = tutor.third_script(" ".join(str(x) for x in shown if x))
     if "expected_mode" in item:
         result["intent_correct"] = result["mode"] in as_list(item["expected_mode"])
     if "expected_chapter" in item:
@@ -171,6 +176,7 @@ def _summary(rows: list[dict]) -> dict:
         "refusal": refusal_report([(r["answerable"], r["refused"]) for r in rows]),
         "intent_correct": _rate_of(rows, "intent_correct"),
         "chapter_correct": _rate_of(rows, "chapter_correct"),
+        "third_script": _rate_of(rows, "third_script"),
         "ttft_s": {f"p{p}": percentile(ttfts, p / 100) for p in (50, 95, 99)},
         "total_s": {f"p{p}": percentile(totals, p / 100) for p in (50, 95, 99)},
     }

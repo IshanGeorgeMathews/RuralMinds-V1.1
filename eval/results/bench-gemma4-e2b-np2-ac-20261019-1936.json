@@ -1,0 +1,156 @@
+{
+  "run_at": "2026-10-19T19:36:53",
+  "slo_first_word_s": 15.0,
+  "llm_parallel": 2,
+  "per_user": 3,
+  "levels": [
+    {
+      "concurrency": 1,
+      "requests": 3,
+      "events": {
+        "done": 3
+      },
+      "answers_per_min": 3.08,
+      "goodput": 1.0,
+      "ttft_s": {
+        "p50": 1.48,
+        "p95": 1.98,
+        "p99": 1.98
+      },
+      "total_s": {
+        "p50": 19.51,
+        "p95": 22.55,
+        "p99": 22.55
+      },
+      "wall_s": 58.4,
+      "decode_tokens_per_s": 7.5,
+      "prompt_tokens_per_s": 6.8,
+      "window": [
+        "2026-10-19T19:21:31",
+        "2026-10-19T19:22:29"
+      ],
+      "resources": {
+        "samples": 9,
+        "cpu_percent": 12.93,
+        "mem_used_mb": 11835.11,
+        "llama_ws_mb": 2486.56,
+        "python_ws_mb": 134.22,
+        "gpu_3d_percent": 0.0,
+        "gpu_compute_percent": 97.41,
+        "on_battery": 0.0,
+        "discharge_w": 0.0
+      }
+    },
+    {
+      "concurrency": 2,
+      "requests": 6,
+      "events": {
+        "done": 6
+      },
+      "answers_per_min": 3.82,
+      "goodput": 1.0,
+      "ttft_s": {
+        "p50": 2.19,
+        "p95": 2.48,
+        "p99": 2.48
+      },
+      "total_s": {
+        "p50": 30.1,
+        "p95": 32.95,
+        "p99": 32.95
+      },
+      "wall_s": 94.3,
+      "decode_tokens_per_s": 5.2,
+      "prompt_tokens_per_s": 8.2,
+      "window": [
+        "2026-10-19T19:22:29",
+        "2026-10-19T19:24:04"
+      ],
+      "resources": {
+        "samples": 16,
+        "cpu_percent": 10.79,
+        "mem_used_mb": 11824.81,
+        "llama_ws_mb": 2465.56,
+        "python_ws_mb": 137.31,
+        "gpu_3d_percent": 0.0,
+        "gpu_compute_percent": 85.99,
+        "on_battery": 0.0,
+        "discharge_w": 0.0
+      }
+    },
+    {
+      "concurrency": 4,
+      "requests": 12,
+      "events": {
+        "done": 12
+      },
+      "answers_per_min": 2.9,
+      "goodput": 0.167,
+      "ttft_s": {
+        "p50": 44.11,
+        "p95": 59.82,
+        "p99": 59.82
+      },
+      "total_s": {
+        "p50": 79.6,
+        "p95": 90.02,
+        "p99": 90.02
+      },
+      "wall_s": 248.6,
+      "decode_tokens_per_s": 4.1,
+      "prompt_tokens_per_s": 54.9,
+      "window": [
+        "2026-10-19T19:24:04",
+        "2026-10-19T19:28:12"
+      ],
+      "resources": {
+        "samples": 40,
+        "cpu_percent": 14.14,
+        "mem_used_mb": 11899.12,
+        "llama_ws_mb": 2468.93,
+        "python_ws_mb": 141.5,
+        "gpu_3d_percent": 0.0,
+        "gpu_compute_percent": 92.82,
+        "on_battery": 0.0,
+        "discharge_w": 0.0
+      }
+    },
+    {
+      "concurrency": 8,
+      "requests": 24,
+      "events": {
+        "done": 24
+      },
+      "answers_per_min": 2.76,
+      "goodput": 0.083,
+      "ttft_s": {
+        "p50": 129.93,
+        "p95": 144.77,
+        "p99": 149.78
+      },
+      "total_s": {
+        "p50": 168.22,
+        "p95": 186.05,
+        "p99": 195.62
+      },
+      "wall_s": 520.8,
+      "decode_tokens_per_s": 4.0,
+      "prompt_tokens_per_s": 54.6,
+      "window": [
+        "2026-10-19T19:28:12",
+        "2026-10-19T19:36:53"
+      ],
+      "resources": {
+        "samples": 84,
+        "cpu_percent": 14.63,
+        "mem_used_mb": 12104.29,
+        "llama_ws_mb": 2698.65,
+        "python_ws_mb": 146.65,
+        "gpu_3d_percent": 0.02,
+        "gpu_compute_percent": 93.15,
+        "on_battery": 0.0,
+        "discharge_w": 0.0
+      }
+    }
+  ]
+}

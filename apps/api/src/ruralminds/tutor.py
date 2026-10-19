@@ -258,3 +258,44 @@ def wrong_script(text: str, language: str) -> bool:
     expected = malayalam if language == "ml" else latin
     # Malayalam answers keep English names (Harappa, BCE), so only a clear minority fails.
     return expected / len(letters) < 0.5
+
+
+def third_script(text: str) -> bool:
+    """Any letter that is neither Latin nor Malayalam: the single stray Korean or Telugu word
+    that wrong_script's majority rule lets through (2/93 dev answers, 19 Oct). Measured by the
+    eval; preventing it at generation time is the W4 grammar change."""
+    return any(
+        ch.isalpha()
+        and not ch.isascii()
+        and not 0x00C0 <= ord(ch) <= 0x024F
+        and not 0x0D00 <= ord(ch) <= 0x0D7F
+        for ch in text
+    )
+
+
+# ---------- time-sensitive questions (ANSWER_POLICY §4) ----------
+# "Who is the Chief Minister now?" The book names office-holders as of its printing, if at all,
+# so the honest answer is "ask your teacher". Neither the gate nor the model refused it on dev.
+# All three parts are needed, so "What are the powers of the President?" is still answered.
+_ASKS_WHO = re.compile(
+    r"\b(?:who|whom|whose|name|aaranu|aaraanu|aara|aaru|aarokke)\b|ആര്|ആരാണ്|ആരൊക്കെ|പേര്",
+    re.IGNORECASE,
+)
+_NOW = re.compile(
+    r"\b(?:now|current|currently|present|presently|today|this year|these days|at the moment"
+    r"|latest|ippo|ippol|ippozhathe|ippozhulla|ippozhatthe|nilavil|nilavile|innathe)\b"
+    r"|ഇപ്പോൾ|ഇപ്പോഴത്തെ|ഇപ്പോഴുള്ള|നിലവിലെ|നിലവിൽ|ഇന്നത്തെ",
+    re.IGNORECASE,
+)
+_OFFICE = re.compile(
+    r"\b(?:president|prime minister|pm|chief minister|cm|minister|governor|chief justice"
+    r"|speaker|vice president|election commissioner|collector|mayor|mla|mp"
+    r"|rashtrapathi|pradhana ?manthri|mukhya ?manthri|manthri)\b"
+    r"|രാഷ്ട്രപതി|പ്രധാനമന്ത്രി|മുഖ്യമന്ത്രി|മന്ത്രി|ഗവർണർ|ചീഫ് ജസ്റ്റിസ്|സ്പീക്കർ",
+    re.IGNORECASE,
+)
+
+
+def time_sensitive(question: str) -> bool:
+    """Asks who holds an office now: refused without a model call (ANSWER_POLICY §4)."""
+    return all(pattern.search(question) for pattern in (_ASKS_WHO, _NOW, _OFFICE))
