@@ -16,7 +16,7 @@ import multiprocessing
 import multiprocessing.pool
 import re
 import threading
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 
 import sympy
 from sympy.physics import units as u
@@ -35,6 +35,14 @@ UNITS: dict[str, sympy.Expr] = {
     "N": u.newton, "J": u.joule, "kJ": 1000 * u.joule, "W": u.watt, "Pa": u.pascal,
     "L": u.liter, "mL": u.milliliter,
 }  # fmt: skip
+# The model often spells units out ("1 hour", "5 metres"); singular and plural both count.
+_SPELLED = {
+    "millimetre": "mm", "centimetre": "cm", "metre": "m", "kilometre": "km",
+    "millimeter": "mm", "centimeter": "cm", "meter": "m", "kilometer": "km",
+    "second": "s", "minute": "min", "hour": "h", "gram": "g", "kilogram": "kg",
+    "newton": "N", "joule": "J", "watt": "W", "litre": "L", "liter": "L",
+}  # fmt: skip
+UNITS |= {name + plural: UNITS[short] for name, short in _SPELLED.items() for plural in ("", "s")}
 SI_BASE = [u.meter, u.kilogram, u.second, u.ampere, u.kelvin, u.mole, u.candela]
 FUNCTIONS = {"sqrt": sympy.sqrt}
 
@@ -93,6 +101,9 @@ class Solution:
     status: str
     solutions: tuple[tuple[Answer, ...], ...] = field(default=())
     detail: str = ""
+    # Worked lines ("3x + 6 = 33", "3x = 27", "x = 9") so the model narrates, never calculates.
+    # Empty when the problem has more than one equation or unknown.
+    steps: tuple[str, ...] = ()
 
 
 def _tokens(text: str, limits: Limits) -> list[str]:
@@ -204,6 +215,24 @@ def parse_quantity(text: str, limits: Limits) -> sympy.Expr:
     number = parse(match.group(1), {}, limits)
     unit_text = match.group(2)
     return number * parse(unit_text, UNITS, limits) if unit_text else number
+
+
+def answer_unit_for(unit: str, question: str, limits: Limits) -> str:
+    """The model's answer unit, kept only if it is a real unit or a word from the question.
+
+    A small model fills the unit line even for plain numbers ("degree/none" on a sum of odd
+    numbers), so a label like "rupees" must come from the question itself.
+    """
+    unit = unit.strip()
+    if not unit:
+        return ""
+    try:
+        parse(unit, UNITS, limits)
+        return unit
+    except MathParseError:
+        pass
+    words = re.findall(r"[a-z]+", question.casefold())
+    return unit if unit.casefold() in words else ""
 
 
 def _equation(text: str, names: dict[str, sympy.Expr], limits: Limits) -> sympy.Eq:
@@ -326,7 +355,93 @@ def solve_problem(problem: Problem, limits: Limits) -> Solution:
         return Solution("no_solution")
     if not all(_holds(equation, solution) for equation in equations for solution in found):
         return Solution("check_failed", detail="an answer does not satisfy the equations")
-    return _answers(problem, names, found, limits)
+    solution = _answers(problem, names, found, limits)
+    if solution.status != "solved" or len(found) != 1 or len(unknowns) != 1:
+        return solution
+    unknown, value = unknowns[0], found[0][unknowns[0]]
+    try:
+        answer = _answer(str(unknown), value, problem.answer_unit, limits)
+    except ArithmeticError:  # the unit was asked of another expression, not of the unknown
+        number = _strip_units(value)
+        answer = Answer(str(unknown), str(number), "", format_number(number))
+    return replace(solution, steps=worked_steps(problem, answer, limits))
+
+
+def _pretty(text: str, implicit: bool = True) -> str:
+    """Maths the way the book prints it: '3x + 6', 'a × t', 'x²'."""
+    text = text.translate(_SYMBOLS).replace("**", "^")
+    if implicit:
+        text = re.sub(r"(\d)\s*\*\s*(?=[A-Za-z(])", r"\1", text)
+    return pretty_unit(re.sub(r"\s*\*\s*", " × ", text))
+
+
+def show(expr: sympy.Expr, implicit: bool = True, order: str | None = None) -> str:
+    # order="none" keeps "(v - u)/t"; the default order keeps "3x + 6" for polynomials.
+    return _pretty(sympy.sstr(expr, order=order), implicit)
+
+
+def _as_written(text: str, limits: Limits, implicit: bool = True) -> str:
+    """The model's own expression, tidied: 'a t' → 'a × t', '10*x' → '10x'."""
+    joined = "".join(_tokens(text, limits))
+    return _pretty(re.sub(r"(?<=[\w)])([-+=])", r" \1 ", joined), implicit)
+
+
+def _linear_steps(problem: Problem, unknown: sympy.Symbol, limits: Limits) -> list[str]:
+    """'x + (x + 2) + (x + 4) = 33' → '3x + 6 = 33' → '3x = 27'. Raises ValueError if not linear."""
+    text = problem.equations[0]
+    equation = _equation(text, {str(unknown): unknown}, limits)
+    left, right = sympy.expand(equation.lhs), sympy.expand(equation.rhs)
+    coefficient, constant = sympy.Poly(left - right, unknown).all_coeffs()
+    written = " = ".join(_as_written(side, limits) for side in text.split("="))
+    return [
+        written,
+        f"{show(left)} = {show(right)}",
+        f"{show(coefficient * unknown)} = {show(-constant)}",
+    ]
+
+
+def _formula_steps(
+    problem: Problem, unknown: sympy.Symbol, answer: Answer, limits: Limits
+) -> list[str]:
+    """'v = u + a t' → 'a = (v - u)/t' → 'a = (40 - 0)/8'. Numbers are shown without units."""
+    left_text, right_text = problem.equations[0].split("=")
+    lines = [f"{_as_written(left_text, limits)} = {_as_written(right_text, limits)}"]
+    if left_text.strip() == str(unknown):  # already "d = v × t": substitute into it as written
+        formula = _as_written(right_text, limits, implicit=False)
+    else:
+        names = {name: sympy.Symbol(name) for name, _ in problem.knowns} | {str(unknown): unknown}
+        rearranged = sympy.solve(_equation(problem.equations[0], names, limits), unknown)
+        if len(rearranged) != 1:
+            return lines
+        lines.append(f"{unknown} = {show(rearranged[0], order='none')}")
+        # Explicit ×: with implicit multiplication "2l" would become "25" once l is replaced by 5.
+        formula = show(rearranged[0], implicit=False, order="none")
+    numbers = {}
+    for name, quantity in problem.knowns:
+        number = format_number(_strip_units(parse_quantity(quantity, limits)))
+        numbers[name] = f"({number})" if number.startswith("-") else number
+    substituted = re.sub(r"[A-Za-z][A-Za-z0-9_]*", lambda m: numbers.get(m[0], m[0]), formula)
+    # "72 km in 1 h" asked in m/s: "v = 72/1" then "v = 20 m/s" would look wrong, so the line
+    # is shown only when its own numbers give the answer.
+    if parse(substituted, {}, limits) == parse(answer.exact, {}, limits):
+        lines.append(f"{unknown} = {substituted}")
+    return lines
+
+
+def worked_steps(problem: Problem, answer: Answer, limits: Limits) -> tuple[str, ...]:
+    """Worked lines for one equation in one unknown, ending with the answer; else ()."""
+    if len(problem.equations) != 1:
+        return ()
+    unknown = sympy.Symbol(problem.unknowns[0])
+    try:
+        if problem.knowns:
+            lines = _formula_steps(problem, unknown, answer, limits)
+        else:
+            lines = _linear_steps(problem, unknown, limits)
+    except (MathParseError, ValueError, PolynomialError, NotImplementedError):
+        return ()  # e.g. a quadratic: explained from the equation and its answers instead
+    lines.append(f"{unknown} = {answer.display}")
+    return tuple(line for index, line in enumerate(lines) if index == 0 or line != lines[index - 1])
 
 
 class Solver:

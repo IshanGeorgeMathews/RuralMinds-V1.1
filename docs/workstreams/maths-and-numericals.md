@@ -1,6 +1,6 @@
 # Maths and numerical problems (Maths, Physics, Chemistry)
 
-**State on 20 Oct 2026:** option A chosen (DECISIONS 2026-10-20); answer card = §3.5. Built: `mathcheck.py` (§6 step 2) with 23 unit tests; not yet wired into answering. Measured today: how well our current ingestion reads the Maths book (§1). Everything else here is a proposal. Numbers from papers are marked *external* and are never RuralMinds results (rule 6).
+**State on 20 Oct 2026:** option A chosen (DECISIONS 2026-10-20); answer card = §3.5. Built: `mathcheck.py` (§6 step 2: safe parser, solve, units, worked steps, unit labels; 35 unit tests) and the two prompts `maths_setup_v1` / `system_v3_numerical_en` (step 3, prompts only; tried on 10 items, §6a). Not yet wired into answering. Measured today: how well our current ingestion reads the Maths book (§1). Everything else here is a proposal. Numbers from papers are marked *external* and are never RuralMinds results (rule 6).
 
 ## 0. Scope conflict — decide first
 
@@ -175,6 +175,20 @@ Proposed, for the team to change: solve-then-explain beats model-alone on `mx_va
 | 7 | Tier C similar problems + skeleton check | 1 day | no |
 | 8 | Full maths eval sets, held-out book run | 2+ days | no |
 | 9 | Malayalam reading check, ML prompts, ML items | 2+ days | no |
+
+## 6a. Prompt trial, 20 Oct (scratch script, not a measurement)
+
+Ten book problems (6 Science Pt1 numericals, 4 Maths Pt1 p 41) and 1 non-numerical question, run through setup call → SymPy → explain call on the live model. Timings are **not reported**: the laptop was busy (generation ~8.5 tok/s against 13.7 tok/s clean) and the server was restarted mid-trial.
+
+What the trial changed in the design:
+- **Setup output is a line format** (`KIND / UNKNOWNS / KNOWN / EQUATION / ASKED / UNIT`) constrained by a GBNF grammar, not JSON: indented JSON was 176 tokens for one problem. `KNOWN` may only hold a number and a unit, so relations must be written as equations.
+- **The model never writes maths.** Asked to "copy the working exactly", it dropped brackets (`a = v - u / t`) and added its own line. Now SymPy produces the worked lines (`worked_steps`), and the explain grammar writes each line into the reply as fixed text; the model writes only one sentence under each, so the sentence matches its line and the line cannot change. Sentences may not contain `$` or `\` (the model wrote LaTeX once).
+- **Units on plain numbers come from the question** (`answer_unit_for`): the model filled "degree/none" on a sum of odd numbers.
+
+What it showed (indicative, n = 10):
+- Science numericals: 6/6 set up correctly and solved (incl. km/h → m/s); all formula substitution.
+- Maths story problems: 2/4 solved correctly; 2 failed safely (no number shown). **But one of the safe failures had wrong equations** (`b = c + 4` for "4 rupees more than the pen"), and it failed only because of an unrelated parse error. A wrong setup that parses would be shown as "✓ checked" and be wrong. **This is the main risk of the design**: SymPy checks the arithmetic, not the reading of the story. Stage 4 of the bench (setup correct) must be reported on its own; a candidate guard is two setups that must agree before the badge is shown, decided by measurement.
+- Two-equation problems have no worked lines yet, so their last sentence is vague ("substitute b … then find the breadth").
 
 ## 7. To decide (team)
 1. Option A, B or C (§0).
