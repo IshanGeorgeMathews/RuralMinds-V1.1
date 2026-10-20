@@ -62,6 +62,14 @@ class Settings(BaseSettings):
     revision_idle_s: int = 45
     revision_poll_s: float = 15.0
     max_question_chars: int = 500
+    # Numerical problems (mathcheck.py): caps on what the model's equations may contain, and a
+    # hard time limit for SymPy so a runaway input cannot hold the server.
+    math_timeout_s: float = 3.0
+    math_max_chars: int = 200
+    math_max_digits: int = 12
+    math_max_exponent: int = 10
+    math_max_degree: int = 3  # Class 8-10 is mostly linear and quadratic
+    math_max_unknowns: int = 4
     history_turns: int = 2
 
     # Accounts and sessions (see auth.py)

@@ -11,6 +11,7 @@ Read this first, every session. Deeper detail lives in `docs/` — read the rele
 | Past decisions (don't re-litigate) | `docs/DECISIONS.md` |
 | Hackathon demo flow | `docs/DEMO_SCRIPT.md` |
 | **Current Phase 0 design, day plan, conflicts resolved** (wins where `ARCHITECTURE.md` differs) | `docs/SYSTEM_DESIGN.md` |
+| Status of each workstream, all evaluations done and to do, queued work (exam revision, subject RAG, teacher inbox) | `docs/workstreams/` |
 
 ---
 
