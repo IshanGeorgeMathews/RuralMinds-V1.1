@@ -1,6 +1,6 @@
 # Maths and numerical problems (Maths, Physics, Chemistry)
 
-**State on 20 Oct 2026:** option A chosen (DECISIONS 2026-10-20); answer card = §3.5. Built: `mathcheck.py` (§6 step 2: safe parser, solve, units, worked steps, unit labels; 35 unit tests) and the two prompts `maths_setup_v1` / `system_v3_numerical_en` (step 3, prompts only; tried on 10 items, §6a). Not yet wired into answering. Measured today: how well our current ingestion reads the Maths book (§1). Everything else here is a proposal. Numbers from papers are marked *external* and are never RuralMinds results (rule 6).
+**State on 20 Oct 2026:** option A chosen (DECISIONS 2026-10-20); answer card = §3.5. Built: `mathcheck.py` (§6 step 2: safe parser, solve, units, worked steps, unit labels; 35 unit tests) and the two prompts `maths_setup_v1` / `system_v3_numerical_en` (tried on 10 items, §6a), and the solve path (§6 step 3): `numerical.py` + mode `solve` in `answer.py`, chip-only, with a method-only fallback and `math_status` in every solve answer; 10 tests. Live check on a database copy: 3 Science numericals solved with the right pages cited, 1 non-numerical question routed to the tutor answer; first word 15–40 s on a busy laptop (not a measurement; the setup call comes before the first word, so step 4 shows a progress step). Next: step 4 (chip + answer card). Measured today: how well our current ingestion reads the Maths book (§1). Everything else here is a proposal. Numbers from papers are marked *external* and are never RuralMinds results (rule 6).
 
 ## 0. Scope conflict — decide first
 

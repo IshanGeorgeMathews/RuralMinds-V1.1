@@ -65,6 +65,7 @@ class Settings(BaseSettings):
     # Numerical problems (mathcheck.py): caps on what the model's equations may contain, and a
     # hard time limit for SymPy so a runaway input cannot hold the server.
     math_timeout_s: float = 3.0
+    math_worker: bool = True  # start the SymPy process at app start (off in API tests)
     math_max_chars: int = 200
     math_max_digits: int = 12
     math_max_exponent: int = 10

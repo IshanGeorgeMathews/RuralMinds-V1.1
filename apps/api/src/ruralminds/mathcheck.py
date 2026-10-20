@@ -483,8 +483,22 @@ class Solver:
 _solver: Solver | None = None
 
 
-async def solve(problem: Problem) -> Solution:
+def _get_solver() -> Solver:
     global _solver
     if _solver is None:
         _solver = Solver(settings.math_timeout_s, Limits.from_settings())
-    return await asyncio.to_thread(_solver.solve, problem)
+    return _solver
+
+
+async def start() -> None:
+    """At app start: the worker process and its SymPy import cost ~2 s once, not per student."""
+    await asyncio.to_thread(_get_solver().warm)
+
+
+def stop() -> None:
+    if _solver is not None:
+        _solver.close()
+
+
+async def solve(problem: Problem) -> Solution:
+    return await asyncio.to_thread(_get_solver().solve, problem)

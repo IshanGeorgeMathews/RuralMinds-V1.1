@@ -5,7 +5,7 @@ import httpx
 from fastapi import FastAPI, Request, Response
 from fastapi.responses import FileResponse, JSONResponse
 
-from . import api_admin, api_student, api_teacher
+from . import api_admin, api_student, api_teacher, mathcheck
 from .answer import AnswerQueue
 from .auth import LoginThrottle
 from .config import settings
@@ -35,7 +35,10 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     )
     app.state.jobs = JobRunner(app.state.db)
     app.state.jobs.start()  # resumes uploads interrupted by a power cut, cleans orphans
+    if settings.math_worker:
+        await mathcheck.start()
     yield
+    mathcheck.stop()
     await app.state.jobs.stop()
     if app.state.revision is not None:
         await app.state.revision.stop()

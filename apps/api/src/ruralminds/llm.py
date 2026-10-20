@@ -39,7 +39,10 @@ async def count_tokens(text: str, client: httpx.AsyncClient) -> int:
 
 
 async def chat_stream(
-    messages: list[dict[str, str]], client: httpx.AsyncClient, max_tokens: int | None = None
+    messages: list[dict[str, str]],
+    client: httpx.AsyncClient,
+    max_tokens: int | None = None,
+    grammar: str | None = None,
 ) -> AsyncIterator[str]:
     """Stream answer text pieces from llama-server's OpenAI-compatible endpoint.
 
@@ -53,6 +56,8 @@ async def chat_stream(
         "max_tokens": max_tokens or settings.max_tokens,
         "cache_prompt": True,  # reuse the KV cache for the shared system-prompt prefix
     }
+    if grammar:  # GBNF: llama-server only samples tokens the grammar allows
+        payload["grammar"] = grammar
     url = f"{settings.llm_url}/v1/chat/completions"
     async with client.stream("POST", url, json=payload, timeout=CHAT_TIMEOUT) as reply:
         reply.raise_for_status()
@@ -69,7 +74,10 @@ async def chat_stream(
 
 
 async def complete(
-    messages: list[dict[str, str]], client: httpx.AsyncClient, max_tokens: int
+    messages: list[dict[str, str]],
+    client: httpx.AsyncClient,
+    max_tokens: int,
+    grammar: str | None = None,
 ) -> str:
     """One short, non-streamed reply (temperature 0), e.g. rewriting a question for search."""
     payload = {
@@ -79,6 +87,8 @@ async def complete(
         "max_tokens": max_tokens,
         "cache_prompt": True,
     }
+    if grammar:
+        payload["grammar"] = grammar
     reply = await client.post(
         f"{settings.llm_url}/v1/chat/completions", json=payload, timeout=COMPLETE_TIMEOUT
     )

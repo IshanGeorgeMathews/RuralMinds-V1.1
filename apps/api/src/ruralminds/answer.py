@@ -5,6 +5,9 @@
     -> retrieve -> gate (layer 1) -> pack sources -> tutor prompt -> llama-server stream
     -> sentinel / marker check (layer 2) -> sections + citations from the database -> label
 
+The "Solve step by step" chip (mode "solve") takes the same path up to the sources, then
+numerical.py: the model sets the problem up, SymPy solves it and the model explains the lines.
+
 The model only ever sees sources as [S1]..[Sn]; chapter and page numbers come from our own
 tables, so the model cannot invent a page. Every request emits a `gate` record with the inputs
 to the refusal decision so the threshold can be calibrated on the eval dev split.
@@ -21,7 +24,7 @@ from dataclasses import asdict, dataclass, field, replace
 
 import httpx
 
-from . import tutor
+from . import numerical, tutor
 from .cache import lookup as lookup_approved
 from .cache import normalise_question
 from .config import settings
@@ -349,21 +352,123 @@ async def _answer_from_book(
                 async for item in _wait_for_slot(queue, ticket):
                     yield item
             sources = pack_sources(hits, settings.max_context_tokens)
-            parts: list[str] = []
-            try:
-                async for piece in _release_tokens(_chat(client, request, sources), parts):
-                    clock.first_token = clock.first_token or time.perf_counter()
-                    yield event("token", text=piece)
-            except httpx.HTTPError:
-                log.exception("llama-server request failed")
-                _log(conn, request, "error", clock)
-                yield event("error", message_key="error.model")
-                return
-            final = _finish(conn, request, gate, sources, "".join(parts), clock)
+            answering = (
+                _solve(conn, client, request, gate, sources, clock)
+                if request.mode == "solve"
+                else _generate(conn, client, request, gate, sources, clock)
+            )
+            async for item in answering:
+                if item["event"] == "token":
+                    yield item
+                else:
+                    final = item
     finally:
         if ticket is not None:
             queue.leave(ticket)
     yield final  # after the slot is free: a slow phone never holds it
+
+
+async def _generate(
+    conn: sqlite3.Connection,
+    client: httpx.AsyncClient,
+    request: AskRequest,
+    gate: Gate,
+    sources: list[RetrievedChunk],
+    clock: Clock,
+) -> AsyncIterator[dict[str, object]]:
+    """The tutor answer: token events, then one final done / refused / error event."""
+    parts: list[str] = []
+    try:
+        async for piece in _release_tokens(_chat(client, request, sources), parts):
+            clock.first_token = clock.first_token or time.perf_counter()
+            yield event("token", text=piece)
+    except httpx.HTTPError:
+        log.exception("llama-server request failed")
+        _log(conn, request, "error", clock)
+        yield event("error", message_key="error.model")
+        return
+    yield _finish(conn, request, gate, sources, "".join(parts), clock)
+
+
+async def _solve(
+    conn: sqlite3.Connection,
+    client: httpx.AsyncClient,
+    request: AskRequest,
+    gate: Gate,
+    sources: list[RetrievedChunk],
+    clock: Clock,
+) -> AsyncIterator[dict[str, object]]:
+    """ "Solve step by step": set up, solve with SymPy, explain the worked lines. Anything that
+    does not solve cleanly (or a Malayalam answer, not built yet) gets the tutor's method
+    explanation instead, with no final number; `math_status` says why, for the eval."""
+    try:
+        setup = (
+            await numerical.set_up(client, request.question)
+            if request.language == "en"
+            else numerical.Setup("language_not_supported")
+        )
+        if setup.status != "solved":
+            async for item in _generate(conn, client, request, gate, sources, clock):
+                if item["event"] == "done":
+                    item["data"]["math_status"] = setup.status
+                yield item
+            return
+        parts: list[str] = []
+        messages = numerical.explain_messages(
+            request.question, sources, setup.lines, request.language
+        )
+        grammar = numerical.explain_grammar(setup.lines)
+        async for piece in chat_stream(messages, client, numerical.EXPLAIN_MAX_TOKENS, grammar):
+            clock.first_token = clock.first_token or time.perf_counter()
+            parts.append(piece)
+            yield event("token", text=piece)
+    except httpx.HTTPError:
+        log.exception("llama-server request failed")
+        _log(conn, request, "error", clock)
+        yield event("error", message_key="error.model")
+        return
+    yield _finish_solved(conn, request, gate, sources, setup, "".join(parts), clock)
+
+
+def _finish_solved(
+    conn: sqlite3.Connection,
+    request: AskRequest,
+    gate: Gate,
+    sources: list[RetrievedChunk],
+    setup: numerical.Setup,
+    raw_text: str,
+    clock: Clock,
+) -> dict[str, object]:
+    """Like _finish: the method must be cited, or the answer is refused (rule 2)."""
+    card = numerical.read_explanation(raw_text, request.question, setup.lines)
+    card.idea, cited = validate_markers(card.idea, len(sources))
+    for step in card.steps:
+        step["why"], cited_here = validate_markers(step["why"], len(sources))
+        cited += [n for n in cited_here if n not in cited]
+    if not cited:
+        gate = replace(gate, passed=False, reason="no_valid_citation")
+        return _refuse(conn, request, gate, clock, raw_text)
+    answers = setup.solution.solutions[0]
+    card.answers = [answer.display for answer in answers]
+    _log(conn, request, "answered", clock)
+    return event(
+        "done",
+        text=numerical.card_text(card),
+        card=asdict(card),
+        mode=request.mode,
+        language=request.language,
+        citations=[citation(n, sources[n - 1]) for n in cited],
+        label="ai_explanation",
+        prompt_version=f"{numerical.EXPLAIN_PROMPT}_{request.language}",
+        gate=asdict(gate),
+        math_status="solved",
+        # For the eval: what was solved and SymPy's exact values, compared with gold answers.
+        math={
+            "equations": list(setup.problem.equations),
+            "knowns": [list(known) for known in setup.problem.knowns],
+            "answers": [{"asked": a.asked, "exact": a.exact, "unit": a.unit} for a in answers],
+        },
+    )
 
 
 async def _wait_for_slot(queue: AnswerQueue, ticket: Ticket) -> AsyncIterator[dict[str, object]]:
