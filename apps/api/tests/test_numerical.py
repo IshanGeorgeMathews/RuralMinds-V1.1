@@ -106,7 +106,7 @@ def _run_solve(monkeypatch, setup_reply: str, explain: str, language: str = "en"
 def test_solved_problem_becomes_a_checked_card(monkeypatch) -> None:
     events = _run_solve(monkeypatch, SETUP_REPLY, explain_reply())
     final = events[-1]
-    assert [e["event"] for e in events[:-1]] == ["token", "token"]
+    assert [e["event"] for e in events[:-1]] == ["progress", "token", "token"]
     assert final["event"] == "done" and final["calls"] == ["setup", "explain"]
     data = final["data"]
     assert data["math_status"] == "solved"
@@ -139,10 +139,63 @@ def test_anything_unsolved_falls_back_to_the_method_without_a_number(
         if language == "ml"
         else "Divide the change in velocity by the time [S1]."
     )
-    final = _run_solve(monkeypatch, setup_reply, tutor_answer, language)[-1]
+    events = _run_solve(monkeypatch, setup_reply, tutor_answer, language)
+    final = events[-1]
     assert final["event"] == "done" and final["calls"] == calls
     assert final["data"]["math_status"] == status
     assert "card" not in final["data"]
+    # Not streamed: only progress steps before the checked answer, so nothing is ever erased.
+    steps = [e["data"]["step"] for e in events[:-1]]
+    assert steps == (["method"] if language == "ml" else ["solving", "method"])
+
+
+def test_unchecked_method_answer_is_refused_without_showing_any_text(monkeypatch) -> None:
+    events = _run_solve(monkeypatch, "KIND: not_numerical", "Divide distance by time.")
+    assert [e["event"] for e in events] == ["progress", "progress", "refused"]
+
+
+def test_names_used_in_equations_become_unknowns() -> None:
+    setup = (
+        "KIND: numeric\nUNKNOWNS: d\nKNOWN: v1 = 20 m/s\nKNOWN: t1 = 30 s\nKNOWN: t2 = 20 s\n"
+        "EQUATION: d1 = v1 / 2 * t1\nEQUATION: d2 = 3x + v1 * t2\nEQUATION: d = d1 + d2\n"
+        "ASKED: d\nUNIT: m\n"
+    )
+    problem = numerical.parse_setup(setup)
+    # d1, d2 were never declared; "3x" is 3 times x, so x is a name too (and v1, t1 are given).
+    assert problem.unknowns == ("d", "d1", "d2", "x")
+
+
+def test_declared_unknowns_that_no_equation_uses_are_dropped() -> None:
+    # The user's 3-part journey (20 Oct): "d4, d5" declared and never used left free unknowns.
+    setup = (
+        "KIND: numeric\nUNKNOWNS: d1, d2, d3, d4, d5\nKNOWN: u = 0 m/s\nKNOWN: v1 = 20 m/s\n"
+        "KNOWN: t1 = 5 s\nKNOWN: v2 = 100 m/s\nKNOWN: t2 = 10 s\nKNOWN: v3 = 0 m/s\n"
+        "KNOWN: t3 = 20 minutes\nEQUATION: d1 = (u + v1) / 2 * t1\n"
+        "EQUATION: d2 = (v1 + v2) / 2 * t2\nEQUATION: d3 = (v2 + v3) / 2 * t3\n"
+        "EQUATION: d = d1 + d2 + d3\nASKED: d\nUNIT: m\n"
+    )
+    problem = numerical.parse_setup(setup)
+    assert problem.unknowns == ("d1", "d2", "d3", "d")
+    solution = mathcheck.solve_problem(problem, LIMITS)
+    assert [a.display for a in solution.solutions[0]] == ["60650 m"]  # 50 + 600 + 60000
+
+
+def test_setup_grammar_keeps_comments_out_of_equations() -> None:
+    assert "[A-Za-z0-9_ +*/^().=-]{1,120}" in numerical.SETUP_GRAMMAR
+
+
+def test_several_answers_are_named(monkeypatch) -> None:
+    setup = (
+        "KIND: algebraic\nUNKNOWNS: l, b\nEQUATION: 2l + 2b = 80\nEQUATION: l = 2b + 1\n"
+        "ASKED: l, b\nUNIT: m\n"
+    )
+    explain = (
+        "IDEA: The **perimeter** is twice length plus breadth [S1].\n"
+        "1. 2l + 2b = 80\nThe perimeter rule.\n2. l = 2b + 1\nThe length rule.\n"
+        "3. l = 27 m, b = 13 m\nSolving both together.\nTRY: Another rectangle."
+    )
+    data = _run_solve(monkeypatch, setup, explain)[-1]["data"]
+    assert data["card"]["answers"] == ["l = 27 m", "b = 13 m"]
 
 
 def test_solved_answer_without_a_citation_is_refused(monkeypatch) -> None:

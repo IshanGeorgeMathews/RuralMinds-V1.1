@@ -284,7 +284,8 @@ class AnswerQueue:
 async def answer_stream(
     conn: sqlite3.Connection, client: httpx.AsyncClient, queue: AnswerQueue, request: AskRequest
 ) -> AsyncIterator[dict[str, object]]:
-    """Events: queued{position} | token{text} | done | notes | refused | blocked | busy | error."""
+    """Events: queued{position} | progress{step} | token{text} | done | notes | refused | blocked
+    | busy | error. `progress` comes only from the solve chip (its setup call writes nothing)."""
     clock = Clock()
     question = normalize(request.question).strip()[: settings.max_question_chars]
     if not question:
@@ -358,7 +359,7 @@ async def _answer_from_book(
                 else _generate(conn, client, request, gate, sources, clock)
             )
             async for item in answering:
-                if item["event"] == "token":
+                if item["event"] in ("token", "progress"):
                     yield item
                 else:
                     final = item
@@ -375,13 +376,16 @@ async def _generate(
     gate: Gate,
     sources: list[RetrievedChunk],
     clock: Clock,
+    stream: bool = True,
 ) -> AsyncIterator[dict[str, object]]:
-    """The tutor answer: token events, then one final done / refused / error event."""
+    """The tutor answer: token events (unless stream is False), then one final done / refused /
+    error event. Unstreamed, the first word is logged as None: the student saw no text early."""
     parts: list[str] = []
     try:
         async for piece in _release_tokens(_chat(client, request, sources), parts):
-            clock.first_token = clock.first_token or time.perf_counter()
-            yield event("token", text=piece)
+            if stream:
+                clock.first_token = clock.first_token or time.perf_counter()
+                yield event("token", text=piece)
     except httpx.HTTPError:
         log.exception("llama-server request failed")
         _log(conn, request, "error", clock)
@@ -402,13 +406,17 @@ async def _solve(
     does not solve cleanly (or a Malayalam answer, not built yet) gets the tutor's method
     explanation instead, with no final number; `math_status` says why, for the eval."""
     try:
-        setup = (
-            await numerical.set_up(client, request.question)
-            if request.language == "en"
-            else numerical.Setup("language_not_supported")
-        )
+        if request.language == "en":
+            # The setup call shows nothing on screen: tell the phone what is happening.
+            yield event("progress", step="solving")
+            setup = await numerical.set_up(client, request.question)
+        else:  # step-by-step solving is English-only for now; Malayalam gets the method
+            setup = numerical.Setup("language_not_supported")
         if setup.status != "solved":
-            async for item in _generate(conn, client, request, gate, sources, clock):
+            # Not streamed: the method answer is shown only once it passed every check, so
+            # nothing appears and is then erased (user test, 20 Oct: 3 such refusals).
+            yield event("progress", step="method")
+            async for item in _generate(conn, client, request, gate, sources, clock, False):
                 if item["event"] == "done":
                     item["data"]["math_status"] = setup.status
                 yield item
@@ -449,7 +457,11 @@ def _finish_solved(
         gate = replace(gate, passed=False, reason="no_valid_citation")
         return _refuse(conn, request, gate, clock, raw_text)
     answers = setup.solution.solutions[0]
-    card.answers = [answer.display for answer in answers]
+    # Several answers ("27 metres, 13 metres") need their names to say which is which.
+    card.answers = [
+        f"{answer.asked} = {answer.display}" if len(answers) > 1 else answer.display
+        for answer in answers
+    ]
     _log(conn, request, "answered", clock)
     return event(
         "done",

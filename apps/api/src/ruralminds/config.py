@@ -70,7 +70,7 @@ class Settings(BaseSettings):
     math_max_digits: int = 12
     math_max_exponent: int = 10
     math_max_degree: int = 3  # Class 8-10 is mostly linear and quadratic
-    math_max_unknowns: int = 4
+    math_max_unknowns: int = 6  # also the cap on equations; a 3-part journey needs 4
     history_turns: int = 2
 
     # Accounts and sessions (see auth.py)

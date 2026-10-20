@@ -183,7 +183,8 @@ _INSTRUCTIONS = {
     "solve": (
         "The student wants to solve this problem. Explain the rule or method from the sources"
         " step by step. Do not calculate anything and do not write any number that is not in"
-        " the question: the student will work out the numbers."
+        " the question. Never say what the result is or which choice is right (which is first,"
+        " bigger or faster): the student will work it out."
     ),
 }
 # A cap, not a target: the prompt asks for ~90 words (EN) / ~60 (ML). Malayalam needs

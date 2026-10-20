@@ -7,6 +7,7 @@
 	import Logo from './Logo.svelte';
 	import NotesCard from './NotesCard.svelte';
 	import PageViewer from './PageViewer.svelte';
+	import SolutionCard from './SolutionCard.svelte';
 
 	let {
 		turn,
@@ -43,6 +44,10 @@
 			: { text: turn.text, example: turn.example, check: turn.check, answers: turn.answers }
 	);
 	const html = $derived(renderMarkdown(parts.text, turn.status === 'done'));
+	// A solve answer streams as "IDEA: …", then numbered lines: show the idea and how far it got.
+	const solving = $derived(turn.mode === 'solve');
+	const streamIdea = $derived(solving ? (turn.raw.match(/^IDEA:\s*(.*)$/m)?.[1] ?? '') : '');
+	const stepsWritten = $derived(solving ? (turn.raw.match(/^\d+\. /gm) ?? []).length : 0);
 
 	const FOLLOW: { mode: Mode; icon: string; key: string }[] = [
 		{ mode: 'simpler', icon: 'simpler', key: 'follow.simpler' },
@@ -100,11 +105,22 @@
 						<p class="queue"><Icon name="users" size={16} />{queueText(turn.queuePosition ?? 1, turn.queueEta)}</p>
 					{/if}
 					<ol class="steps">
-						<li class:on={turn.status === 'searching'}>
-							<span class="step-mark">{#if turn.status === 'searching'}<span class="spinner"></span>{/if}</span>
+						<li class:on={turn.status === 'searching' && !turn.step}>
+							<span class="step-mark">{#if turn.status === 'searching' && !turn.step}<span class="spinner"></span>{/if}</span>
 							{t('step.searching')}
 						</li>
-						<li><span class="step-mark"></span>{t('step.writing')}</li>
+						{#if solving}
+							<li class:on={turn.step === 'solving'}>
+								<span class="step-mark">{#if turn.step === 'solving'}<span class="spinner"></span>{/if}</span>
+								{t('step.solving')}
+							</li>
+						{/if}
+						<!-- "method": the calculator could not take this problem; the method answer is
+						     written in full and shown only after its checks, so the step stays here. -->
+						<li class:on={turn.step === 'method'}>
+							<span class="step-mark">{#if turn.step === 'method'}<span class="spinner"></span>{/if}</span>
+							{t(turn.step === 'method' ? 'step.method' : 'step.writing')}
+						</li>
 					</ol>
 					<div class="skeleton line"></div>
 					<div class="skeleton line short"></div>
@@ -116,7 +132,19 @@
 				</div>
 			{:else if turn.status === 'notes' && turn.notes}
 				<NotesCard notes={turn.notes} />
+			{:else if turn.status === 'done' && turn.card}
+				<SolutionCard card={turn.card} language={turn.language} oncite={openCitation} />
+			{:else if solving && turn.status === 'writing' && streamIdea}
+				<div class="prose" lang={turn.language || undefined}>{@html renderMarkdown(streamIdea, false)}</div>
+				<p class="writing"><span class="dot"></span>{t('solve.writing_step', { n: stepsWritten || 1 })}</p>
 			{:else}
+				{#if solving && turn.status === 'done' && turn.mathStatus && !['solved', 'not_numerical'].includes(turn.mathStatus)}
+					<!-- A calculation the calculator could not check: say so, and give only the method.
+					     A question with nothing to calculate ("why SI units?") is just a normal answer. -->
+					<p class="not-checked">
+						<Icon name="alert" size={16} />{t(turn.mathStatus === 'language_not_supported' ? 'solve.english_only' : 'solve.not_checked')}
+					</p>
+				{/if}
 				<!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
 				<div class="prose" lang={turn.language || undefined} onclick={openCitation}>
 					{@html html}{#if turn.status === 'writing'}<span class="caret" aria-hidden="true"></span>{/if}
@@ -432,6 +460,23 @@
 	.answers {
 		background: var(--accent-softer);
 		border: 1px solid var(--accent-soft);
+	}
+	.not-checked {
+		display: flex;
+		gap: 8px;
+		align-items: flex-start;
+		margin: 0;
+		padding: 10px 12px;
+		border-radius: 12px;
+		background: var(--warm-soft);
+		border: 1px solid var(--warm-line);
+		color: var(--text);
+		font-size: 0.9rem;
+	}
+	.not-checked :global(svg) {
+		color: var(--warm);
+		flex-shrink: 0;
+		margin-top: 2px;
 	}
 	.writing {
 		display: flex;

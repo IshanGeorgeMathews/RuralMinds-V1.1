@@ -6,7 +6,14 @@ import { api, ApiError, askStream, type Book, type Citation } from './api.js';
 import { prefs } from './prefs.svelte.js';
 import { remember } from './session.svelte.js';
 
-export type Mode = 'explain' | 'simpler' | 'example' | 'story' | 'quiz' | 'summary';
+export type Mode = 'explain' | 'simpler' | 'example' | 'story' | 'quiz' | 'summary' | 'solve';
+// "Solve step by step": the calculator's worked lines with the model's sentence under each.
+export type SolutionCard = {
+	idea: string;
+	steps: { line: string; why: string }[];
+	try_problem: string;
+	answers: string[];
+};
 export type Notes = {
 	document_id: number;
 	chapter_no: number;
@@ -26,6 +33,7 @@ export type Turn = {
 	chapterNo: number | null;
 	language: string;
 	status: 'searching' | 'queued' | 'writing' | 'done' | 'notes' | 'refused' | 'blocked' | 'error' | 'stopped';
+	step?: string; // what the server is doing before any text arrives ("solving")
 	queuePosition?: number;
 	queueEta?: number | null; // seconds, from the measured answer rate; null = not known yet
 	raw: string;
@@ -38,6 +46,8 @@ export type Turn = {
 	messageKey?: string;
 	gate?: Record<string, any>;
 	notes?: Notes;
+	card?: SolutionCard;
+	mathStatus?: string; // "solved", or why the calculator could not check this problem
 	firstTurn: boolean;
 	approved?: boolean;
 };
@@ -179,6 +189,9 @@ function apply(turn: Turn, event: string, data: Record<string, any>): void {
 		turn.status = 'queued';
 		turn.queuePosition = data.position;
 		turn.queueEta = data.eta_s ?? null;
+	} else if (event === 'progress') {
+		turn.status = 'searching';
+		turn.step = data.step;
 	} else if (event === 'token') {
 		turn.status = 'writing';
 		turn.raw += data.text;
@@ -193,7 +206,9 @@ function apply(turn: Turn, event: string, data: Record<string, any>): void {
 			label: data.label,
 			gate: data.gate,
 			language: data.language ?? turn.language,
-			mode: data.mode ?? turn.mode
+			mode: data.mode ?? turn.mode,
+			card: data.card ?? undefined,
+			mathStatus: data.math_status ?? undefined
 		});
 	} else if (event === 'notes') {
 		turn.status = 'notes';

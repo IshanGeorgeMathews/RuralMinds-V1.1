@@ -48,6 +48,15 @@
 		input?.blur();
 	}
 
+	// "Solve step by step": only for books with calculations. It applies to typed problems only
+	// (a suggestion chip keeps its own mode) and stays on for the next problem until turned off.
+	let solveOn = $state(false);
+	const canSolve = $derived(['science', 'maths'].includes(book?.subject ?? ''));
+
+	function sendTyped(): void {
+		send(question, solveOn && canSolve ? 'solve' : null);
+	}
+
 	function follow(mode: Mode): void {
 		ask(t(`follow.${mode}.question`), { mode, shown: t(`follow.${mode}`), followUp: true });
 	}
@@ -55,7 +64,7 @@
 	function onkeydown(event: KeyboardEvent): void {
 		if (event.key === 'Enter' && !event.shiftKey) {
 			event.preventDefault();
-			send();
+			sendTyped();
 		}
 	}
 
@@ -76,7 +85,13 @@
 				]
 			: []
 	);
-	const placeholder = $derived(study.turns.length ? t('ask.followup_placeholder') : t('ask.placeholder'));
+	const placeholder = $derived(
+		solveOn && canSolve
+			? t('solve.placeholder')
+			: study.turns.length
+				? t('ask.followup_placeholder')
+				: t('ask.placeholder')
+	);
 	const languageNote = $derived(
 		prefs.answerLanguage === 'auto' ? t('ask.answer_auto') : t('ask.answer_in', { language: t(`medium.${prefs.answerLanguage}`) })
 	);
@@ -127,7 +142,12 @@
 		<div bind:this={end}></div>
 	</div>
 
-	<form class="composer no-print" onsubmit={(event) => (event.preventDefault(), send())}>
+	<form class="composer no-print" onsubmit={(event) => (event.preventDefault(), sendTyped())}>
+		{#if canSolve}
+			<button type="button" class="solve-toggle" aria-pressed={solveOn} onclick={() => (solveOn = !solveOn)}>
+				<Icon name={solveOn ? 'check' : 'pencil'} size={16} />{t('solve.toggle')}
+			</button>
+		{/if}
 		<div class="box">
 			<textarea
 				bind:this={input}
@@ -378,6 +398,32 @@
 		background: var(--surface-2);
 		color: var(--text);
 		border: 1px solid var(--line-strong);
+	}
+	.solve-toggle {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		min-height: 36px;
+		margin: 0 0 8px 4px;
+		padding: 0 14px;
+		border-radius: 999px;
+		border: 1px solid var(--line-strong);
+		background: var(--surface);
+		color: var(--text);
+		font-size: 0.86rem;
+		font-weight: 600;
+		cursor: pointer;
+	}
+	.solve-toggle :global(svg) {
+		color: var(--accent-strong);
+	}
+	.solve-toggle[aria-pressed='true'] {
+		background: var(--accent);
+		border-color: var(--accent);
+		color: var(--on-accent);
+	}
+	.solve-toggle[aria-pressed='true'] :global(svg) {
+		color: var(--on-accent);
 	}
 	.hint {
 		display: block;

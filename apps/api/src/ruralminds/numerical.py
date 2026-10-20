@@ -20,23 +20,28 @@ from .mathcheck import Limits, Problem, Solution
 from .retrieve import RetrievedChunk
 from .tutor import load_prompt
 
-SETUP_PROMPT = "maths_setup_v1"
+SETUP_PROMPT = "maths_setup_v2"
 EXPLAIN_PROMPT = "system_v3_numerical"
-SETUP_MAX_TOKENS = 120
+# A journey in three parts needs ~10 KNOWN lines and 4 equations: 120 tokens cut such a setup
+# off mid-equation (user test, 20 Oct).
+SETUP_MAX_TOKENS = 220
 EXPLAIN_MAX_TOKENS = 400  # the forced working lines count too
 
-# KNOWN holds only a number and a unit, so "b = p + 4" must be written as an EQUATION.
+# KNOWN holds only a number and a unit, so "b = p + 4" must be written as an EQUATION, and an
+# equation holds only the characters the maths parser reads (the model once wrote a "(Note: …)").
 SETUP_GRAMMAR = r"""
-root ::= "KIND: not_numerical" | "KIND: " kind "\n" "UNKNOWNS: " names "\n" known{0,8} equation{1,4} "ASKED: " text "\n" "UNIT:" (" " unit)? "\n"
+root ::= "KIND: not_numerical" | "KIND: " kind "\n" "UNKNOWNS: " names "\n" known{0,10} equation{1,6} "ASKED: " text "\n" "UNIT:" (" " unit)? "\n"
 kind ::= "numeric" | "algebraic"
-names ::= name (", " name){0,3}
+names ::= name (", " name){0,5}
 name ::= [A-Za-z] [A-Za-z0-9_]{0,7}
 known ::= "KNOWN: " name " = " "-"? [0-9]{1,12} ("." [0-9]{1,6})? (" " unit)? "\n"
 unit ::= [A-Za-z] [A-Za-z/^0-9]{0,11}
-equation ::= "EQUATION: " [^\n]{1,120} "\n"
+equation ::= "EQUATION: " [A-Za-z0-9_ +*/^().=-]{1,120} "\n"
 text ::= [^\n]{1,60}
 """
 _NUMBER = re.compile(r"\d+(?:\.\d+)?")
+# Names as mathcheck's parser reads them: "3x" is 3 times x, "x2" is one name.
+_NAME = re.compile(r"[A-Za-z][A-Za-z0-9_]*")
 _MARKERS = re.compile(r"\[[^\]]*\]")
 
 
@@ -79,9 +84,10 @@ def parse_setup(raw: str) -> Problem | None:
         if not equals:
             raise SetupError(f"bad KNOWN line {known!r}")
         knowns.append((name.strip(), value.strip()))
+    equations = tuple(fields["EQUATION"])
     return Problem(
-        unknowns=_split(fields["UNKNOWNS"][0]),
-        equations=tuple(fields["EQUATION"]),
+        unknowns=_unknowns_in_use(_split(fields["UNKNOWNS"][0]), equations, knowns),
+        equations=equations,
         knowns=tuple(knowns),
         asked=_split(fields["ASKED"][0]),
         answer_unit=fields.get("UNIT", [""])[0],
@@ -90,6 +96,22 @@ def parse_setup(raw: str) -> Problem | None:
 
 def _split(text: str) -> tuple[str, ...]:
     return tuple(part.strip() for part in text.split(",") if part.strip())
+
+
+def _unknowns_in_use(
+    declared: tuple[str, ...], equations: tuple[str, ...], knowns: list[tuple[str, str]]
+) -> tuple[str, ...]:
+    """The unknowns are the names the equations use that are not given, declared or not.
+    The model writes "d = d1 + d2" with only d1, d2 declared, and declares names it never uses
+    ("d4, d5"), which would leave free unknowns and no answer (user test, 20 Oct). A stray word
+    in an equation (a unit) still becomes an unknown and leaves it unsolved: a safe failure."""
+    given = {name for name, _ in knowns} | set(mathcheck.FUNCTIONS)
+    used = dict.fromkeys(
+        name for equation in equations for name in _NAME.findall(equation) if name not in given
+    )
+    return tuple(name for name in declared if name in used) + tuple(
+        name for name in used if name not in declared
+    )
 
 
 def working_lines(problem: Problem, solution: Solution) -> tuple[str, ...]:
