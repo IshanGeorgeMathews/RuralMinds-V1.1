@@ -167,7 +167,10 @@ def alone_outcome(text: str, item: dict) -> str:
             return "right"
     answers = final_answers(text)
     if answers is None:
-        return "no_final"
+        # A FINAL line with no number ("Anil's scooter is faster") is an answer, just a wrong one.
+        return (
+            "wrong" if finals and not finals[-1].strip().lower().startswith("none") else "no_final"
+        )
     right = matches(answers, item["gold"], TOLERANCE["alone"], allow_extra=True)
     return "right" if right else "wrong"
 

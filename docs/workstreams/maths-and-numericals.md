@@ -210,6 +210,10 @@ Next decisions: (1) the agreement guard (✓ only when the calculator and the mo
 
 Built (DECISIONS 2026-10-21): `agreement.py` (second opinion + comparison, shared with the bench), prompt `maths_check_v1`, setup prompt `maths_setup_v3` (no conversion numbers; worked lines keep units when converted), phone message for "two ways disagree". Dev check in [evaluation-register.md](evaluation-register.md) §A11: no wrong ✓; the guard caught a wrong conversion that setup v3 still wrote; one right answer held back; book/pen/pencil setup regressed. Waiting for: the user's check of the gold answers and fresh test problems, then one test read.
 
+### 6e. Final test read, 21 Oct
+
+In [evaluation-register.md](evaluation-register.md) §A11: no wrong ✓ in 26 Science test problems; 18 of 26 shown with a ✓, all right; the guard caught two wrong unit conversions on the team's fresh problems. Open: comparisons lose answers because the second opinion names the winner without numbers (fix: ask the check prompt for each value, then the choice — needs a new fresh set to measure, since the test split is now used up); setup v3 still converts units by hand sometimes; the whole answer takes ~1 min on this laptop.
+
 ## 7. To decide (team)
 1. Option A, B or C (§0).
 2. What "draw the box" means: the answer card in §3.5, a boxed final answer, figures, or something else.

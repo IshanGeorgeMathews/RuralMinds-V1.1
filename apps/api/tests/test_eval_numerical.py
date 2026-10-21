@@ -154,3 +154,12 @@ def test_a_comparison_is_right_when_the_right_choice_is_named() -> None:
     assert bench.alone_outcome("…\nFINAL: Car 2 reaches first", item) == "wrong"
     assert bench.alone_outcome("…\nFINAL: Car 1 or car 2, both", item) != "right"
     assert bench.alone_outcome("…\nFINAL: 3 s and 4 s", item) == "right"
+
+
+def test_a_final_line_naming_the_wrong_choice_is_wrong_not_missing() -> None:
+    item = {
+        "gold": [g("17.5", "m/s"), g("18", "m/s")],
+        "gold_choice": {"right": r"\bBiju\b", "wrong": r"\bAnil\b"},
+    }
+    assert bench.alone_outcome("…\nFINAL: Anil's scooter is faster", item) == "wrong"
+    assert bench.alone_outcome("ran out of tokens before the end", item) == "no_final"

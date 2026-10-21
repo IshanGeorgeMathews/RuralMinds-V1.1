@@ -116,6 +116,19 @@ Bug found by the run and fixed after it (21 Oct): an unknown named `s` could not
 
 **After the agreement guard + setup v3 (21 Oct, dev only; `num-guard-setup3-dev-20261021-1247.json`; solve and setup arms):** Science ✓ shown and right 10/14 (was 11/14), ✓ on a wrong answer 0/10 (was 0/11), held back 4/14 (was 3/14). The guard held back two answers: the 60 650 m journey (calculator right, model alone said 60 400: the expected cost) and "2500 g in kg", where setup v3 still divided by 1000 itself and the calculator would have shown 0.0025 kg with a ✓ (the model alone said 2.5 kg). Maths setup only: 3/5 (was 4/5): the book/pen/pencil setup regressed to wrong relations under prompt v3 and failed safely (parse error). Draft gold, dev was tuned on: indicative; the test split is not read again until the fresh test problems exist.
 
+**Final test read with the guard and setup v3 (21 Oct; `num-guard-setup3-final-test-20261021-1355-rescored.json`).** Gold: the 34 original items verified by the user; 13 new problems written by the team (`num-t01`–`t13`, pinned to test, written after the guard was built; verified by the user and re-solved independently: all correct). `num-u02` stays unverified (ambiguous wording) and is excluded. The original 17 test items have now been read twice (baseline + this final read); further changes need fresh items.
+
+| Group | ✓ shown and right | **✓ on a wrong answer** | Held back | Other | Same model alone, right |
+|---|---|---|---|---|---|
+| Fresh team problems, full app path (13) | 8 (0.36–0.82) | **0** | 5 | 0 | 12 |
+| Original test, Science, full app path (13) | 10 (0.50–0.92) | **0** (baseline: 1) | 2 | 1 refused (no citation) | 13 |
+| Original test, Maths setup only, no guard in this arm (3) | 2 | 1 (both angles shown; the second opinion said 65, so the guard would have held it) | 0 | 0 | 3 |
+
+- **No wrong ✓ in 26 Science problems on the full app path** (0 of 18 shown; 95% CI 0–0.18). The guard held back the two wrong calculator answers on fresh problems (t02: 8 km/h for 28.8; t03: 0.000001 m³ for 0.01 m³ — conversions setup v3 still got wrong).
+- **Cost:** on fresh "which is faster" problems the second opinion answered with a name and no numbers ("Bus X is faster"), so two right calculator answers were held back (t10, t13); in t11 the second opinion was wrong ("Anil's") and a right answer was held back. Two original items now fail safely that a ✓ covered in the baseline (v11: unit mismatch after setup v3; v03: no citation).
+- The model alone was right on 28 of 29 numerical test items but is never checked; the app cannot tell which of its answers is the wrong one.
+- Timings on this laptop (other apps open, ~3 GB RAM free; indicative): first text after tapping Solve p50 20.6 s / p95 34.2 s; whole answer incl. the second opinion p50 61.5 s / p95 117.6 s.
+
 ## B. To do
 
 Priority: **P1** needed for the submission, **P2** if time allows, **P3** after the hackathon.

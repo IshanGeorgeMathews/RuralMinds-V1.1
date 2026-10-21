@@ -2,7 +2,7 @@
  "seed": "ruralminds-num-v1",
  "counts": {
   "dev": 21,
-  "test": 17
+  "test": 30
  },
- "test_sha256": "693f934e7a3fd1219e8cebdc007efec33333885fb225841087730409aaa42fe5"
+ "test_sha256": "94f60e78825f78897fdce9cbfc34472e5f403c69c85d6261d681aa141fc39b8d"
 }
