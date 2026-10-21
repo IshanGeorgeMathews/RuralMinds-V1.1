@@ -191,7 +191,8 @@ function apply(turn: Turn, event: string, data: Record<string, any>): void {
 		turn.queuePosition = data.position;
 		turn.queueEta = data.eta_s ?? null;
 	} else if (event === 'progress') {
-		turn.status = 'searching';
+		// A step after text has started (the second check) keeps the text on screen.
+		if (turn.status !== 'writing') turn.status = 'searching';
 		turn.step = data.step;
 	} else if (event === 'token') {
 		turn.status = 'writing';

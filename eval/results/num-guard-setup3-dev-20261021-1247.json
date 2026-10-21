@@ -1,0 +1,983 @@
+{
+ "label": "guard-setup3",
+ "run_at": "2026-10-21T12:47:11",
+ "split": "dev",
+ "items_file": "eval\\datasets\\num\\numerical.jsonl",
+ "db_path": "data\\eval-run.db",
+ "model_path": "C:/Users/ishan/.ollama/models/blobs/sha256-6dd7ac24fe13a238898e16e253ebc7a72fa27fb83f2658c2f6c241df3af5937d",
+ "setup_prompt": "maths_setup_v3",
+ "explain_prompt": "system_v3_numerical",
+ "alone_prompt": "maths_check_v1",
+ "verified_items": 0,
+ "items": 21,
+ "resumed": true,
+ "summary": {
+  "solve": {
+   "items": 14,
+   "outcomes": {
+    "checked_right": 10,
+    "unsolved": 4
+   },
+   "right": {
+    "hits": 10,
+    "n": 14,
+    "rate": 0.714,
+    "ci95": [
+     0.454,
+     0.883
+    ]
+   },
+   "wrong_among_checked": {
+    "hits": 0,
+    "n": 10,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.278
+    ]
+   },
+   "not_numerical_answered_plainly": {
+    "hits": 2,
+    "n": 2,
+    "rate": 1.0,
+    "ci95": [
+     0.342,
+     1.0
+    ]
+   },
+   "first_shown_s": {
+    "p50": 24.83,
+    "p95": 44.09
+   },
+   "total_s": {
+    "p50": 68.48,
+    "p95": 143.59
+   }
+  },
+  "setup": {
+   "items": 5,
+   "outcomes": {
+    "checked_right": 3,
+    "unsolved": 2
+   },
+   "right": {
+    "hits": 3,
+    "n": 5,
+    "rate": 0.6,
+    "ci95": [
+     0.231,
+     0.882
+    ]
+   },
+   "wrong_among_checked": {
+    "hits": 0,
+    "n": 3,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.561
+    ]
+   }
+  }
+ },
+ "results": [
+  {
+   "id": "num-b01",
+   "group": "book",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "What is the acceleration of a car which started from rest and acquired a velocity of 40 m/s in 8 s?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "5",
+     "unit": "m/s^2"
+    }
+   ],
+   "gold_pages": [
+    129
+   ],
+   "origin": "book",
+   "forced_split": "dev",
+   "why_dev": "used in the 20 Oct prompt trials",
+   "verified": false,
+   "split": "dev",
+   "arm": "solve",
+   "outcome": "checked_right",
+   "math_status": "solved",
+   "reason": null,
+   "answers": [
+    [
+     "5",
+     "m/s^2"
+    ]
+   ],
+   "text": "**Acceleration** is the rate at which velocity changes over time, which is calculated by dividing the change in velocity by the time taken [S1], [S2].\n\n1. We write the formula for acceleration, where v is the final velocity, u is the initial velocity, and t is the time taken [S2].\n   a = (v - u)/t\n2. The car starts from rest, so the initial velocity u is 0; we substitute the values into the formula.\n   a = (40 - 0)/8\n3. We calculate the result by subtracting the initial velocity from the final velocity and then dividing by the time.\n   a = 5 m/s²\n\n**Answer: 5 m/s²**",
+   "raw_text": null,
+   "cited_pages": [
+    129,
+    126
+   ],
+   "first_shown_s": 44.09,
+   "total_s": 103.24
+  },
+  {
+   "id": "num-b02",
+   "group": "book",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "What is the displacement of a car in 30 s if it is travelling with a velocity of 15 m/s?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "450",
+     "unit": "m"
+    }
+   ],
+   "gold_pages": [
+    129
+   ],
+   "origin": "book",
+   "forced_split": "dev",
+   "why_dev": "used in the 20 Oct prompt trials",
+   "verified": false,
+   "split": "dev",
+   "arm": "solve",
+   "outcome": "checked_right",
+   "math_status": "solved",
+   "reason": null,
+   "answers": [
+    [
+     "450",
+     "m"
+    ]
+   ],
+   "text": "**Displacement** is the shortest straight-line distance between the starting point and the final point, and we calculate it by multiplying the **velocity** by the **time** [S2].\n\n1. We write the formula for displacement, which is velocity multiplied by time.\n   d = v × t\n2. We put the given velocity (15 m/s) and the time (30 s) into the formula.\n   d = 15 × 30\n3. We multiply the numbers to find the displacement, which is 450 metres.\n   d = 450 m\n\n**Answer: 450 m**",
+   "raw_text": null,
+   "cited_pages": [
+    122
+   ],
+   "first_shown_s": 22.14,
+   "total_s": 74.68
+  },
+  {
+   "id": "num-b03",
+   "group": "book",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "Find the area of a classroom of length 5 m and breadth 4 m.",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "20",
+     "unit": "m^2"
+    }
+   ],
+   "gold_pages": [
+    110
+   ],
+   "origin": "book",
+   "forced_split": "dev",
+   "why_dev": "used in the 20 Oct prompt trials",
+   "verified": false,
+   "split": "dev",
+   "arm": "solve",
+   "outcome": "checked_right",
+   "math_status": "solved",
+   "reason": null,
+   "answers": [
+    [
+     "20",
+     "m^2"
+    ]
+   ],
+   "text": "To find the **area** of a rectangle, we multiply its **length** by its **breadth** [S1].\n\n1. We write the formula for the area of a rectangle, which is length multiplied by breadth.\n   A = l × b\n2. We substitute the given length (5 m) and breadth (4 m) into the formula.\n   A = 5 × 4\n3. We calculate the product to find the area, which is 20 square metres.\n   A = 20 m²\n\n**Answer: 20 m²**",
+   "raw_text": null,
+   "cited_pages": [
+    110
+   ],
+   "first_shown_s": 21.36,
+   "total_s": 56.18
+  },
+  {
+   "id": "num-b04",
+   "group": "book",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "What is the volume of a block of length 0.2 m, breadth 0.01 m and height 0.05 m?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "0.0001",
+     "unit": "m^3"
+    }
+   ],
+   "gold_pages": [
+    112
+   ],
+   "origin": "book",
+   "forced_split": "dev",
+   "why_dev": "used in the 20 Oct prompt trials",
+   "verified": false,
+   "split": "dev",
+   "arm": "solve",
+   "outcome": "checked_right",
+   "math_status": "solved",
+   "reason": null,
+   "answers": [
+    [
+     "1/10000",
+     "m^3"
+    ]
+   ],
+   "text": "To find the **volume** of a rectangular block, we multiply its length, breadth, and height [S1].\n\n1. We write the formula for volume, which is length multiplied by breadth multiplied by height.\n   V = l × b × h\n2. We substitute the given values for length, breadth, and height into the formula.\n   V = 0.2 × 0.01 × 0.05\n3. We multiply the numbers to find the volume, and the unit is cubic metres.\n   V = 0.0001 m³\n\n**Answer: 0.0001 m³**",
+   "raw_text": null,
+   "cited_pages": [
+    112
+   ],
+   "first_shown_s": 24.83,
+   "total_s": 68.48
+  },
+  {
+   "id": "num-b05",
+   "group": "book",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "A food packet dropped from a helicopter reaches the ground in 5 s. If the velocity with which it hits the ground is 50 m/s, what is the acceleration?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "10",
+     "unit": "m/s^2"
+    }
+   ],
+   "gold_pages": [
+    126
+   ],
+   "origin": "book",
+   "forced_split": "dev",
+   "why_dev": "used in the 20 Oct prompt trials",
+   "verified": false,
+   "split": "dev",
+   "arm": "solve",
+   "outcome": "checked_right",
+   "math_status": "solved",
+   "reason": null,
+   "answers": [
+    [
+     "10",
+     "m/s^2"
+    ]
+   ],
+   "text": "We use the formula for **acceleration**, which is the change in velocity divided by the time taken [S1].\n\n1. We write the formula for acceleration, where v is the final velocity, u is the initial velocity, and t is the time taken.\n   a = (v - u)/t\n2. The initial velocity (u) is zero because the food packet is dropped, and we put the given values into the formula.\n   a = (50 - 0)/5\n3. We calculate the result to find the acceleration, which is 10 metres per second squared.\n   a = 10 m/s²\n\n**Answer: 10 m/s²**",
+   "raw_text": null,
+   "cited_pages": [
+    126
+   ],
+   "first_shown_s": 25.26,
+   "total_s": 96.86
+  },
+  {
+   "id": "num-v01",
+   "group": "variant",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "A bicycle starts from rest and reaches 6 m/s in 3 s. What is its acceleration?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "2",
+     "unit": "m/s^2"
+    }
+   ],
+   "gold_pages": [
+    125,
+    126
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "dev",
+   "arm": "solve",
+   "outcome": "checked_right",
+   "math_status": "solved",
+   "reason": null,
+   "answers": [
+    [
+     "2",
+     "m/s^2"
+    ]
+   ],
+   "text": "**Acceleration** is the change in velocity over time, which we find by subtracting the initial velocity from the final velocity and dividing by the time taken [S1].\n\n1. We write the formula for acceleration, where v is the final velocity, u is the initial velocity, and t is the time.\n   a = (v - u)/t\n2. The bicycle starts from rest, so u is 0; we put the given values into the formula.\n   a = (6 - 0)/3\n3. We calculate the result to find the acceleration in metres per second squared.\n   a = 2 m/s²\n\n**Answer: 2 m/s²**",
+   "raw_text": null,
+   "cited_pages": [
+    129
+   ],
+   "first_shown_s": 25.6,
+   "total_s": 74.6
+  },
+  {
+   "id": "num-v04",
+   "group": "variant",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "A runner covers 400 m in 50 s. What is her speed?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "8",
+     "unit": "m/s"
+    }
+   ],
+   "gold_pages": [
+    121,
+    122
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "dev",
+   "arm": "solve",
+   "outcome": "checked_right",
+   "math_status": "solved",
+   "reason": null,
+   "answers": [
+    [
+     "8",
+     "m/s"
+    ]
+   ],
+   "text": "Speed is calculated by dividing the **distance** covered by the **time** taken to cover that distance [S1].\n\n1. We write the formula for speed, which is distance divided by time.\n   v = d/t\n2. We put the given distance (400 m) and time (50 s) into the formula.\n   v = 400/50\n3. We calculate the result to find the speed in metres per second.\n   v = 8 m/s\n\n**Answer: 8 m/s**",
+   "raw_text": null,
+   "cited_pages": [
+    123
+   ],
+   "first_shown_s": 20.12,
+   "total_s": 49.33
+  },
+  {
+   "id": "num-v05",
+   "group": "variant",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "A car slows down from 30 m/s to 10 m/s in 4 s. What is its acceleration?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "-5",
+     "unit": "m/s^2"
+    }
+   ],
+   "gold_pages": [
+    125,
+    126
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "dev",
+   "arm": "solve",
+   "outcome": "checked_right",
+   "math_status": "solved",
+   "reason": null,
+   "answers": [
+    [
+     "-5",
+     "m/s^2"
+    ]
+   ],
+   "text": "**Acceleration** is the rate at which velocity changes over time, calculated by finding the change in velocity and dividing it by the time taken [S1].\n\n1. We write the formula for acceleration, where u is the initial velocity, v is the final velocity, and t is the time taken [S1].\n   a = (v - u)/t\n2. We put the given values for final velocity (10 m/s), initial velocity (30 m/s), and time (4 s) into the formula.\n   a = (10 - 30)/4\n3. We calculate the result to find the acceleration, which is negative, meaning the car is slowing down.\n   a = -5 m/s²\n\n**Answer: -5 m/s²**",
+   "raw_text": null,
+   "cited_pages": [
+    129
+   ],
+   "first_shown_s": 27.51,
+   "total_s": 82.43
+  },
+  {
+   "id": "num-v13",
+   "group": "variant",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "Cyclist P rides 120 m at 6 m/s. Cyclist Q rides 150 m at 10 m/s. Who takes less time?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "20",
+     "unit": "s"
+    },
+    {
+     "value": "15",
+     "unit": "s"
+    }
+   ],
+   "gold_note": "Q takes less time (15 s against 20 s)",
+   "gold_pages": [
+    121,
+    122
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "dev",
+   "gold_choice": {
+    "right": "\\bQ\\b",
+    "wrong": "\\bP\\b"
+   },
+   "arm": "solve",
+   "outcome": "checked_right",
+   "math_status": "solved",
+   "reason": null,
+   "answers": [
+    [
+     "20",
+     "s"
+    ],
+    [
+     "15",
+     "s"
+    ]
+   ],
+   "text": "To find out who takes less time, we need to calculate the **time** taken for each cyclist using the formula: time = distance / speed [S2].\n\n1. We use the formula to find the time taken by Cyclist P, which is the distance covered by P divided by the speed of P.\n   tP = dP / vP\n2. We use the same formula to find the time taken by Cyclist Q, which is the distance covered by Q divided by the speed of Q.\n   tQ = dQ / vQ\n3. We calculate the time for P and Q to see how much time each cyclist takes.\n   tP = 20 s, tQ = 15 s\n\n**Answer: tP = 20 s, tQ = 15 s**",
+   "raw_text": null,
+   "cited_pages": [
+    123
+   ],
+   "first_shown_s": 30.44,
+   "total_s": 87.06
+  },
+  {
+   "id": "num-v14",
+   "group": "variant",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "A scooter moves at 10 m/s for 30 s, then speeds up uniformly to 20 m/s in 10 s. What total distance does it cover?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "450",
+     "unit": "m"
+    }
+   ],
+   "gold_note": "300 m + (10 + 20)/2 x 10 = 150 m",
+   "gold_pages": [
+    122,
+    126
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "dev",
+   "arm": "solve",
+   "outcome": "checked_right",
+   "math_status": "solved",
+   "reason": null,
+   "answers": [
+    [
+     "450",
+     "m"
+    ]
+   ],
+   "text": "To find the total distance covered, we need to calculate the distance covered in the first part of the journey and the distance covered in the second part of the journey, and then add them together [S2].\n\n1. We calculate the distance covered in the first part using the formula distance equals velocity multiplied by time.\n   d1 = v1 * t1\n2. We calculate the distance covered in the second part using the formula for the average speed when there is uniform acceleration.\n   d2 = (v1 + v2) / 2 * t2\n3. We add the distance from the first part and the distance from the second part to get the total distance.\n   d = d1 + d2\n4. We get the final total distance covered by the scooter.\n   d = 450 m\n\n**Answer: 450 m**",
+   "raw_text": null,
+   "cited_pages": [
+    129
+   ],
+   "first_shown_s": 32.29,
+   "total_s": 101.57
+  },
+  {
+   "id": "num-v15",
+   "group": "variant",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "How many kilograms is 2500 g?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "2.5",
+     "unit": "kg"
+    }
+   ],
+   "gold_pages": [
+    103,
+    108
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "dev",
+   "arm": "solve",
+   "outcome": "unsolved",
+   "math_status": "disagree",
+   "reason": null,
+   "answers": [],
+   "text": "",
+   "raw_text": null,
+   "cited_pages": [
+    77,
+    105
+   ],
+   "first_shown_s": 19.73,
+   "total_s": 57.49
+  },
+  {
+   "id": "num-u01",
+   "group": "user",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "A car starts from A and reaches B, which is 75m away, with a uniform speed of 25 m/s. Another car with a uniform speed of 30m/s starts from A and reaches B point C(where the distance Ac = 50m and CB = 70m). Which car reaches destination first?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "3",
+     "unit": "s"
+    },
+    {
+     "value": "4",
+     "unit": "s"
+    }
+   ],
+   "gold_note": "the first car (3 s against 4 s)",
+   "gold_pages": [
+    121,
+    122
+   ],
+   "origin": "user test 20 Oct",
+   "forced_split": "dev",
+   "why_dev": "the 20 Oct fixes were made on it",
+   "verified": false,
+   "split": "dev",
+   "gold_choice": {
+    "right": "\\b(car\\s*(1|one|A)|first car)\\b",
+    "wrong": "\\b(car\\s*(2|two|B)|second car)\\b"
+   },
+   "arm": "solve",
+   "outcome": "unsolved",
+   "math_status": "many_solutions",
+   "reason": null,
+   "answers": [],
+   "text": "",
+   "raw_text": null,
+   "cited_pages": [
+    129,
+    122
+   ],
+   "first_shown_s": 17.65,
+   "total_s": 17.65
+  },
+  {
+   "id": "num-u02",
+   "group": "user",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "A car was at rest then gets to 20m/s and then to 100m/s within 5 and 10 seconds and then comes to rest after deaccerating uniformly for 20minutes calculate the distance covered.",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "60650",
+     "unit": "m"
+    }
+   ],
+   "gold_note": "50 + 600 + 60000 m (times read as 5 s and 10 s for the two stages)",
+   "gold_pages": [
+    126
+   ],
+   "origin": "user test 20 Oct",
+   "forced_split": "dev",
+   "why_dev": "the 20 Oct fixes were made on it",
+   "verified": false,
+   "split": "dev",
+   "arm": "solve",
+   "outcome": "unsolved",
+   "math_status": "disagree",
+   "reason": null,
+   "answers": [],
+   "text": "",
+   "raw_text": null,
+   "cited_pages": [
+    129,
+    122
+   ],
+   "first_shown_s": 33.08,
+   "total_s": 143.59
+  },
+  {
+   "id": "num-u03",
+   "group": "user",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "A car goes from rest and reaches velocity 20 m/s in 30s and then reaches 100m/s velocity in 20s and then uniformly deaccerates at the 2m/s² find the distance travelled by the car",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "4000",
+     "unit": "m"
+    }
+   ],
+   "gold_note": "300 + 1200 + 2500 m (last stage: v^2 = u^2 + 2as)",
+   "gold_pages": [
+    126
+   ],
+   "origin": "user test 20 Oct",
+   "forced_split": "dev",
+   "why_dev": "the 20 Oct fixes were made on it",
+   "verified": false,
+   "split": "dev",
+   "arm": "solve",
+   "outcome": "unsolved",
+   "math_status": "many_solutions",
+   "reason": null,
+   "answers": [],
+   "text": "",
+   "raw_text": null,
+   "cited_pages": [
+    123,
+    122
+   ],
+   "first_shown_s": 26.17,
+   "total_s": 26.17
+  },
+  {
+   "id": "num-n01",
+   "group": "not_numerical",
+   "arms": [
+    "solve"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "Why do we use SI units?",
+   "expected": "explain",
+   "gold": [],
+   "gold_pages": [
+    110
+   ],
+   "origin": "drafted",
+   "forced_split": "dev",
+   "why_dev": "used in the 20 Oct prompt trials",
+   "verified": false,
+   "split": "dev",
+   "arm": "solve",
+   "outcome": "answered_plain",
+   "math_status": "not_numerical",
+   "reason": null,
+   "answers": [],
+   "text": "We use **SI units** because they provide a standard way to measure things so that everyone around the world can understand measurements the same way [S1]. They help us be **consistent** when we talk about things like length, mass, and time [S2].\n\n- SI units are the standard system used for measuring quantities like length, mass, and time [S2].\n- They help us use the right units for different situations [S1].\n- They help us understand **derived units**, which are made by combining fundamental units like length and breadth to find things like area [S2].",
+   "raw_text": null,
+   "cited_pages": [
+    115,
+    110
+   ],
+   "first_shown_s": 16.06,
+   "total_s": 36.32
+  },
+  {
+   "id": "num-n03",
+   "group": "not_numerical",
+   "arms": [
+    "solve"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "What is the difference between speed and velocity?",
+   "expected": "explain",
+   "gold": [],
+   "gold_pages": [
+    121,
+    122
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "dev",
+   "arm": "solve",
+   "outcome": "answered_plain",
+   "math_status": "not_numerical",
+   "reason": null,
+   "answers": [],
+   "text": "Speed and velocity are different because speed only cares about how much distance is covered in a certain time, whereas velocity considers the straight-line change in position. Speed is the total distance travelled divided by the time taken [S2]. Velocity, on the other hand, is the **displacement** (the straight-line distance from the start to the end point) divided by the time taken [S2]. Velocity is a **vector quantity** [S1].\n\n- Speed is about the total path taken.\n- Velocity is about the straight-line change in position.\n- Velocity includes direction, while speed does not.",
+   "raw_text": null,
+   "cited_pages": [
+    121,
+    122
+   ],
+   "first_shown_s": 10.95,
+   "total_s": 34.46
+  },
+  {
+   "id": "num-x01",
+   "group": "maths_setup",
+   "arms": [
+    "setup",
+    "alone"
+   ],
+   "lang": "en",
+   "question": "The sum of three consecutive odd numbers is 33. What are the numbers?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "9",
+     "unit": ""
+    },
+    {
+     "value": "11",
+     "unit": ""
+    },
+    {
+     "value": "13",
+     "unit": ""
+    }
+   ],
+   "origin": "book (Maths Pt1 p 41)",
+   "forced_split": "dev",
+   "why_dev": "used in the 20 Oct prompt trials",
+   "verified": false,
+   "split": "dev",
+   "arm": "setup",
+   "outcome": "checked_right",
+   "math_status": "solved",
+   "answers": [
+    [
+     "9",
+     ""
+    ],
+    [
+     "11",
+     ""
+    ],
+    [
+     "13",
+     ""
+    ]
+   ],
+   "equations": [
+    "x + (x + 2) + (x + 4) = 33"
+   ],
+   "total_s": 9.54
+  },
+  {
+   "id": "num-x03",
+   "group": "maths_setup",
+   "arms": [
+    "setup",
+    "alone"
+   ],
+   "lang": "en",
+   "question": "The sum of three consecutive even numbers is 36. What are the numbers?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "10",
+     "unit": ""
+    },
+    {
+     "value": "12",
+     "unit": ""
+    },
+    {
+     "value": "14",
+     "unit": ""
+    }
+   ],
+   "origin": "book (Maths Pt1 p 41)",
+   "verified": false,
+   "split": "dev",
+   "arm": "setup",
+   "outcome": "checked_right",
+   "math_status": "solved",
+   "answers": [
+    [
+     "10",
+     ""
+    ],
+    [
+     "12",
+     ""
+    ],
+    [
+     "14",
+     ""
+    ]
+   ],
+   "equations": [
+    "x + (x + 2) + (x + 4) = 36"
+   ],
+   "total_s": 8.18
+  },
+  {
+   "id": "num-x04",
+   "group": "maths_setup",
+   "arms": [
+    "setup",
+    "alone"
+   ],
+   "lang": "en",
+   "question": "The perimeter of a rectangle is 80 metres and its length is one metre more than twice the breadth. What are its length and breadth?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "27",
+     "unit": ""
+    },
+    {
+     "value": "13",
+     "unit": ""
+    }
+   ],
+   "origin": "book (Maths Pt1 p 41)",
+   "forced_split": "dev",
+   "why_dev": "used in the 20 Oct prompt trials",
+   "verified": false,
+   "split": "dev",
+   "arm": "setup",
+   "outcome": "checked_right",
+   "math_status": "solved",
+   "answers": [
+    [
+     "27",
+     "metres"
+    ],
+    [
+     "13",
+     "metres"
+    ]
+   ],
+   "equations": [
+    "2l + 2b = 80",
+    "l = 2b + 1"
+   ],
+   "total_s": 8.69
+  },
+  {
+   "id": "num-x06",
+   "group": "maths_setup",
+   "arms": [
+    "setup",
+    "alone"
+   ],
+   "lang": "en",
+   "question": "The price of a book is 4 rupees more than the price of a pen. The price of a pencil is 2 rupees less than the price of the pen. The total price of 5 books, 2 pens and 3 pencils is 74 rupees. What is the price of each?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "10",
+     "unit": ""
+    },
+    {
+     "value": "6",
+     "unit": ""
+    },
+    {
+     "value": "4",
+     "unit": ""
+    }
+   ],
+   "origin": "book (Maths Pt1 p 41)",
+   "forced_split": "dev",
+   "why_dev": "used in the trials; the setup prompt's age example has the same shape",
+   "verified": false,
+   "split": "dev",
+   "arm": "setup",
+   "outcome": "unsolved",
+   "math_status": "parse_error",
+   "answers": [],
+   "equations": [
+    "b = c + 4",
+    "c = p - 2",
+    "5b + 2p + 3c = 74"
+   ],
+   "total_s": 11.87
+  },
+  {
+   "id": "num-x07",
+   "group": "maths_setup",
+   "arms": [
+    "setup",
+    "alone"
+   ],
+   "lang": "en",
+   "question": "In a calendar, a square of four numbers is marked. The sum of the numbers is 80. What are the numbers?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "16",
+     "unit": ""
+    },
+    {
+     "value": "17",
+     "unit": ""
+    },
+    {
+     "value": "23",
+     "unit": ""
+    },
+    {
+     "value": "24",
+     "unit": ""
+    }
+   ],
+   "origin": "book (Maths Pt1 p 41)",
+   "forced_split": "dev",
+   "why_dev": "used in the 20 Oct prompt trials",
+   "verified": false,
+   "split": "dev",
+   "arm": "setup",
+   "outcome": "unsolved",
+   "math_status": "many_solutions",
+   "answers": [],
+   "equations": [
+    "x + y + z + w = 80"
+   ],
+   "total_s": 7.68
+  }
+ ]
+}

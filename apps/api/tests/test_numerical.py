@@ -2,7 +2,7 @@ import asyncio
 
 import pytest
 
-from ruralminds import answer, mathcheck, numerical
+from ruralminds import agreement, answer, mathcheck, numerical
 from ruralminds.answer import AskRequest, Clock, check_gate
 from ruralminds.db import connect, init_schema
 from ruralminds.mathcheck import Limits, Problem
@@ -73,13 +73,24 @@ def _hit() -> RetrievedChunk:
 
 
 def _run_solve(
-    monkeypatch, setup_reply: str, explain: str, language: str = "en", mode: str = "solve"
+    monkeypatch,
+    setup_reply: str,
+    explain: str,
+    language: str = "en",
+    mode: str = "solve",
+    opinion: str = "a = 40 / 8\nFINAL: a = 5 m/s^2",  # the model's own answer agrees
 ) -> list[dict]:
     calls: list[str] = []
 
     async def fake_complete(messages, client, max_tokens, grammar=None):
         calls.append("setup")
         return setup_reply
+
+    async def fake_opinion(messages, client, max_tokens, grammar=None):
+        calls.append("check")
+        return opinion
+
+    monkeypatch.setattr(agreement, "complete", fake_opinion)
 
     async def fake_stream(messages, client, max_tokens=None, grammar=None):
         calls.append("explain" if grammar else "tutor")
@@ -109,10 +120,12 @@ def _run_solve(
 def test_solved_problem_becomes_a_checked_card(monkeypatch) -> None:
     events = _run_solve(monkeypatch, SETUP_REPLY, explain_reply())
     final = events[-1]
-    assert [e["event"] for e in events[:-1]] == ["progress", "token", "token"]
-    assert final["event"] == "done" and final["calls"] == ["setup", "explain"]
+    assert [e["event"] for e in events[:-1]] == ["progress", "token", "token", "progress"]
+    assert events[-2]["data"]["step"] == "double_check"
+    assert final["event"] == "done" and final["calls"] == ["setup", "explain", "check"]
     data = final["data"]
     assert data["math_status"] == "solved"
+    assert data["math"]["said"] == ["a = 5 m/s^2"]  # what the second opinion agreed with
     assert data["card"]["answers"] == ["5 m/s²"]
     assert [step["line"] for step in data["card"]["steps"]] == list(LINES)
     assert data["math"]["answers"] == [{"asked": "a", "exact": "5", "unit": "m/s^2"}]
@@ -200,8 +213,31 @@ def test_several_answers_are_named(monkeypatch) -> None:
         "1. 2l + 2b = 80\nThe perimeter rule.\n2. l = 2b + 1\nThe length rule.\n"
         "3. l = 27 m, b = 13 m\nSolving both together.\nTRY: Another rectangle."
     )
-    data = _run_solve(monkeypatch, setup, explain)[-1]["data"]
+    data = _run_solve(monkeypatch, setup, explain, opinion="FINAL: l = 27 m, b = 13 m")[-1]["data"]
     assert data["card"]["answers"] == ["l = 27 m", "b = 13 m"]
+
+
+@pytest.mark.parametrize(
+    "opinion",
+    [
+        "FINAL: 6.94 m/s^2",  # a different answer (the 90 km/h case on 21 Oct, in miniature)
+        "The answer is 5.",  # no FINAL line: no second opinion, so no agreement either
+        "FINAL: 5 m/s",  # the right number in the wrong unit
+    ],
+)
+def test_no_answer_is_shown_when_the_two_ways_disagree(monkeypatch, opinion: str) -> None:
+    final = _run_solve(monkeypatch, SETUP_REPLY, explain_reply(), opinion=opinion)[-1]
+    data = final["data"]
+    assert final["event"] == "done" and data["unsolved"] is True and data["text"] == ""
+    assert data["math_status"] == "disagree" and "card" not in data
+    assert data["math"]["calculator"] == [("5", "m/s^2")]  # kept for the eval, not shown
+
+
+def test_agreement_allows_rounding_and_other_units() -> None:
+    assert agreement.agrees([("125/18", "m/s")], "FINAL: v = 6.94 m/s")  # rounded decimals
+    assert agreement.agrees([("25", "m/s")], "FINAL: 90 km/h = 25 m/s")  # extra numbers are fine
+    assert agreement.agrees([("20", "m/s")], "FINAL: 72 km/h")  # the same speed
+    assert not agreement.agrees([("27", "m"), ("13", "m")], "FINAL: l = 27 m")  # one missing
 
 
 def test_solved_answer_without_a_citation_is_refused(monkeypatch) -> None:

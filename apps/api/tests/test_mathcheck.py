@@ -147,10 +147,16 @@ def test_solver_times_out_and_recovers() -> None:
             Problem(("A",), ("A = 2l b",), knowns=(("l", "5 m"), ("b", "4 m")), answer_unit="m^2"),
             ("A = 2l × b", "A = 2 × 5 × 4", "A = 40 m²"),
         ),
-        # Units converted on the way: "v = 72/1" would contradict "20 m/s", so it is left out.
+        # Units converted on the way: "v = 72/1" would contradict "20 m/s", so the line keeps
+        # its units instead.
         (
             Problem(("v",), ("v = d/t",), knowns=(("d", "72 km"), ("t", "1 h")), answer_unit="m/s"),
-            ("v = d/t", "v = 20 m/s"),
+            ("v = d/t", "v = (72 km)/(1 h)", "v = 20 m/s"),
+        ),
+        # A pure conversion, as setup v3 writes it (the calculator converts, not the model).
+        (
+            Problem(("v",), ("v = v1",), knowns=(("v1", "54 km/h"),), answer_unit="m/s"),
+            ("v = v1", "v = 54 km/h", "v = 15 m/s"),
         ),
         # Two answers or two equations: no worked lines; the model explains the equations.
         (Problem(("x",), ("x^2 - 5x + 6 = 0",)), ()),

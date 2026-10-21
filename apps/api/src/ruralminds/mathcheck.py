@@ -428,11 +428,23 @@ def _formula_steps(
         number = format_number(_strip_units(parse_quantity(quantity, limits)))
         numbers[name] = f"({number})" if number.startswith("-") else number
     substituted = re.sub(r"[A-Za-z][A-Za-z0-9_]*", lambda m: numbers.get(m[0], m[0]), formula)
-    # "72 km in 1 h" asked in m/s: "v = 72/1" then "v = 20 m/s" would look wrong, so the line
-    # is shown only when its own numbers give the answer.
     if parse(substituted, {}, limits) == parse(answer.exact, {}, limits):
         lines.append(f"{unknown} = {substituted}")
+    else:
+        # Units are converted on the way ("72 km in 1 h" asked in m/s): "v = 72/1" then
+        # "v = 20 m/s" would look wrong, so the line keeps the units: "v = (72 km)/(1 h)".
+        written = {name: _with_unit(value) for name, value in problem.knowns}
+        if len(written) == 1 and formula.strip() in written:  # "v = v1": no brackets needed
+            written = {name: value.strip("()") for name, value in written.items()}
+        with_units = re.sub(r"[A-Za-z][A-Za-z0-9_]*", lambda m: written.get(m[0], m[0]), formula)
+        lines.append(f"{unknown} = {pretty_unit(with_units)}")
     return lines
+
+
+def _with_unit(quantity: str) -> str:
+    """'72 km' -> '(72 km)'; a plain number stays as it is."""
+    text = " ".join(quantity.split())
+    return f"({text})" if re.search(r"[A-Za-z]", text) else text
 
 
 def worked_steps(problem: Problem, answer: Answer, limits: Limits) -> tuple[str, ...]:

@@ -20,7 +20,7 @@ from .mathcheck import Limits, Problem, Solution
 from .retrieve import RetrievedChunk
 from .tutor import load_prompt
 
-SETUP_PROMPT = "maths_setup_v2"
+SETUP_PROMPT = "maths_setup_v3"
 EXPLAIN_PROMPT = "system_v3_numerical"
 # A journey in three parts needs ~10 KNOWN lines and 4 equations: 120 tokens cut such a setup
 # off mid-equation (user test, 20 Oct).

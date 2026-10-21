@@ -24,7 +24,7 @@ from dataclasses import asdict, dataclass, field, replace
 
 import httpx
 
-from . import numerical, tutor
+from . import agreement, numerical, tutor
 from .cache import lookup as lookup_approved
 from .cache import normalise_question
 from .config import settings
@@ -432,12 +432,26 @@ async def _solve(
             clock.first_token = clock.first_token or time.perf_counter()
             parts.append(piece)
             yield event("token", text=piece)
+        # The second opinion, after the explanation so the first words are not delayed (the
+        # phone shows only the idea sentence while streaming, never the calculator's lines).
+        yield event("progress", step="double_check")
+        opinion = await agreement.second_opinion(client, request.question)
     except httpx.HTTPError:
         log.exception("llama-server request failed")
         _log(conn, request, "error", clock)
         yield event("error", message_key="error.model")
         return
-    yield _finish_solved(conn, request, gate, sources, setup, "".join(parts), clock)
+    calculator = [(answer.exact, answer.unit) for answer in setup.solution.solutions[0]]
+    said = agreement.final_lines(opinion)[-1:]
+    if not agreement.agrees(calculator, opinion):
+        # Two ways gave two answers: show none of them (DECISIONS 2026-10-21).
+        math = {"equations": list(setup.problem.equations), "calculator": calculator, "said": said}
+        yield _unsolved(conn, request, sources, clock, "disagree", math)
+        return
+    final = _finish_solved(conn, request, gate, sources, setup, "".join(parts), clock)
+    if final["event"] == "done":
+        final["data"]["math"]["said"] = said  # what the second opinion agreed with
+    yield final
 
 
 def _unsolved(
@@ -446,11 +460,13 @@ def _unsolved(
     sources: list[RetrievedChunk],
     clock: Clock,
     status: str,
+    math: dict | None = None,
 ) -> dict[str, object]:
-    """The calculator could not take this problem: a fixed message and the pages our search
-    found, with no model text. A method answer written without the calculator twice told a
-    student the faster car arrives first when it arrives last (user test, 20 Oct), so it is
-    shown only if the student asks for it, with a warning (mode "method")."""
+    """The calculator could not take this problem, or its answer and the model's own disagree:
+    a fixed message and the pages our search found, with no model text. A method answer written
+    without the calculator twice told a student the faster car arrives first when it arrives
+    last (user test, 20 Oct), so it is shown only if the student asks for it, with a warning
+    (mode "method"). `math` (what each side said) is for the eval; the phone ignores it."""
     _log(conn, request, "refused", clock)
     return event(
         "done",
@@ -462,6 +478,7 @@ def _unsolved(
         citations=[citation(n, hit) for n, hit in enumerate(sources[:2], start=1)],
         label="ai_explanation",
         math_status=status,
+        **({"math": math} if math else {}),
     )
 
 

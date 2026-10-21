@@ -206,6 +206,10 @@ Results and validity are in [evaluation-register.md](evaluation-register.md) §A
 
 Next decisions: (1) the agreement guard (✓ only when the calculator and the model's own answer agree; +1 model call, can run while the explanation streams); (2) setup prompt v3 for unit conversions ("never write 1000/3600; the calculator converts units") — motivated by dev item v15 and test item v03, so it must be checked on fresh items; (3) a reviewer checks the gold answers; (4) fresh test items, because the test split has now been read once and the next read is the final one.
 
+### 6d. Agreement guard and setup v3, 21 Oct
+
+Built (DECISIONS 2026-10-21): `agreement.py` (second opinion + comparison, shared with the bench), prompt `maths_check_v1`, setup prompt `maths_setup_v3` (no conversion numbers; worked lines keep units when converted), phone message for "two ways disagree". Dev check in [evaluation-register.md](evaluation-register.md) §A11: no wrong ✓; the guard caught a wrong conversion that setup v3 still wrote; one right answer held back; book/pen/pencil setup regressed. Waiting for: the user's check of the gold answers and fresh test problems, then one test read.
+
 ## 7. To decide (team)
 1. Option A, B or C (§0).
 2. What "draw the box" means: the answer card in §3.5, a boxed final answer, figures, or something else.

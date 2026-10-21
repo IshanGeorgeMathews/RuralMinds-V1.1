@@ -114,6 +114,8 @@ Item set `eval/datasets/num/numerical.jsonl`: 38 items, **gold answers solved by
 
 Bug found by the run and fixed after it (21 Oct): an unknown named `s` could not be solved next to SymPy's unit second (also `s`), so a correct setup ("s = v * t") came back "no solution"; unknowns are now real-valued symbols (`mathcheck.symbol`, regression test). Offline simulation on the saved runs, not a run: showing the ✓ only when the calculator's answer agrees with the model's own answer would have removed both wrong ✓ in test and kept every right one; on dev it would have removed one right ✓ (60 650 m, model alone said 60 400). Designed after reading the test split, so it must be confirmed on fresh items.
 
+**After the agreement guard + setup v3 (21 Oct, dev only; `num-guard-setup3-dev-20261021-1247.json`; solve and setup arms):** Science ✓ shown and right 10/14 (was 11/14), ✓ on a wrong answer 0/10 (was 0/11), held back 4/14 (was 3/14). The guard held back two answers: the 60 650 m journey (calculator right, model alone said 60 400: the expected cost) and "2500 g in kg", where setup v3 still divided by 1000 itself and the calculator would have shown 0.0025 kg with a ✓ (the model alone said 2.5 kg). Maths setup only: 3/5 (was 4/5): the book/pen/pencil setup regressed to wrong relations under prompt v3 and failed safely (parse error). Draft gold, dev was tuned on: indicative; the test split is not read again until the fresh test problems exist.
+
 ## B. To do
 
 Priority: **P1** needed for the submission, **P2** if time allows, **P3** after the hackathon.

@@ -142,7 +142,13 @@
 				<div class="unsolved">
 					<p class="unsolved-text">
 						<Icon name="alert" size={18} />
-						{t(turn.mathStatus === 'language_not_supported' ? 'solve.english_only' : 'solve.not_set_up')}
+						{t(
+							turn.mathStatus === 'language_not_supported'
+								? 'solve.english_only'
+								: turn.mathStatus === 'disagree'
+									? 'solve.disagree'
+									: 'solve.not_set_up'
+						)}
 					</p>
 					{#if turn.citations.length}
 						<p class="eyebrow">{t('solve.pages_help')}</p>
@@ -169,7 +175,9 @@
 				</div>
 			{:else if solving && turn.status === 'writing' && streamIdea}
 				<div class="prose" lang={turn.language || undefined}>{@html renderMarkdown(streamIdea, false)}</div>
-				<p class="writing"><span class="dot"></span>{t('solve.writing_step', { n: stepsWritten || 1 })}</p>
+				<p class="writing">
+					<span class="dot"></span>{turn.step === 'double_check' ? t('step.double_check') : t('solve.writing_step', { n: stepsWritten || 1 })}
+				</p>
 			{:else}
 				{#if turn.mode === 'method' && turn.status === 'done'}
 					<!-- Asked for after the calculator could not take the problem: it may be wrong. -->
