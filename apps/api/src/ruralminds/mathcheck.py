@@ -284,14 +284,24 @@ def _answer(asked: str, value: sympy.Expr, unit_text: str, limits: Limits) -> An
     if not value.atoms(Quantity):  # unitless: any unit is only a label
         shown = f"{format_number(value)} {pretty_unit(unit_text)}".strip()
         return Answer(asked, str(value), unit_text, shown)
-    if not unit_text:  # has units but none was asked for: keep SymPy's own form
-        shown = sympy.sstr(value, abbrev=True)
-        return Answer(asked, shown, "", pretty_unit(shown))
+    if not unit_text:  # has units but none was asked for: SI units, never "28*m/(3*s)"
+        number, unit = si_form(value)
+        return Answer(asked, str(number), unit, f"{format_number(number)} {pretty_unit(unit)}")
     number = _in_unit(value, parse(unit_text, UNITS, limits))
     if number is None:
         raise ArithmeticError(f"{asked} is not in {unit_text}")
     shown = f"{format_number(number)} {pretty_unit(unit_text)}"
     return Answer(asked, str(number), unit_text, shown)
+
+
+def si_form(value: sympy.Expr) -> tuple[sympy.Expr, str]:
+    """A quantity as (number, unit in SI base units): 28*meter/(3*second) -> (28/3, 'm/s').
+    A human eval on 21 Oct showed '50*s' and '28*m/(3*s)' on a student's card."""
+    number, unit = sympy.simplify(convert_to(value, SI_BASE)).as_coeff_Mul()
+    if not unit.atoms(Quantity):
+        return value, ""
+    text = sympy.sstr(unit, abbrev=True).replace("**", "^").replace("*", "·")
+    return number, text
 
 
 def _holds(equation: sympy.Eq, solution: dict[sympy.Symbol, sympy.Expr]) -> bool:
@@ -363,8 +373,15 @@ def solve_problem(problem: Problem, limits: Limits) -> Solution:
     if not all(_holds(equation, solution) for equation in equations for solution in found):
         return Solution("check_failed", detail="an answer does not satisfy the equations")
     solution = _answers(problem, names, found, limits)
-    if solution.status != "solved" or len(found) != 1 or len(unknowns) != 1:
+    if solution.status != "solved" or len(found) != 1:
         return solution
+    if len(unknowns) > 1:
+        values = {str(name): value for name, value in found[0].items()}
+        try:
+            steps = chain_steps(problem, values, solution.solutions[0], limits)
+        except (MathParseError, ValueError, TypeError, ArithmeticError):
+            steps = ()  # explained from the equations and the answers instead
+        return replace(solution, steps=steps)
     unknown, value = unknowns[0], found[0][unknowns[0]]
     try:
         answer = _answer(str(unknown), value, problem.answer_unit, limits)
@@ -461,6 +478,78 @@ def worked_steps(problem: Problem, answer: Answer, limits: Limits) -> tuple[str,
         return ()  # e.g. a quadratic: explained from the equation and its answers instead
     lines.append(f"{unknown} = {answer.display}")
     return tuple(line for index, line in enumerate(lines) if index == 0 or line != lines[index - 1])
+
+
+def chain_steps(
+    problem: Problem, values: dict[str, sympy.Expr], answers: tuple[Answer, ...], limits: Limits
+) -> tuple[str, ...]:
+    """Worked lines for equations that each give one unknown from what is already known, in an
+    order that works: 't1 = d1/v1 = 400/8 = 50 s', then 't = t1 + t2 + t3 = 50 + 100 + 60 = 210 s'.
+    A human eval (21 Oct) showed six bare formulas with no numbers for a three-stage journey.
+    Truly simultaneous equations (2l + 2b = 80 with l = 2b + 1) cannot be chained: ()."""
+    known = {name: parse_quantity(quantity, limits) for name, quantity in problem.knowns}
+    pending = []
+    for text in problem.equations:
+        left, _, right = text.partition("=")
+        if left.strip() not in values:
+            return ()
+        pending.append((left.strip(), right))
+    done: dict[str, sympy.Expr] = {}
+    lines = []
+    while pending:
+        ready = next(
+            (eq for eq in pending if _names_in(eq[1]) <= set(known) | set(done) | set(FUNCTIONS)),
+            None,
+        )
+        if ready is None:
+            return ()
+        pending.remove(ready)
+        name, right = ready
+        done[name] = values[name]
+        lines.append(_chain_line(name, right, known, done, dict(problem.knowns), limits))
+    summary = ", ".join(f"{answer.asked} = {answer.display}" for answer in answers)
+    return (*lines, summary)
+
+
+def _exact(number: sympy.Expr) -> str:
+    """A number to put inside a worked line: '2.5', or '28/3' rather than '28/3 ≈ 9.33'."""
+    shown = format_number(number)
+    return str(number) if "≈" in shown else shown
+
+
+def _names_in(text: str) -> set[str]:
+    return set(re.findall(r"[A-Za-z][A-Za-z0-9_]*", text))
+
+
+def _chain_line(
+    name: str,
+    right: str,
+    known: dict[str, sympy.Expr],
+    done: dict[str, sympy.Expr],
+    given: dict[str, str],  # the knowns as the question wrote them: "1.2 km"
+    limits: Limits,
+) -> str:
+    formula = _as_written(right, limits, implicit=False)
+    number, unit = si_form(done[name])
+    result = f"{format_number(number)} {pretty_unit(unit)}".strip()
+    numbers = {n: _exact(si_form(v)[0]) for n, v in done.items()} | {
+        n: _exact(_strip_units(v)) for n, v in known.items()
+    }
+    substituted = re.sub(r"[A-Za-z][A-Za-z0-9_]*", lambda m: numbers.get(m[0], m[0]), formula)
+    try:
+        plain_numbers_hold = parse(substituted, {}, limits) == number
+    except MathParseError:
+        plain_numbers_hold = False
+    if not plain_numbers_hold:  # units converted on the way: keep them ("(1.2 km)/(10 min)")
+        with_units = {n: _with_unit(text) for n, text in given.items()} | {
+            n: _with_unit(f"{_exact(si_form(v)[0])} {si_form(v)[1]}") for n, v in done.items()
+        }
+        substituted = re.sub(
+            r"[A-Za-z][A-Za-z0-9_]*", lambda m: with_units.get(m[0], m[0]), formula
+        )
+    parts = [formula, pretty_unit(substituted), result]
+    shown = [part for index, part in enumerate(parts) if index == 0 or part != parts[index - 1]]
+    return f"{name} = " + " = ".join(shown)
 
 
 class Solver:

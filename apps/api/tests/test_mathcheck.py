@@ -1,3 +1,5 @@
+from dataclasses import replace
+
 import pytest
 
 from ruralminds import mathcheck
@@ -191,3 +193,70 @@ def test_unknowns_named_like_units_still_solve(name: str) -> None:
         (name,), (f"{name} = v * t",), knowns=(("v", "20 m/s"), ("t", "2 minutes")), answer_unit="m"
     )
     assert solved(problem) == ["2400 m"]
+
+
+STAGES = (
+    ("d1", "400 m"),
+    ("v1", "8 m/s"),
+    ("d2", "1200 m"),
+    ("v2", "12 m/s"),
+    ("d3", "360 m"),
+    ("v3", "6 m/s"),
+)
+STAGE_EQUATIONS = (
+    "t1 = d1 / v1",
+    "t2 = d2 / v2",
+    "t3 = d3 / v3",
+    "d = d1 + d2 + d3",
+    "t = t1 + t2 + t3",
+    "v = d / t",
+)
+
+SIX_UNKNOWNS = replace(LIMITS, max_unknowns=6)  # the app's limit: a 3-stage journey needs 6
+
+
+def test_answers_without_a_unit_are_shown_in_si_units() -> None:
+    # Human eval, 21 Oct: the card showed "50*s" and "28*m/(3*s)".
+    problem = Problem(("t1", "t2", "t3", "d", "t", "v"), STAGE_EQUATIONS, STAGES, ("t1", "v"))
+    solution = solve_problem(problem, SIX_UNKNOWNS)
+    assert [a.display for a in solution.solutions[0]] == ["50 s", "28/3 ≈ 9.33 m/s"]
+
+
+def test_chained_equations_are_worked_with_numbers() -> None:
+    # Human eval, 21 Oct: six bare formulas and no numbers for a three-stage journey.
+    problem = Problem(
+        ("t1", "t2", "t3", "d", "t", "v"), STAGE_EQUATIONS, STAGES, ("d", "t", "v"), ""
+    )
+    assert solve_problem(problem, SIX_UNKNOWNS).steps == (
+        "t1 = d1/v1 = 400/8 = 50 s",
+        "t2 = d2/v2 = 1200/12 = 100 s",
+        "t3 = d3/v3 = 360/6 = 60 s",
+        "d = d1 + d2 + d3 = 400 + 1200 + 360 = 1960 m",
+        "t = t1 + t2 + t3 = 50 + 100 + 60 = 210 s",
+        "v = d/t = 1960/210 = 28/3 ≈ 9.33 m/s",
+        "d = 1960 m, t = 210 s, v = 28/3 ≈ 9.33 m/s",
+    )
+
+
+def test_chained_lines_keep_units_when_they_are_converted() -> None:
+    problem = Problem(
+        ("t1",), ("t1 = d1 / v1",), (("d1", "1.8 km"), ("v1", "5 m/s")), answer_unit="s"
+    )
+    two = Problem(
+        ("t1", "t"),
+        ("t1 = d1 / v1", "t = t1 + t0"),
+        (("d1", "1.8 km"), ("v1", "5 m/s"), ("t0", "1 minute")),
+        ("t",),
+        "s",
+    )
+    assert solve_problem(two, LIMITS).steps == (
+        "t1 = d1/v1 = (1.8 km)/(5 m/s) = 360 s",
+        "t = t1 + t0 = (360 s) + (1 minute) = 420 s",
+        "t = 420 s",
+    )
+    assert solved(problem) == ["360 s"]
+
+
+def test_simultaneous_equations_are_not_chained() -> None:
+    problem = Problem(("b", "l"), ("2(l + b) = 80", "l = 2b + 1"), answer_unit="m")
+    assert solve_problem(problem, LIMITS).steps == ()

@@ -214,6 +214,18 @@ Built (DECISIONS 2026-10-21): `agreement.py` (second opinion + comparison, share
 
 In [evaluation-register.md](evaluation-register.md) §A11: no wrong ✓ in 26 Science test problems; 18 of 26 shown with a ✓, all right; the guard caught two wrong unit conversions on the team's fresh problems. Open: comparisons lose answers because the second opinion names the winner without numbers (fix: ask the check prompt for each value, then the choice — needs a new fresh set to measure, since the test split is now used up); setup v3 still converts units by hand sometimes; the whole answer takes ~1 min on this laptop.
 
+## 6f. Human eval of the chip, 21 Oct (2 chats: a brick on three faces; a car in three stages)
+
+Fixed the same day (`mathcheck.py`, tests): answers without a unit showed SymPy's raw form ("50*s", "28*m/(3*s)") — now SI units ("50 s", "28/3 ≈ 9.33 m/s"); chained equations showed bare formulas — now each line is worked: "t1 = d1/v1 = 400/8 = 50 s", keeping units where they are converted ("(1.8 km)/(5 m/s) = 360 s"); simultaneous equations stay as before.
+
+**Queued, in this order (build after the current work; each needs its own plan):**
+1. **Multi-part questions: fold instead of failing, and never ✓ a partial answer.** A question with numbered parts ("Calculate: 1. … 2. … 3. …") got "couldn't set up", and once got "✓ checked" on part 1 alone while part 4 was ignored. Detect the parts; show "This question has 4 parts" with one chip per part; each chip solves the shared statement plus that part; a ✓ is only ever per part.
+2. **Failure messages that say why and what to do**, per `math_status`: too many parts → the part chips; free unknowns → "some numbers seem to be missing: check the question gives every value"; unit mismatch → "the formula did not fit the units"; disagree → as now. "For each orientation"-type questions ask the student to name one case.
+3. **"Show the method" must not say "couldn't find this in your textbook"** directly under "Pages that may help": its refusal gets its own message (the method could not be written from the book; try the pages, or ask the teacher).
+4. **Example box** (register T13): drop it when the model has no real everyday example, and keep it from contradicting the answer.
+5. **Tutor accuracy finding** (not maths): in normal mode the brick answer said the deeper depression comes from the *broadest* face (wrong) with a citation, while its own example said the opposite — an inverted fact the citation check cannot catch (register T14).
+6. Add both chats' parts to the numerical dev set once 1–2 exist (brick weight solved correctly to 58.8 N with a ✓).
+
 ## 7. To decide (team)
 1. Option A, B or C (§0).
 2. What "draw the box" means: the answer card in §3.5, a boxed final answer, figures, or something else.

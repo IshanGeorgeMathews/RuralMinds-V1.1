@@ -129,6 +129,8 @@ Bug found by the run and fixed after it (21 Oct): an unknown named `s` could not
 - The model alone was right on 28 of 29 numerical test items but is never checked; the app cannot tell which of its answers is the wrong one.
 - Timings on this laptop (other apps open, ~3 GB RAM free; indicative): first text after tapping Solve p50 20.6 s / p95 34.2 s; whole answer incl. the second opinion p50 61.5 s / p95 117.6 s.
 
+**Human eval of the chip (user, 21 Oct; 2 chats, ~12 turns; qualitative).** Right with ✓: brick weight 58.8 N; times per stage 50/100/60 s; total distance 1960 m. **One ✓ on a partial answer:** a four-part question was answered with t1 = 50 s only (shown as "50*s") under "Checked by the calculator". Multi-part questions were always "couldn't set up"; "Show the method" twice answered "couldn't find this in your textbook" under the pages it had just offered; one normal-mode answer stated an inverted fact (deeper depression from the broadest face) with a citation. Display and step fixes made the same day; the rest is queued in [maths-and-numericals.md](maths-and-numericals.md) §6f.
+
 ## B. To do
 
 Priority: **P1** needed for the submission, **P2** if time allows, **P3** after the hackathon.
