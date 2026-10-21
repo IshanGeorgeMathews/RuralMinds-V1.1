@@ -353,11 +353,12 @@ async def _answer_from_book(
                 async for item in _wait_for_slot(queue, ticket):
                     yield item
             sources = pack_sources(hits, settings.max_context_tokens)
-            answering = (
-                _solve(conn, client, request, gate, sources, clock)
-                if request.mode == "solve"
-                else _generate(conn, client, request, gate, sources, clock)
-            )
+            if request.mode == "solve":
+                answering = _solve(conn, client, request, gate, sources, clock)
+            elif request.mode == "method":
+                answering = _method(conn, client, request, gate, sources, clock)
+            else:
+                answering = _generate(conn, client, request, gate, sources, clock)
             async for item in answering:
                 if item["event"] in ("token", "progress"):
                     yield item
@@ -403,23 +404,24 @@ async def _solve(
     clock: Clock,
 ) -> AsyncIterator[dict[str, object]]:
     """ "Solve step by step": set up, solve with SymPy, explain the worked lines. Anything that
-    does not solve cleanly (or a Malayalam answer, not built yet) gets the tutor's method
-    explanation instead, with no final number; `math_status` says why, for the eval."""
+    does not solve cleanly gets no model text at all (`_unsolved`); a question with nothing to
+    calculate gets the normal tutor answer. `math_status` says which, for the eval."""
     try:
-        if request.language == "en":
-            # The setup call shows nothing on screen: tell the phone what is happening.
-            yield event("progress", step="solving")
-            setup = await numerical.set_up(client, request.question)
-        else:  # step-by-step solving is English-only for now; Malayalam gets the method
-            setup = numerical.Setup("language_not_supported")
-        if setup.status != "solved":
-            # Not streamed: the method answer is shown only once it passed every check, so
-            # nothing appears and is then erased (user test, 20 Oct: 3 such refusals).
-            yield event("progress", step="method")
-            async for item in _generate(conn, client, request, gate, sources, clock, False):
+        if request.language != "en":  # step-by-step solving is English-only for now
+            yield _unsolved(conn, request, sources, clock, "language_not_supported")
+            return
+        # The setup call shows nothing on screen: tell the phone what is happening.
+        yield event("progress", step="solving")
+        setup = await numerical.set_up(client, request.question)
+        if setup.status == "not_numerical":
+            explain = replace(request, mode="explain")
+            async for item in _generate(conn, client, explain, gate, sources, clock):
                 if item["event"] == "done":
-                    item["data"]["math_status"] = setup.status
+                    item["data"].update(mode="solve", math_status=setup.status)
                 yield item
+            return
+        if setup.status != "solved":
+            yield _unsolved(conn, request, sources, clock, setup.status)
             return
         parts: list[str] = []
         messages = numerical.explain_messages(
@@ -436,6 +438,47 @@ async def _solve(
         yield event("error", message_key="error.model")
         return
     yield _finish_solved(conn, request, gate, sources, setup, "".join(parts), clock)
+
+
+def _unsolved(
+    conn: sqlite3.Connection,
+    request: AskRequest,
+    sources: list[RetrievedChunk],
+    clock: Clock,
+    status: str,
+) -> dict[str, object]:
+    """The calculator could not take this problem: a fixed message and the pages our search
+    found, with no model text. A method answer written without the calculator twice told a
+    student the faster car arrives first when it arrives last (user test, 20 Oct), so it is
+    shown only if the student asks for it, with a warning (mode "method")."""
+    _log(conn, request, "refused", clock)
+    return event(
+        "done",
+        text="",
+        unsolved=True,
+        mode=request.mode,
+        language=request.language,
+        # Pages from our own index, not from the model: where the method may be explained.
+        citations=[citation(n, hit) for n, hit in enumerate(sources[:2], start=1)],
+        label="ai_explanation",
+        math_status=status,
+    )
+
+
+async def _method(
+    conn: sqlite3.Connection,
+    client: httpx.AsyncClient,
+    request: AskRequest,
+    gate: Gate,
+    sources: list[RetrievedChunk],
+    clock: Clock,
+) -> AsyncIterator[dict[str, object]]:
+    """ "Show the method anyway": the tutor's method answer, asked for after the calculator
+    could not take the problem. Not streamed, so it shows only once it passed its checks, and
+    the phone marks it as written without the calculator and possibly wrong."""
+    yield event("progress", step="method")
+    async for item in _generate(conn, client, request, gate, sources, clock, False):
+        yield item
 
 
 def _finish_solved(

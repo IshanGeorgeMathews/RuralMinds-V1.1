@@ -57,6 +57,12 @@
 		send(question, solveOn && canSolve ? 'solve' : null);
 	}
 
+	// The student asked for the method after the calculator could not take the problem: ask the
+	// same problem again in "method" mode (the answer carries a "may be wrong" note).
+	function method(turn: (typeof study.turns)[number]): void {
+		ask(turn.question, { mode: 'method', shown: t('solve.method_shown') });
+	}
+
 	function follow(mode: Mode): void {
 		ask(t(`follow.${mode}.question`), { mode, shown: t(`follow.${mode}`), followUp: true });
 	}
@@ -137,7 +143,7 @@
 			</div>
 		{/if}
 		{#each study.turns as turn, index (turn.id)}
-			<AnswerCard {turn} {teacherMode} last={index === study.turns.length - 1} onfollow={follow} {onapprove} />
+			<AnswerCard {turn} {teacherMode} last={index === study.turns.length - 1} onfollow={follow} {onapprove} onmethod={method} />
 		{/each}
 		<div bind:this={end}></div>
 	</div>

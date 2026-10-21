@@ -1,0 +1,1380 @@
+{
+ "label": "gemma4-e2b-baseline",
+ "run_at": "2026-10-21T12:00:27",
+ "split": "test",
+ "items_file": "eval\\datasets\\num\\numerical.jsonl",
+ "db_path": "data\\eval-run.db",
+ "model_path": "C:/Users/ishan/.ollama/models/blobs/sha256-6dd7ac24fe13a238898e16e253ebc7a72fa27fb83f2658c2f6c241df3af5937d",
+ "setup_prompt": "maths_setup_v2",
+ "explain_prompt": "system_v3_numerical",
+ "alone_prompt": "numerical_alone_v1.md",
+ "verified_items": 0,
+ "items": 17,
+ "resumed": true,
+ "summary": {
+  "solve": {
+   "items": 13,
+   "outcomes": {
+    "checked_right": 10,
+    "checked_wrong": 1,
+    "unsolved": 2
+   },
+   "right": {
+    "hits": 10,
+    "n": 13,
+    "rate": 0.769,
+    "ci95": [
+     0.497,
+     0.918
+    ]
+   },
+   "wrong_among_checked": {
+    "hits": 1,
+    "n": 11,
+    "rate": 0.091,
+    "ci95": [
+     0.016,
+     0.377
+    ]
+   },
+   "not_numerical_answered_plainly": {
+    "hits": 1,
+    "n": 1,
+    "rate": 1.0,
+    "ci95": [
+     0.207,
+     1.0
+    ]
+   },
+   "first_shown_s": {
+    "p50": 21.45,
+    "p95": 28.1
+   },
+   "total_s": {
+    "p50": 44.65,
+    "p95": 59.19
+   }
+  },
+  "setup": {
+   "items": 3,
+   "outcomes": {
+    "checked_right": 2,
+    "checked_wrong": 1
+   },
+   "right": {
+    "hits": 2,
+    "n": 3,
+    "rate": 0.667,
+    "ci95": [
+     0.208,
+     0.939
+    ]
+   },
+   "wrong_among_checked": {
+    "hits": 1,
+    "n": 3,
+    "rate": 0.333,
+    "ci95": [
+     0.061,
+     0.792
+    ]
+   }
+  },
+  "alone": {
+   "items": 16,
+   "outcomes": {
+    "right": 16
+   },
+   "right": {
+    "hits": 16,
+    "n": 16,
+    "rate": 1.0,
+    "ci95": [
+     0.806,
+     1.0
+    ]
+   },
+   "wrong_among_checked": null
+  }
+ },
+ "results": [
+  {
+   "id": "num-v02",
+   "group": "variant",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "A train moves at a uniform speed of 20 m/s for 2 minutes. How far does it go?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "2400",
+     "unit": "m"
+    }
+   ],
+   "gold_pages": [
+    121,
+    122
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "test",
+   "arm": "solve",
+   "outcome": "unsolved",
+   "math_status": "no_solution",
+   "reason": null,
+   "answers": [],
+   "text": "",
+   "raw_text": null,
+   "cited_pages": [
+    125,
+    123
+   ],
+   "first_shown_s": 10.39,
+   "total_s": 10.39
+  },
+  {
+   "id": "num-v02",
+   "group": "variant",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "A train moves at a uniform speed of 20 m/s for 2 minutes. How far does it go?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "2400",
+     "unit": "m"
+    }
+   ],
+   "gold_pages": [
+    121,
+    122
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "test",
+   "arm": "alone",
+   "outcome": "right",
+   "answers": [
+    [
+     "2400",
+     "m"
+    ]
+   ],
+   "text": "Here is the step-by-step solution:\n\n1.  **Convert time to seconds:** The time given is 2 minutes, which needs to be converted to seconds: $2 \\text{ minutes} \\times 60 \\text{ seconds/minute} = 120 \\text{ seconds}$.\n2.  **Use the distance formula:** The distance covered is calculated using the formula: Distance = Speed $\\times$ Time.\n3.  **Calculate the distance:** Substitute the given speed ($20 \\text{ m/s}$) and the converted time ($120 \\text{ s}$): Distance = $20 \\text{ m/s} \\times 120 \\text{ s} = 2400 \\text{ meters}$.\n\nFINAL: Distance = 2400 m",
+   "total_s": 32.09
+  },
+  {
+   "id": "num-v03",
+   "group": "variant",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "A bus moves at 90 km/h. What is its speed in m/s?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "25",
+     "unit": "m/s"
+    }
+   ],
+   "gold_pages": [
+    121,
+    122
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "test",
+   "arm": "solve",
+   "outcome": "checked_wrong",
+   "math_status": "solved",
+   "reason": null,
+   "answers": [
+    [
+     "125/18",
+     "m/s"
+    ]
+   ],
+   "text": "To convert speed from kilometres per hour (km/h) to metres per second (m/s), we multiply the speed in km/h by the fraction 1000/3600 [S1].\n\n1. We write the formula to convert speed from km/h to m/s, where v_kmh is the speed in km/h.\n   v = v_kmh × (1000/3600)\n2. We substitute the given speed of 90 km/h into the formula and calculate the speed in m/s.\n   v = 125/18 ≈ 6.94 m/s\n\n**Answer: 125/18 ≈ 6.94 m/s**",
+   "raw_text": null,
+   "cited_pages": [
+    128
+   ],
+   "first_shown_s": 28.1,
+   "total_s": 59.19
+  },
+  {
+   "id": "num-v03",
+   "group": "variant",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "A bus moves at 90 km/h. What is its speed in m/s?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "25",
+     "unit": "m/s"
+    }
+   ],
+   "gold_pages": [
+    121,
+    122
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "test",
+   "arm": "alone",
+   "outcome": "right",
+   "answers": [
+    [
+     "25",
+     "m/s"
+    ]
+   ],
+   "text": "To convert km/h to m/s, we use the conversion factor $\\frac{1000 \\text{ m}}{1 \\text{ km}}$ and $\\frac{1 \\text{ hour}}{3600 \\text{ seconds}}$.\nSpeed in m/s = $90 \\text{ km/h} \\times \\frac{1000 \\text{ m}}{1 \\text{ km}} \\times \\frac{1 \\text{ h}}{3600 \\text{ s}}$\nSpeed in m/s = $\\frac{90 \\times 1000}{3600} \\text{ m/s}$\nSpeed in m/s = $\\frac{90000}{3600} \\text{ m/s}$\nSpeed in m/s = $25 \\text{ m/s}$\n\nFINAL: speed = 25 m/s",
+   "total_s": 35.39
+  },
+  {
+   "id": "num-v06",
+   "group": "variant",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "A room is 6 m long and 3.5 m wide. What is its floor area?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "21",
+     "unit": "m^2"
+    }
+   ],
+   "gold_pages": [
+    110
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "test",
+   "arm": "solve",
+   "outcome": "checked_right",
+   "math_status": "solved",
+   "reason": null,
+   "answers": [
+    [
+     "21",
+     "m^2"
+    ]
+   ],
+   "text": "To find the **floor area** of a room, we need to multiply its **length** by its **width** [S1].\n\n1. We write the formula for area, which is length multiplied by width.\n   A = l × w\n2. We substitute the given length (6 m) and width (3.5 m) into the formula.\n   A = 6 × 3.5\n3. We multiply the numbers to find the area, and the unit is in square metres.\n   A = 21 m²\n\n**Answer: 21 m²**",
+   "raw_text": null,
+   "cited_pages": [
+    140
+   ],
+   "first_shown_s": 22.15,
+   "total_s": 44.65
+  },
+  {
+   "id": "num-v06",
+   "group": "variant",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "A room is 6 m long and 3.5 m wide. What is its floor area?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "21",
+     "unit": "m^2"
+    }
+   ],
+   "gold_pages": [
+    110
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "test",
+   "arm": "alone",
+   "outcome": "right",
+   "answers": [
+    [
+     "21",
+     "m^2"
+    ]
+   ],
+   "text": "The floor area of a rectangle is calculated by multiplying its length by its width.\nArea = Length $\\times$ Width\nArea = $6 \\, \\text{m} \\times 3.5 \\, \\text{m}$\nArea = $21 \\, \\text{m}^2$\n\nFINAL: Floor area = 21 m^2",
+   "total_s": 11.65
+  },
+  {
+   "id": "num-v07",
+   "group": "variant",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "A box is 2 m long, 1.5 m wide and 0.5 m high. What is its volume?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "1.5",
+     "unit": "m^3"
+    }
+   ],
+   "gold_pages": [
+    112
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "test",
+   "arm": "solve",
+   "outcome": "checked_right",
+   "math_status": "solved",
+   "reason": null,
+   "answers": [
+    [
+     "3/2",
+     "m^3"
+    ]
+   ],
+   "text": "To find the **volume** of a rectangular box, we multiply its length, breadth, and height [S2].\n\n1. We write the formula for volume, which is length multiplied by breadth multiplied by height.\n   V = l × w × h\n2. We substitute the given length, breadth, and height into the formula.\n   V = 2 × 1.5 × 0.5\n3. We multiply the numbers together to find the volume, and the unit is cubic metres.\n   V = 1.5 m³\n\n**Answer: 1.5 m³**",
+   "raw_text": null,
+   "cited_pages": [
+    112
+   ],
+   "first_shown_s": 19.21,
+   "total_s": 43.08
+  },
+  {
+   "id": "num-v07",
+   "group": "variant",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "A box is 2 m long, 1.5 m wide and 0.5 m high. What is its volume?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "1.5",
+     "unit": "m^3"
+    }
+   ],
+   "gold_pages": [
+    112
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "test",
+   "arm": "alone",
+   "outcome": "right",
+   "answers": [
+    [
+     "1.5",
+     "m^3"
+    ]
+   ],
+   "text": "The volume of a rectangular box is calculated by multiplying its length, width, and height.\nVolume = Length $\\times$ Width $\\times$ Height\nVolume = $2 \\, \\text{m} \\times 1.5 \\, \\text{m} \\times 0.5 \\, \\text{m}$\nVolume = $3 \\, \\text{m}^2 \\times 0.5 \\, \\text{m}$\nVolume = $1.5 \\, \\text{m}^3$\n\nFINAL: Volume = 1.5 m^3",
+   "total_s": 19.72
+  },
+  {
+   "id": "num-v08",
+   "group": "variant",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "A stone of mass 600 g has a volume of 200 cm³. What is its density?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "3",
+     "unit": "g/cm^3"
+    }
+   ],
+   "gold_pages": [
+    112,
+    115
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "test",
+   "arm": "solve",
+   "outcome": "checked_right",
+   "math_status": "solved",
+   "reason": null,
+   "answers": [
+    [
+     "3",
+     "g/cm^3"
+    ]
+   ],
+   "text": "Density is calculated by dividing the **mass** of an object by its **volume** [S1].\n\n1. We write the formula for density, which is mass divided by volume.\n   rho = m/V\n2. We substitute the given mass (600) and volume (200) into the formula.\n   rho = 600/200\n3. We perform the division to find the density, which is 3 grams per cubic centimeter.\n   rho = 3 g/cm³\n\n**Answer: 3 g/cm³**",
+   "raw_text": null,
+   "cited_pages": [
+    112
+   ],
+   "first_shown_s": 21.29,
+   "total_s": 44.35
+  },
+  {
+   "id": "num-v08",
+   "group": "variant",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "A stone of mass 600 g has a volume of 200 cm³. What is its density?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "3",
+     "unit": "g/cm^3"
+    }
+   ],
+   "gold_pages": [
+    112,
+    115
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "test",
+   "arm": "alone",
+   "outcome": "right",
+   "answers": [
+    [
+     "3000",
+     "kg/m^3"
+    ]
+   ],
+   "text": "Here is the step-by-step solution:\n\n1.  **Convert mass to kilograms (kg):** Mass ($m$) = $600 \\text{ g} = 600 / 1000 \\text{ kg} = 0.6 \\text{ kg}$.\n2.  **Convert volume to cubic meters ($\\text{m}^3$):** Volume ($V$) = $200 \\text{ cm}^3$. Since $1 \\text{ cm}^3 = 10^{-6} \\text{ m}^3$, $V = 200 \\times 10^{-6} \\text{ m}^3 = 2 \\times 10^{-4} \\text{ m}^3$.\n3.  **Calculate density ($\\rho$):** Density is mass divided by volume ($\\rho = m/V$).\n    $\\rho = 0.6 \\text{ kg} / (2 \\times 10^{-4} \\text{ m}^3) = 0.6 / (0.0002) \\text{ kg/m}^3 = 3000 \\text{ kg/m}^3$.\n\nAlternatively, using CGS units (grams and $\\text{cm}^3$):\n1.  **Calculate density in $\\text{g/cm}^3$:** $\\rho = 600 \\text{ g} / 200 \\text{ cm}^3 = 3 \\text{ g/cm}^3$.\n2.  **Convert to $\\text{kg/m}^3$:** $3 \\text{ g/cm}^3 = 3 \\times (10^{-3} \\text{ kg}) / (10^{-6} \\text{ m}^3) = 3 \\times 10^3 \\text{ kg/m}^3 = 3000 \\text{ kg/m}^3$.\n\nFINAL: density = 3000 kg/m^3",
+   "total_s": 64.54
+  },
+  {
+   "id": "num-v09",
+   "group": "variant",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "A metal block of mass 2 kg has a volume of 0.001 m³. Find its density.",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "2000",
+     "unit": "kg/m^3"
+    }
+   ],
+   "gold_pages": [
+    112,
+    115
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "test",
+   "arm": "solve",
+   "outcome": "checked_right",
+   "math_status": "solved",
+   "reason": null,
+   "answers": [
+    [
+     "2000",
+     "kg/m^3"
+    ]
+   ],
+   "text": "To find the **density** of a substance, we divide its **mass** by its **volume** [S2].\n\n1. We write the formula for density, which is mass divided by volume.\n   rho = m/V\n2. We substitute the given mass (2) and volume (0.001) into the formula.\n   rho = 2/0.001\n3. We calculate the result, which is the density in kilograms per cubic metre.\n   rho = 2000 kg/m³\n\n**Answer: 2000 kg/m³**",
+   "raw_text": null,
+   "cited_pages": [
+    112
+   ],
+   "first_shown_s": 17.68,
+   "total_s": 41.69
+  },
+  {
+   "id": "num-v09",
+   "group": "variant",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "A metal block of mass 2 kg has a volume of 0.001 m³. Find its density.",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "2000",
+     "unit": "kg/m^3"
+    }
+   ],
+   "gold_pages": [
+    112,
+    115
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "test",
+   "arm": "alone",
+   "outcome": "right",
+   "answers": [
+    [
+     "2000",
+     "kg/m^3"
+    ]
+   ],
+   "text": "Here is the step-by-step solution:\n\n1.  **Identify the given values:** Mass ($m$) = $2 \\text{ kg}$, Volume ($V$) = $0.001 \\text{ m}^3$.\n2.  **Recall the formula for density:** Density ($\\rho$) is calculated as mass divided by volume ($\\rho = m/V$).\n3.  **Calculate the density:** $\\rho = 2 \\text{ kg} / 0.001 \\text{ m}^3$.\n4.  **Perform the division:** $\\rho = 2000 \\text{ kg/m}^3$.\n\nFINAL: Density = $2000 \\text{ kg/m}^3$",
+   "total_s": 25.51
+  },
+  {
+   "id": "num-v10",
+   "group": "variant",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "How long does a cyclist take to cover 150 m at a uniform speed of 5 m/s?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "30",
+     "unit": "s"
+    }
+   ],
+   "gold_pages": [
+    121,
+    122
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "test",
+   "arm": "solve",
+   "outcome": "checked_right",
+   "math_status": "solved",
+   "reason": null,
+   "answers": [
+    [
+     "30",
+     "s"
+    ]
+   ],
+   "text": "To find the **time** taken, we use the formula that relates distance, speed, and time, which is distance divided by speed [S1].\n\n1. We write the formula, where t is the time, d is the distance, and v is the speed.\n   t = d/v\n2. We put the given values for distance (150 m) and speed (5 m/s) into the formula.\n   t = 150/5\n3. We calculate the result to find the time taken, which is 30 seconds.\n   t = 30 s\n\n**Answer: 30 s**",
+   "raw_text": null,
+   "cited_pages": [
+    129
+   ],
+   "first_shown_s": 21.45,
+   "total_s": 48.6
+  },
+  {
+   "id": "num-v10",
+   "group": "variant",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "How long does a cyclist take to cover 150 m at a uniform speed of 5 m/s?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "30",
+     "unit": "s"
+    }
+   ],
+   "gold_pages": [
+    121,
+    122
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "test",
+   "arm": "alone",
+   "outcome": "right",
+   "answers": [
+    [
+     "30",
+     "s"
+    ]
+   ],
+   "text": "Time is calculated by dividing the distance by the speed.\nTime = Distance / Speed\nTime = 150 m / 5 m/s\nTime = 30 s\n\nFINAL: Time taken = 30 s",
+   "total_s": 10.0
+  },
+  {
+   "id": "num-v11",
+   "group": "variant",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "A car moving at 10 m/s speeds up with an acceleration of 2 m/s² for 5 s. What is its final velocity?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "20",
+     "unit": "m/s"
+    }
+   ],
+   "gold_pages": [
+    125,
+    126
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "test",
+   "arm": "solve",
+   "outcome": "checked_right",
+   "math_status": "solved",
+   "reason": null,
+   "answers": [
+    [
+     "20",
+     "m/s"
+    ]
+   ],
+   "text": "To find the **final velocity**, we use the formula that relates initial velocity, acceleration, and time [S1].\n\n1. We write the formula for final velocity, where u is the initial velocity, a is the acceleration, and t is the time.\n   v = u + a × t\n2. We substitute the given values: the initial velocity u is 10 m/s, the acceleration a is 2 m/s², and the time t is 5 s.\n   v = 10 + 2 × 5\n3. We calculate the final velocity by adding the initial velocity and the change in velocity caused by acceleration.\n   v = 20 m/s\n\n**Answer: 20 m/s**",
+   "raw_text": null,
+   "cited_pages": [
+    126
+   ],
+   "first_shown_s": 25.35,
+   "total_s": 51.13
+  },
+  {
+   "id": "num-v11",
+   "group": "variant",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "A car moving at 10 m/s speeds up with an acceleration of 2 m/s² for 5 s. What is its final velocity?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "20",
+     "unit": "m/s"
+    }
+   ],
+   "gold_pages": [
+    125,
+    126
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "test",
+   "arm": "alone",
+   "outcome": "right",
+   "answers": [
+    [
+     "20",
+     "m/s"
+    ]
+   ],
+   "text": "The initial velocity ($u$) is $10 \\text{ m/s}$.\nThe acceleration ($a$) is $2 \\text{ m/s}^2$.\nThe time ($t$) is $5 \\text{ s}$.\nUsing the formula $v = u + at$, the final velocity ($v$) is $10 + (2 \\times 5) = 10 + 10 = 20 \\text{ m/s}$.\n\nFINAL: final velocity = 20 m/s",
+   "total_s": 19.16
+  },
+  {
+   "id": "num-v12",
+   "group": "variant",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "A boy walks 100 m in 20 s and then runs 200 m in 20 s. What is his average speed for the whole trip?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "7.5",
+     "unit": "m/s"
+    }
+   ],
+   "gold_pages": [
+    121,
+    122
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "test",
+   "arm": "solve",
+   "outcome": "unsolved",
+   "math_status": "unit_mismatch",
+   "reason": null,
+   "answers": [],
+   "text": "",
+   "raw_text": null,
+   "cited_pages": [
+    130,
+    123
+   ],
+   "first_shown_s": 18.64,
+   "total_s": 18.64
+  },
+  {
+   "id": "num-v12",
+   "group": "variant",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "A boy walks 100 m in 20 s and then runs 200 m in 20 s. What is his average speed for the whole trip?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "7.5",
+     "unit": "m/s"
+    }
+   ],
+   "gold_pages": [
+    121,
+    122
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "test",
+   "arm": "alone",
+   "outcome": "right",
+   "answers": [
+    [
+     "7.5",
+     "m/s"
+    ]
+   ],
+   "text": "Here is the step-by-step solution:\n\n1.  **Calculate the total distance:** The first distance is $100 \\text{ m}$ and the second distance is $200 \\text{ m}$. Total distance $= 100 \\text{ m} + 200 \\text{ m} = 300 \\text{ m}$.\n2.  **Calculate the total time:** The time taken for the first part is $20 \\text{ s}$ and the time taken for the second part is $20 \\text{ s}$. Total time $= 20 \\text{ s} + 20 \\text{ s} = 40 \\text{ s}$.\n3.  **Calculate the average speed:** Average speed is total distance divided by total time. Average speed $= 300 \\text{ m} / 40 \\text{ s} = 7.5 \\text{ m/s}$.\n\nFINAL: Average speed = 7.5 m/s",
+   "total_s": 35.51
+  },
+  {
+   "id": "num-v16",
+   "group": "variant",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "A lorry starting from rest reaches 15 m/s in 10 s. How far does it travel in that time?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "75",
+     "unit": "m"
+    }
+   ],
+   "gold_note": "(0 + 15)/2 x 10",
+   "gold_pages": [
+    125,
+    126
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "test",
+   "arm": "solve",
+   "outcome": "checked_right",
+   "math_status": "solved",
+   "reason": null,
+   "answers": [
+    [
+     "75",
+     "m"
+    ]
+   ],
+   "text": "To find the **distance** covered when the acceleration is constant, we use the formula for distance using the average velocity [S2].\n\n1. We write the formula for distance using the average of the initial and final velocities over time.\n   s = (u + v)/2t\n2. The lorry starts from rest, so u is 0; we put the initial velocity (0), final velocity (15 m/s), and time (10 s) into the rule.\n   s = (0 + 15)/2 × 10\n3. We calculate the distance the lorry travels in that time, which is 75 metres.\n   s = 75 m\n\n**Answer: 75 m**",
+   "raw_text": null,
+   "cited_pages": [
+    125
+   ],
+   "first_shown_s": 25.21,
+   "total_s": 53.88
+  },
+  {
+   "id": "num-v16",
+   "group": "variant",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "A lorry starting from rest reaches 15 m/s in 10 s. How far does it travel in that time?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "75",
+     "unit": "m"
+    }
+   ],
+   "gold_note": "(0 + 15)/2 x 10",
+   "gold_pages": [
+    125,
+    126
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "test",
+   "arm": "alone",
+   "outcome": "right",
+   "answers": [
+    [
+     "75",
+     "m"
+    ]
+   ],
+   "text": "Here is the step-by-step solution:\n\n1.  **Find the acceleration ($a$):** Use the formula $v = u + at$, where $u=0$ (starting from rest), $v=15 \\text{ m/s}$, and $t=10 \\text{ s}$.\n    $15 = 0 + a(10) \\implies a = 1.5 \\text{ m/s}^2$.\n2.  **Find the distance ($s$):** Use the formula $s = ut + \\frac{1}{2}at^2$.\n    $s = (0)(10) + \\frac{1}{2}(1.5)(10)^2 = 0 + 0.75 \\times 100 = 75 \\text{ m}$.\n\nFINAL: Distance traveled = 75 m",
+   "total_s": 32.67
+  },
+  {
+   "id": "num-n02",
+   "group": "not_numerical",
+   "arms": [
+    "solve"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "What is uniform motion?",
+   "expected": "explain",
+   "gold": [],
+   "gold_pages": [
+    122
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "test",
+   "arm": "solve",
+   "outcome": "answered_plain",
+   "math_status": "not_numerical",
+   "reason": null,
+   "answers": [],
+   "text": "Uniform motion means that an object moves at a **constant speed** [S1]. This happens when the distance covered in equal time intervals is the same [S1]. If the distance covered in equal time intervals is the same, then the motion is considered **uniform speed** [S1].\n\n- Uniform velocity is a specific type of velocity that you can distinguish from non-uniform velocity [S2].\n- A train starting and moving out of the station is an example of non-uniform velocity [S2].",
+   "raw_text": null,
+   "cited_pages": [
+    122,
+    125
+   ],
+   "first_shown_s": 12.81,
+   "total_s": 38.32
+  },
+  {
+   "id": "num-m01",
+   "group": "manglish",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "oru car rest il ninnu start cheythu 5 second kondu 20 m/s il ethi, acceleration ethra?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "4",
+     "unit": "m/s^2"
+    }
+   ],
+   "gold_pages": [
+    125,
+    126
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "test",
+   "arm": "solve",
+   "outcome": "checked_right",
+   "math_status": "solved",
+   "reason": null,
+   "answers": [
+    [
+     "4",
+     "m/s^2"
+    ]
+   ],
+   "text": "**Acceleration** is the rate at which velocity changes over time, which is calculated by dividing the change in velocity by the time taken [S1].\n\n1. We write the formula for acceleration, where v is the final velocity, u is the initial velocity, and t is the time taken.\n   a = (v - u)/t\n2. The car starts from rest, so the initial velocity u is 0; we put the given values into the formula.\n   a = (20 - 0)/5\n3. We calculate the result to find the acceleration in metres per second squared.\n   a = 4 m/s²\n\n**Answer: 4 m/s²**",
+   "raw_text": null,
+   "cited_pages": [
+    126
+   ],
+   "first_shown_s": 22.67,
+   "total_s": 49.16
+  },
+  {
+   "id": "num-m01",
+   "group": "manglish",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "oru car rest il ninnu start cheythu 5 second kondu 20 m/s il ethi, acceleration ethra?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "4",
+     "unit": "m/s^2"
+    }
+   ],
+   "gold_pages": [
+    125,
+    126
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "test",
+   "arm": "alone",
+   "outcome": "right",
+   "answers": [
+    [
+     "4",
+     "m/s^2"
+    ]
+   ],
+   "text": "Here is the step-by-step solution:\n\n1.  **Identify the knowns:** Initial velocity ($u$) = $0 \\text{ m/s}$ (starts from rest), Final velocity ($v$) = $20 \\text{ m/s}$, Time ($t$) = $5 \\text{ s}$.\n2.  **Identify the unknown:** Acceleration ($a$).\n3.  **Apply the first equation of motion:** Use the formula $v = u + at$.\n4.  **Solve for acceleration:** Rearrange the formula to $a = (v - u) / t$.\n5.  **Calculate the result:** $a = (20 \\text{ m/s} - 0 \\text{ m/s}) / 5 \\text{ s} = 20 / 5 = 4 \\text{ m/s}^2$.\n\nFINAL: acceleration = 4 m/s^2",
+   "total_s": 31.91
+  },
+  {
+   "id": "num-m02",
+   "group": "manglish",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "oru kutti 100 m 25 second kondu odi, speed ethra?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "4",
+     "unit": "m/s"
+    }
+   ],
+   "gold_pages": [
+    121,
+    122
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "test",
+   "arm": "solve",
+   "outcome": "checked_right",
+   "math_status": "solved",
+   "reason": null,
+   "answers": [
+    [
+     "4",
+     "m/s"
+    ]
+   ],
+   "text": "**Speed** is the total distance travelled divided by the time taken to cover that distance [S2].\n\n1. We write the formula for **velocity** (which is the same as speed in this context) as distance divided by time.\n   v = d/t\n2. We substitute the given distance (100 m) and the time taken (25 s) into the formula.\n   v = 100/25\n3. We calculate the result by dividing 100 by 25 to find the speed in metres per second.\n   v = 4 m/s\n\n**Answer: 4 m/s**",
+   "raw_text": null,
+   "cited_pages": [
+    121
+   ],
+   "first_shown_s": 21.65,
+   "total_s": 46.22
+  },
+  {
+   "id": "num-m02",
+   "group": "manglish",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "oru kutti 100 m 25 second kondu odi, speed ethra?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "4",
+     "unit": "m/s"
+    }
+   ],
+   "gold_pages": [
+    121,
+    122
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "test",
+   "arm": "alone",
+   "outcome": "right",
+   "answers": [
+    [
+     "4",
+     "m/s"
+    ]
+   ],
+   "text": "Here is the step-by-step solution:\n\n1.  **Identify the given values:** Distance ($d$) = 100 m, Time ($t$) = 25 s.\n2.  **Recall the formula for speed:** Speed ($v$) = Distance ($d$) / Time ($t$).\n3.  **Calculate the speed:** $v = 100 \\text{ m} / 25 \\text{ s} = 4 \\text{ m/s}$.\n\nFINAL: speed = 4 m/s",
+   "total_s": 20.04
+  },
+  {
+   "id": "num-m03",
+   "group": "manglish",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "6 m neelavum 5 m veethiyum ulla muriyude area ethra?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "30",
+     "unit": "m^2"
+    }
+   ],
+   "gold_pages": [
+    110
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "test",
+   "arm": "solve",
+   "outcome": "checked_right",
+   "math_status": "solved",
+   "reason": null,
+   "answers": [
+    [
+     "30",
+     "m^2"
+    ]
+   ],
+   "text": "To find the **area** of a rectangle, we multiply its **length** by its **breadth** [S2].\n\n1. We write the formula for the area of a rectangle, which is length multiplied by breadth.\n   A = l × w\n2. We substitute the given length (6 m) and breadth (5 m) into the formula.\n   A = 6 × 5\n3. We calculate the product to find the area, and the unit is in square metres.\n   A = 30 m²\n\n**Answer: 30 m²**",
+   "raw_text": null,
+   "cited_pages": [
+    110
+   ],
+   "first_shown_s": 24.12,
+   "total_s": 46.58
+  },
+  {
+   "id": "num-m03",
+   "group": "manglish",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "6 m neelavum 5 m veethiyum ulla muriyude area ethra?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "30",
+     "unit": "m^2"
+    }
+   ],
+   "gold_pages": [
+    110
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "test",
+   "arm": "alone",
+   "outcome": "right",
+   "answers": [
+    [
+     "30",
+     "m^2"
+    ]
+   ],
+   "text": "Here is the step-by-step solution:\n\n1.  **Identify the shape and dimensions:** The problem describes a rectangle with a length ($l$) of 6 m and a width ($w$) of 5 m.\n2.  **Recall the area formula:** The area ($A$) of a rectangle is calculated by multiplying its length by its width ($A = l \\times w$).\n3.  **Calculate the area:** Substitute the given values into the formula: $A = 6 \\text{ m} \\times 5 \\text{ m} = 30 \\text{ m}^2$.\n\nFINAL: Area = 30 m^2",
+   "total_s": 23.77
+  },
+  {
+   "id": "num-x02",
+   "group": "maths_setup",
+   "arms": [
+    "setup",
+    "alone"
+   ],
+   "lang": "en",
+   "question": "The sum of three consecutive natural numbers is 36. What are the numbers?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "11",
+     "unit": ""
+    },
+    {
+     "value": "12",
+     "unit": ""
+    },
+    {
+     "value": "13",
+     "unit": ""
+    }
+   ],
+   "origin": "book (Maths Pt1 p 41)",
+   "verified": false,
+   "split": "test",
+   "arm": "setup",
+   "outcome": "checked_right",
+   "math_status": "solved",
+   "answers": [
+    [
+     "11",
+     "natural"
+    ],
+    [
+     "12",
+     "natural"
+    ],
+    [
+     "13",
+     "natural"
+    ]
+   ],
+   "equations": [
+    "x + (x + 1) + (x + 2) = 36"
+   ],
+   "total_s": 11.27
+  },
+  {
+   "id": "num-x02",
+   "group": "maths_setup",
+   "arms": [
+    "setup",
+    "alone"
+   ],
+   "lang": "en",
+   "question": "The sum of three consecutive natural numbers is 36. What are the numbers?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "11",
+     "unit": ""
+    },
+    {
+     "value": "12",
+     "unit": ""
+    },
+    {
+     "value": "13",
+     "unit": ""
+    }
+   ],
+   "origin": "book (Maths Pt1 p 41)",
+   "verified": false,
+   "split": "test",
+   "arm": "alone",
+   "outcome": "right",
+   "answers": [
+    [
+     "11",
+     ""
+    ],
+    [
+     "12",
+     ""
+    ],
+    [
+     "13",
+     ""
+    ]
+   ],
+   "text": "Let the three consecutive natural numbers be $n$, $n+1$, and $n+2$.\nTheir sum is $n + (n+1) + (n+2) = 3n + 3$.\nWe are given that the sum is 36:\n$3n + 3 = 36$\n$3n = 36 - 3$\n$3n = 33$\n$n = 11$\nThe three numbers are $n=11$, $n+1=12$, and $n+2=13$.\nCheck: $11 + 12 + 13 = 36$.\n\nFINAL: The numbers are 11, 12, and 13",
+   "total_s": 27.24
+  },
+  {
+   "id": "num-x05",
+   "group": "maths_setup",
+   "arms": [
+    "setup",
+    "alone"
+   ],
+   "lang": "en",
+   "question": "From a point on a line, another line is to be drawn such that the angle on one side is 50° more than the angle on the other side. How much is the smaller angle?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "65",
+     "unit": ""
+    }
+   ],
+   "origin": "book (Maths Pt1 p 41)",
+   "verified": false,
+   "split": "test",
+   "arm": "setup",
+   "outcome": "checked_wrong",
+   "math_status": "solved",
+   "answers": [
+    [
+     "115",
+     ""
+    ],
+    [
+     "65",
+     ""
+    ]
+   ],
+   "equations": [
+    "a1 + a2 = 180",
+    "a1 = a2 + 50"
+   ],
+   "total_s": 12.12
+  },
+  {
+   "id": "num-x05",
+   "group": "maths_setup",
+   "arms": [
+    "setup",
+    "alone"
+   ],
+   "lang": "en",
+   "question": "From a point on a line, another line is to be drawn such that the angle on one side is 50° more than the angle on the other side. How much is the smaller angle?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "65",
+     "unit": ""
+    }
+   ],
+   "origin": "book (Maths Pt1 p 41)",
+   "verified": false,
+   "split": "test",
+   "arm": "alone",
+   "outcome": "right",
+   "answers": [
+    [
+     "65",
+     "degrees"
+    ]
+   ],
+   "text": "Let the two angles be $x$ and $y$.\nWe are given that one angle is $50^\\circ$ more than the other. Let $x$ be the smaller angle.\nSo, $y = x + 50^\\circ$.\nThe sum of the angles in a linear pair is $180^\\circ$, so $x + y = 180^\\circ$.\nSubstitute $y$: $x + (x + 50^\\circ) = 180^\\circ$.\n$2x + 50^\\circ = 180^\\circ$.\n$2x = 180^\\circ - 50^\\circ$.\n$2x = 130^\\circ$.\n$x = 130^\\circ / 2 = 65^\\circ$.\nThe smaller angle is $x = 65^\\circ$.\nThe larger angle is $y = 65^\\circ + 50^\\circ = 115^\\circ$.\nCheck: $65^\\circ + 115^\\circ = 180^\\circ$.\n\nFINAL: The smaller angle is 65 degrees",
+   "total_s": 41.82
+  },
+  {
+   "id": "num-x08",
+   "group": "maths_setup",
+   "arms": [
+    "setup",
+    "alone"
+   ],
+   "lang": "en",
+   "question": "The sum of three consecutive natural numbers is 33. What are the numbers?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "10",
+     "unit": ""
+    },
+    {
+     "value": "11",
+     "unit": ""
+    },
+    {
+     "value": "12",
+     "unit": ""
+    }
+   ],
+   "origin": "book (Maths Pt1 p 41)",
+   "verified": false,
+   "split": "test",
+   "arm": "setup",
+   "outcome": "checked_right",
+   "math_status": "solved",
+   "answers": [
+    [
+     "10",
+     "natural"
+    ],
+    [
+     "11",
+     "natural"
+    ],
+    [
+     "12",
+     "natural"
+    ]
+   ],
+   "equations": [
+    "x + (x + 1) + (x + 2) = 33"
+   ],
+   "total_s": 11.23
+  },
+  {
+   "id": "num-x08",
+   "group": "maths_setup",
+   "arms": [
+    "setup",
+    "alone"
+   ],
+   "lang": "en",
+   "question": "The sum of three consecutive natural numbers is 33. What are the numbers?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "10",
+     "unit": ""
+    },
+    {
+     "value": "11",
+     "unit": ""
+    },
+    {
+     "value": "12",
+     "unit": ""
+    }
+   ],
+   "origin": "book (Maths Pt1 p 41)",
+   "verified": false,
+   "split": "test",
+   "arm": "alone",
+   "outcome": "right",
+   "answers": [
+    [
+     "10",
+     ""
+    ],
+    [
+     "11",
+     ""
+    ],
+    [
+     "12",
+     ""
+    ]
+   ],
+   "text": "Let the three consecutive natural numbers be $n$, $n+1$, and $n+2$.\nTheir sum is $n + (n+1) + (n+2) = 3n + 3$.\nWe are given that the sum is 33:\n$3n + 3 = 33$\n$3n = 33 - 3$\n$3n = 30$\n$n = 10$\nThe three numbers are $n=10$, $n+1=11$, and $n+2=12$.\nCheck: $10 + 11 + 12 = 33$.\n\nFINAL: The numbers are 10, 11, and 12",
+   "total_s": 28.7
+  }
+ ]
+}

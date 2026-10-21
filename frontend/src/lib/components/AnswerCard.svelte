@@ -14,13 +14,15 @@
 		last = false,
 		teacherMode = false,
 		onfollow,
-		onapprove
+		onapprove,
+		onmethod
 	}: {
 		turn: Turn;
 		last?: boolean;
 		teacherMode?: boolean;
 		onfollow?: (mode: Mode) => void;
 		onapprove?: (turn: Turn) => void;
+		onmethod?: (turn: Turn) => void; // "Show the method anyway" after an unsolved problem
 	} = $props();
 
 	let opened = $state<Citation | null>(null);
@@ -134,16 +136,44 @@
 				<NotesCard notes={turn.notes} />
 			{:else if turn.status === 'done' && turn.card}
 				<SolutionCard card={turn.card} language={turn.language} oncite={openCitation} />
+			{:else if turn.status === 'done' && turn.unsolved}
+				<!-- The calculator could not take the problem: no model text, only our message and the
+				     pages the search found. The method is shown only if the student asks for it. -->
+				<div class="unsolved">
+					<p class="unsolved-text">
+						<Icon name="alert" size={18} />
+						{t(turn.mathStatus === 'language_not_supported' ? 'solve.english_only' : 'solve.not_set_up')}
+					</p>
+					{#if turn.citations.length}
+						<p class="eyebrow">{t('solve.pages_help')}</p>
+						<div class="source-row">
+							{#each turn.citations as citation (citation.marker)}
+								<button class="source" onclick={() => (opened = citation)}>
+									<span class="source-text">
+										<strong class="tabular">{pageLabel(citation)}</strong>
+										<small>{citation.chapter_title}</small>
+									</span>
+									<Icon name="page" size={18} />
+								</button>
+							{/each}
+						</div>
+					{/if}
+					{#if last && onmethod}
+						<div class="method-offer">
+							<button class="btn soft" onclick={() => onmethod(turn)}>
+								<Icon name="lightbulb" size={18} />{t('solve.method_button')}
+							</button>
+							<p class="hint-small">{t('solve.method_risk')}</p>
+						</div>
+					{/if}
+				</div>
 			{:else if solving && turn.status === 'writing' && streamIdea}
 				<div class="prose" lang={turn.language || undefined}>{@html renderMarkdown(streamIdea, false)}</div>
 				<p class="writing"><span class="dot"></span>{t('solve.writing_step', { n: stepsWritten || 1 })}</p>
 			{:else}
-				{#if solving && turn.status === 'done' && turn.mathStatus && !['solved', 'not_numerical'].includes(turn.mathStatus)}
-					<!-- A calculation the calculator could not check: say so, and give only the method.
-					     A question with nothing to calculate ("why SI units?") is just a normal answer. -->
-					<p class="not-checked">
-						<Icon name="alert" size={16} />{t(turn.mathStatus === 'language_not_supported' ? 'solve.english_only' : 'solve.not_checked')}
-					</p>
+				{#if turn.mode === 'method' && turn.status === 'done'}
+					<!-- Asked for after the calculator could not take the problem: it may be wrong. -->
+					<p class="not-checked"><Icon name="alert" size={16} />{t('solve.method_note')}</p>
 				{/if}
 				<!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_static_element_interactions -->
 				<div class="prose" lang={turn.language || undefined} onclick={openCitation}>
@@ -228,7 +258,7 @@
 		</div>
 	</div>
 
-	{#if last && (turn.status === 'done' || turn.status === 'notes') && onfollow}
+	{#if last && (turn.status === 'done' || turn.status === 'notes') && onfollow && !turn.unsolved}
 		<div class="follow no-print" role="group" aria-label={t('follow.label')}>
 			{#each FOLLOW as option (option.mode)}
 				<button class="chip" onclick={() => onfollow(option.mode)}>
@@ -460,6 +490,37 @@
 	.answers {
 		background: var(--accent-softer);
 		border: 1px solid var(--accent-soft);
+	}
+	.unsolved {
+		display: grid;
+		gap: 10px;
+		padding: 14px 16px;
+		border: 1px solid var(--line);
+		border-radius: 14px;
+		background: var(--surface);
+	}
+	.unsolved-text {
+		display: flex;
+		gap: 10px;
+		align-items: flex-start;
+		margin: 0;
+	}
+	.unsolved-text :global(svg) {
+		color: var(--warm);
+		flex-shrink: 0;
+		margin-top: 3px;
+	}
+	.method-offer {
+		display: grid;
+		gap: 4px;
+		justify-items: start;
+		border-top: 1px solid var(--line);
+		padding-top: 10px;
+	}
+	.hint-small {
+		margin: 0;
+		font-size: 0.8rem;
+		color: var(--muted);
 	}
 	.not-checked {
 		display: flex;

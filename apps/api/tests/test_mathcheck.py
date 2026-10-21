@@ -176,3 +176,12 @@ def test_worked_steps_are_computed_not_written_by_the_model(
 )
 def test_answer_unit_comes_from_units_or_the_question(unit: str, question: str, kept: str) -> None:
     assert mathcheck.answer_unit_for(unit, question, LIMITS) == kept
+
+
+@pytest.mark.parametrize("name", ["s", "m", "g", "h", "d"])
+def test_unknowns_named_like_units_still_solve(name: str) -> None:
+    # Bench, 21 Oct: "s = v * t" gave no solution, because SymPy's unit second is also "s".
+    problem = Problem(
+        (name,), (f"{name} = v * t",), knowns=(("v", "20 m/s"), ("t", "2 minutes")), answer_unit="m"
+    )
+    assert solved(problem) == ["2400 m"]

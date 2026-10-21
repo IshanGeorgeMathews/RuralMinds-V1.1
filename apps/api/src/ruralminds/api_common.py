@@ -28,9 +28,10 @@ class AskIn(BaseModel):
     question: str = Field(min_length=1, max_length=2000)
     # The student's "Answer in" setting. The UI language is separate and never sent.
     answer_language: Literal["auto", "en", "ml"] = "auto"
-    mode: Literal["explain", "simpler", "example", "story", "quiz", "summary", "solve"] | None = (
-        None
-    )
+    mode: (
+        Literal["explain", "simpler", "example", "story", "quiz", "summary", "solve", "method"]
+        | None
+    ) = None
     document_id: int
     chapter_no: int | None = None
     history: list[TurnIn] = Field(default_factory=list, max_length=6)

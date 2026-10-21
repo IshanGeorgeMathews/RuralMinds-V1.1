@@ -98,6 +98,22 @@ Every number RuralMinds may quote must appear here with its file. "Valid" means 
 
 Footer page-number vote found the correct page offset on all 13 SCERT PDFs with a text layer; contents-page parsing matched known chapter starts; converting legacy-font Malayalam pages kept more key-fact terms than OCR (0.85 vs 0.56, n = 14, crude). Source: `reports/RuralMinds feature research 27 Oct.md`. Re-measure in `eval/` before quoting.
 
+### A11. Numerical problems — "Solve step by step" chip (21 Oct)
+
+Item set `eval/datasets/num/numerical.jsonl`: 38 items, **gold answers solved by hand and not yet checked by a reviewer (`verified: false` on all): every number here is draft-gold and indicative**. Split frozen by `python -m eval.numerical freeze` (21 dev / 17 test); everything tuned on during 20 Oct (book numericals, the user's three problems, Maths p 41 trial items) is forced to dev. Arms on the same items: the full app path with the chip (`solve`), the same model solving alone with a FINAL line (`alone`, eval prompt `numerical_alone_v1`), and setup + SymPy only for Maths (no Maths book indexed). Files: `num-gemma4-e2b-dev-20261021-1140-rescored.json`, `num-gemma4-e2b-baseline-test-20261021-1200-rescored.json` (the `-rescored` files apply two bench-scoring fixes found in an audit of the runs: whole numbers must match exactly — "3999 m" had passed for 4000 — and a comparison is right when the right choice is named; the original files are kept).
+
+| What | Dev | Test (baseline, read once) | Validity |
+|---|---|---|---|
+| Science, full app path: ✓ shown and right | 11/14 (0.52–0.92) | 10/13 (0.50–0.92) | indicative, draft gold |
+| Science: **✓ shown on a wrong answer** | 0/11 | **1/11** (90 km/h → 6.94 m/s: the setup converted units by hand *and* gave km/h, so it was converted twice) | indicative |
+| Science: unsolved (safe message) | 3/14 | 2/13 (one was a mathcheck bug, below) | indicative |
+| Science: same model alone, right | 12/14 (0.60–0.96) | 13/13 (0.77–1.0) | indicative; the alone answer is never checked |
+| Maths setup only: ✓ right / ✓ wrong | 4/5 / 0 | 2/3 / 1 (both angles shown, not the asked smaller one) | indicative, n tiny |
+| Not-numerical questions answered normally | 2/2 | 1/1 | indicative |
+| First text shown after tapping Solve | p50 23.6 s, p95 42.8 s (dev + test, n = 30) | | **invalid as a benchmark**: ~1 GB RAM free, other apps open; direction only |
+
+Bug found by the run and fixed after it (21 Oct): an unknown named `s` could not be solved next to SymPy's unit second (also `s`), so a correct setup ("s = v * t") came back "no solution"; unknowns are now real-valued symbols (`mathcheck.symbol`, regression test). Offline simulation on the saved runs, not a run: showing the ✓ only when the calculator's answer agrees with the model's own answer would have removed both wrong ✓ in test and kept every right one; on dev it would have removed one right ✓ (60 650 m, model alone said 60 400). Designed after reading the test split, so it must be confirmed on fresh items.
+
 ## B. To do
 
 Priority: **P1** needed for the submission, **P2** if time allows, **P3** after the hackathon.

@@ -1,0 +1,1763 @@
+{
+ "label": "gemma4-e2b",
+ "run_at": "2026-10-21T11:40:56",
+ "split": "dev",
+ "items_file": "eval\\datasets\\num\\numerical.jsonl",
+ "db_path": "data\\eval-run.db",
+ "model_path": "C:/Users/ishan/.ollama/models/blobs/sha256-6dd7ac24fe13a238898e16e253ebc7a72fa27fb83f2658c2f6c241df3af5937d",
+ "setup_prompt": "maths_setup_v2",
+ "explain_prompt": "system_v3_numerical",
+ "alone_prompt": "numerical_alone_v1.md",
+ "verified_items": 0,
+ "items": 21,
+ "resumed": true,
+ "summary": {
+  "solve": {
+   "items": 14,
+   "outcomes": {
+    "checked_right": 11,
+    "unsolved": 3
+   },
+   "right": {
+    "hits": 11,
+    "n": 14,
+    "rate": 0.786,
+    "ci95": [
+     0.524,
+     0.924
+    ]
+   },
+   "wrong_among_checked": {
+    "hits": 0,
+    "n": 11,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.259
+    ]
+   },
+   "not_numerical_answered_plainly": {
+    "hits": 2,
+    "n": 2,
+    "rate": 1.0,
+    "ci95": [
+     0.342,
+     1.0
+    ]
+   },
+   "first_shown_s": {
+    "p50": 27.14,
+    "p95": 45.45
+   },
+   "total_s": {
+    "p50": 55.86,
+    "p95": 88.9
+   }
+  },
+  "setup": {
+   "items": 5,
+   "outcomes": {
+    "checked_right": 4,
+    "unsolved": 1
+   },
+   "right": {
+    "hits": 4,
+    "n": 5,
+    "rate": 0.8,
+    "ci95": [
+     0.376,
+     0.964
+    ]
+   },
+   "wrong_among_checked": {
+    "hits": 0,
+    "n": 4,
+    "rate": 0.0,
+    "ci95": [
+     0.0,
+     0.49
+    ]
+   }
+  },
+  "alone": {
+   "items": 19,
+   "outcomes": {
+    "right": 16,
+    "wrong": 3
+   },
+   "right": {
+    "hits": 16,
+    "n": 19,
+    "rate": 0.842,
+    "ci95": [
+     0.624,
+     0.945
+    ]
+   },
+   "wrong_among_checked": null
+  }
+ },
+ "results": [
+  {
+   "id": "num-b01",
+   "group": "book",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "What is the acceleration of a car which started from rest and acquired a velocity of 40 m/s in 8 s?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "5",
+     "unit": "m/s^2"
+    }
+   ],
+   "gold_pages": [
+    129
+   ],
+   "origin": "book",
+   "forced_split": "dev",
+   "why_dev": "used in the 20 Oct prompt trials",
+   "verified": false,
+   "split": "dev",
+   "arm": "solve",
+   "outcome": "checked_right",
+   "math_status": "solved",
+   "reason": null,
+   "answers": [
+    [
+     "5",
+     "m/s^2"
+    ]
+   ],
+   "text": "**Acceleration** is the rate at which velocity changes over time, which is calculated by dividing the change in velocity by the time taken [S1], [S2].\n\n1. We write the formula for acceleration, where v is the final velocity, u is the initial velocity, and t is the time taken [S2].\n   a = (v - u)/t\n2. The car starts from rest, so the initial velocity u is 0; we put the given values into the formula.\n   a = (40 - 0)/8\n3. We calculate the result by subtracting the initial velocity from the final velocity and then dividing by the time.\n   a = 5 m/s²\n\n**Answer: 5 m/s²**",
+   "raw_text": null,
+   "cited_pages": [
+    129,
+    126
+   ],
+   "first_shown_s": 42.19,
+   "total_s": 67.38
+  },
+  {
+   "id": "num-b01",
+   "group": "book",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "What is the acceleration of a car which started from rest and acquired a velocity of 40 m/s in 8 s?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "5",
+     "unit": "m/s^2"
+    }
+   ],
+   "gold_pages": [
+    129
+   ],
+   "origin": "book",
+   "forced_split": "dev",
+   "why_dev": "used in the 20 Oct prompt trials",
+   "verified": false,
+   "split": "dev",
+   "arm": "alone",
+   "outcome": "right",
+   "answers": [
+    [
+     "5",
+     "m/s^2"
+    ]
+   ],
+   "text": "Here is the step-by-step solution:\n\n1.  **Identify the knowns:** Initial velocity ($u$) = $0 \\text{ m/s}$ (started from rest), Final velocity ($v$) = $40 \\text{ m/s}$, Time ($t$) = $8 \\text{ s}$.\n2.  **Identify the unknown:** Acceleration ($a$).\n3.  **Apply the first equation of motion:** Use the formula $v = u + at$.\n4.  **Rearrange and solve for acceleration:** $a = (v - u) / t$.\n5.  **Calculate the result:** $a = (40 \\text{ m/s} - 0 \\text{ m/s}) / 8 \\text{ s} = 40 / 8 \\text{ m/s}^2 = 5 \\text{ m/s}^2$.\n\nFINAL: a = 5 m/s^2",
+   "total_s": 28.1
+  },
+  {
+   "id": "num-b02",
+   "group": "book",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "What is the displacement of a car in 30 s if it is travelling with a velocity of 15 m/s?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "450",
+     "unit": "m"
+    }
+   ],
+   "gold_pages": [
+    129
+   ],
+   "origin": "book",
+   "forced_split": "dev",
+   "why_dev": "used in the 20 Oct prompt trials",
+   "verified": false,
+   "split": "dev",
+   "arm": "solve",
+   "outcome": "checked_right",
+   "math_status": "solved",
+   "reason": null,
+   "answers": [
+    [
+     "450",
+     "m"
+    ]
+   ],
+   "text": "**Displacement** is the shortest straight-line distance between the starting point and the final point, and we calculate it by multiplying the **velocity** by the **time** [S2].\n\n1. We write the formula for displacement, which is velocity multiplied by time.\n   d = v × t\n2. We substitute the given velocity (15 m/s) and time (30 s) into the formula.\n   d = 15 × 30\n3. We multiply the numbers to find the displacement, which is 450 metres.\n   d = 450 m\n\n**Answer: 450 m**",
+   "raw_text": null,
+   "cited_pages": [
+    122
+   ],
+   "first_shown_s": 17.8,
+   "total_s": 39.67
+  },
+  {
+   "id": "num-b02",
+   "group": "book",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "What is the displacement of a car in 30 s if it is travelling with a velocity of 15 m/s?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "450",
+     "unit": "m"
+    }
+   ],
+   "gold_pages": [
+    129
+   ],
+   "origin": "book",
+   "forced_split": "dev",
+   "why_dev": "used in the 20 Oct prompt trials",
+   "verified": false,
+   "split": "dev",
+   "arm": "alone",
+   "outcome": "right",
+   "answers": [
+    [
+     "450",
+     "m"
+    ]
+   ],
+   "text": "Here is the step-by-step solution:\n\n1.  **Identify the given values:** Time ($t$) = $30 \\text{ s}$, Velocity ($v$) = $15 \\text{ m/s}$.\n2.  **Identify the required quantity:** Displacement ($\\Delta x$).\n3.  **Apply the relevant formula:** For constant velocity, displacement is calculated as $\\text{Displacement} = \\text{Velocity} \\times \\text{Time}$.\n4.  **Calculate the displacement:** $\\Delta x = 15 \\text{ m/s} \\times 30 \\text{ s} = 450 \\text{ m}$.\n\nFINAL: Displacement = 450 m",
+   "total_s": 21.71
+  },
+  {
+   "id": "num-b03",
+   "group": "book",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "Find the area of a classroom of length 5 m and breadth 4 m.",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "20",
+     "unit": "m^2"
+    }
+   ],
+   "gold_pages": [
+    110
+   ],
+   "origin": "book",
+   "forced_split": "dev",
+   "why_dev": "used in the 20 Oct prompt trials",
+   "verified": false,
+   "split": "dev",
+   "arm": "solve",
+   "outcome": "checked_right",
+   "math_status": "solved",
+   "reason": null,
+   "answers": [
+    [
+     "20",
+     "m^2"
+    ]
+   ],
+   "text": "To find the **area** of a rectangle, we multiply its **length** by its **breadth** [S1].\n\n1. We write the formula for the area of a rectangle, which is area equals length multiplied by breadth.\n   A = l × b\n2. We substitute the given values for length (5 m) and breadth (4 m) into the formula.\n   A = 5 × 4\n3. We multiply the numbers to find the area, and the unit will be in square metres.\n   A = 20 m²\n\n**Answer: 20 m²**",
+   "raw_text": null,
+   "cited_pages": [
+    110
+   ],
+   "first_shown_s": 16.89,
+   "total_s": 38.14
+  },
+  {
+   "id": "num-b03",
+   "group": "book",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "Find the area of a classroom of length 5 m and breadth 4 m.",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "20",
+     "unit": "m^2"
+    }
+   ],
+   "gold_pages": [
+    110
+   ],
+   "origin": "book",
+   "forced_split": "dev",
+   "why_dev": "used in the 20 Oct prompt trials",
+   "verified": false,
+   "split": "dev",
+   "arm": "alone",
+   "outcome": "right",
+   "answers": [
+    [
+     "20",
+     "m^2"
+    ]
+   ],
+   "text": "The area of a rectangle (classroom) is calculated by multiplying its length by its breadth.\nArea = Length $\\times$ Breadth\nArea = $5 \\text{ m} \\times 4 \\text{ m}$\nArea = $20 \\text{ m}^2$\n\nFINAL: Area = 20 m^2",
+   "total_s": 11.12
+  },
+  {
+   "id": "num-b04",
+   "group": "book",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "What is the volume of a block of length 0.2 m, breadth 0.01 m and height 0.05 m?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "0.0001",
+     "unit": "m^3"
+    }
+   ],
+   "gold_pages": [
+    112
+   ],
+   "origin": "book",
+   "forced_split": "dev",
+   "why_dev": "used in the 20 Oct prompt trials",
+   "verified": false,
+   "split": "dev",
+   "arm": "solve",
+   "outcome": "checked_right",
+   "math_status": "solved",
+   "reason": null,
+   "answers": [
+    [
+     "1/10000",
+     "m^3"
+    ]
+   ],
+   "text": "To find the **volume** of a rectangular block, we multiply its length, breadth, and height [S1].\n\n1. We write the formula for volume, which is length multiplied by breadth multiplied by height.\n   V = l × b × h\n2. We substitute the given values for length, breadth, and height into the formula.\n   V = 0.2 × 0.01 × 0.05\n3. We multiply the numbers together to find the volume, and the unit is cubic metres.\n   V = 0.0001 m³\n\n**Answer: 0.0001 m³**",
+   "raw_text": null,
+   "cited_pages": [
+    112
+   ],
+   "first_shown_s": 23.58,
+   "total_s": 48.98
+  },
+  {
+   "id": "num-b04",
+   "group": "book",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "What is the volume of a block of length 0.2 m, breadth 0.01 m and height 0.05 m?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "0.0001",
+     "unit": "m^3"
+    }
+   ],
+   "gold_pages": [
+    112
+   ],
+   "origin": "book",
+   "forced_split": "dev",
+   "why_dev": "used in the 20 Oct prompt trials",
+   "verified": false,
+   "split": "dev",
+   "arm": "alone",
+   "outcome": "right",
+   "answers": [
+    [
+     "0.0001",
+     "m^3"
+    ]
+   ],
+   "text": "The volume of a rectangular block is calculated by multiplying its length, breadth, and height.\nVolume $V = \\text{length} \\times \\text{breadth} \\times \\text{height}$.\n$V = 0.2 \\, \\text{m} \\times 0.01 \\, \\text{m} \\times 0.05 \\, \\text{m}$.\n$V = 0.002 \\, \\text{m}^2 \\times 0.05 \\, \\text{m}$.\n$V = 0.0001 \\, \\text{m}^3$.\n\nFINAL: Volume = $0.0001 \\, \\text{m}^3$",
+   "total_s": 22.04
+  },
+  {
+   "id": "num-b05",
+   "group": "book",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "A food packet dropped from a helicopter reaches the ground in 5 s. If the velocity with which it hits the ground is 50 m/s, what is the acceleration?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "10",
+     "unit": "m/s^2"
+    }
+   ],
+   "gold_pages": [
+    126
+   ],
+   "origin": "book",
+   "forced_split": "dev",
+   "why_dev": "used in the 20 Oct prompt trials",
+   "verified": false,
+   "split": "dev",
+   "arm": "solve",
+   "outcome": "checked_right",
+   "math_status": "solved",
+   "reason": null,
+   "answers": [
+    [
+     "10",
+     "m/s^2"
+    ]
+   ],
+   "text": "We use the formula that relates **final velocity** (v), **initial velocity** (u), **acceleration** (a), and **time** (t) [S1].\n\n1. We write the first equation, which shows how final velocity is calculated using initial velocity, acceleration, and time.\n   v = u + a × t\n2. We rearrange the formula to solve for acceleration, which is what we need to find.\n   a = (v - u)/t\n3. We put the given values for final velocity (v), initial velocity (u), and time (t) into the formula.\n   a = (50 - 0)/5\n4. We calculate the result to find the acceleration in metres per second squared.\n   a = 10 m/s²\n\n**Answer: 10 m/s²**",
+   "raw_text": null,
+   "cited_pages": [
+    126
+   ],
+   "first_shown_s": 34.91,
+   "total_s": 77.1
+  },
+  {
+   "id": "num-b05",
+   "group": "book",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "A food packet dropped from a helicopter reaches the ground in 5 s. If the velocity with which it hits the ground is 50 m/s, what is the acceleration?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "10",
+     "unit": "m/s^2"
+    }
+   ],
+   "gold_pages": [
+    126
+   ],
+   "origin": "book",
+   "forced_split": "dev",
+   "why_dev": "used in the 20 Oct prompt trials",
+   "verified": false,
+   "split": "dev",
+   "arm": "alone",
+   "outcome": "right",
+   "answers": [
+    [
+     "10",
+     "m/s^2"
+    ]
+   ],
+   "text": "Here is the step-by-step solution:\n\n1.  **Identify the knowns:**\n    *   Time ($t$) = $5 \\text{ s}$\n    *   Final velocity ($v$) = $50 \\text{ m/s}$\n    *   Initial velocity ($u$) = $0 \\text{ m/s}$ (since it was dropped)\n\n2.  **Identify the unknown:**\n    *   Acceleration ($a$)\n\n3.  **Apply the first equation of motion:** Use the formula $v = u + at$.\n\n4.  **Solve for acceleration:** Rearrange the formula to $a = (v - u) / t$.\n    *   $a = (50 \\text{ m/s} - 0 \\text{ m/s}) / 5 \\text{ s}$\n    *   $a = 50 / 5 \\text{ m/s}^2$\n    *   $a = 10 \\text{ m/s}^2$\n\nFINAL: a = 10 m/s^2",
+   "total_s": 44.23
+  },
+  {
+   "id": "num-v01",
+   "group": "variant",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "A bicycle starts from rest and reaches 6 m/s in 3 s. What is its acceleration?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "2",
+     "unit": "m/s^2"
+    }
+   ],
+   "gold_pages": [
+    125,
+    126
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "dev",
+   "arm": "solve",
+   "outcome": "checked_right",
+   "math_status": "solved",
+   "reason": null,
+   "answers": [
+    [
+     "2",
+     "m/s^2"
+    ]
+   ],
+   "text": "**Acceleration** is the change in velocity divided by the time taken [S1].\n\n1. We write the formula for acceleration, where v is the final velocity, u is the initial velocity, and t is the time taken [S1].\n   a = (v - u)/t\n2. The bicycle starts from rest, so u is 0; we put the given values into the formula.\n   a = (6 - 0)/3\n3. We calculate the result to find the acceleration in metres per second squared.\n   a = 2 m/s²\n\n**Answer: 2 m/s²**",
+   "raw_text": null,
+   "cited_pages": [
+    129
+   ],
+   "first_shown_s": 30.55,
+   "total_s": 59.76
+  },
+  {
+   "id": "num-v01",
+   "group": "variant",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "A bicycle starts from rest and reaches 6 m/s in 3 s. What is its acceleration?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "2",
+     "unit": "m/s^2"
+    }
+   ],
+   "gold_pages": [
+    125,
+    126
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "dev",
+   "arm": "alone",
+   "outcome": "right",
+   "answers": [
+    [
+     "2",
+     "m/s^2"
+    ]
+   ],
+   "text": "The initial velocity ($u$) is $0 \\text{ m/s}$.\nThe final velocity ($v$) is $6 \\text{ m/s}$.\nThe time ($t$) taken is $3 \\text{ s}$.\nAcceleration ($a$) is calculated using the formula $a = (v - u) / t$.\n$a = (6 \\text{ m/s} - 0 \\text{ m/s}) / 3 \\text{ s} = 6 / 3 \\text{ m/s}^2 = 2 \\text{ m/s}^2$.\n\nFINAL: acceleration = 2 m/s^2",
+   "total_s": 28.35
+  },
+  {
+   "id": "num-v04",
+   "group": "variant",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "A runner covers 400 m in 50 s. What is her speed?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "8",
+     "unit": "m/s"
+    }
+   ],
+   "gold_pages": [
+    121,
+    122
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "dev",
+   "arm": "solve",
+   "outcome": "checked_right",
+   "math_status": "solved",
+   "reason": null,
+   "answers": [
+    [
+     "8",
+     "m/s"
+    ]
+   ],
+   "text": "Speed is calculated by dividing the **distance** covered by the **time** taken to cover that distance [S1].\n\n1. We write the formula for speed, which is distance divided by time.\n   v = d/t\n2. We put the given distance (400 m) and time (50 s) into the formula.\n   v = 400/50\n3. We calculate the result to find the speed in metres per second.\n   v = 8 m/s\n\n**Answer: 8 m/s**",
+   "raw_text": null,
+   "cited_pages": [
+    123
+   ],
+   "first_shown_s": 27.14,
+   "total_s": 56.18
+  },
+  {
+   "id": "num-v04",
+   "group": "variant",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "A runner covers 400 m in 50 s. What is her speed?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "8",
+     "unit": "m/s"
+    }
+   ],
+   "gold_pages": [
+    121,
+    122
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "dev",
+   "arm": "alone",
+   "outcome": "right",
+   "answers": [
+    [
+     "8",
+     "m/s"
+    ]
+   ],
+   "text": "Speed is calculated by dividing the distance covered by the time taken.\nSpeed = Distance / Time\nSpeed = 400 m / 50 s\nSpeed = 8 m/s\n\nFINAL: Speed = 8 m/s",
+   "total_s": 13.69
+  },
+  {
+   "id": "num-v05",
+   "group": "variant",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "A car slows down from 30 m/s to 10 m/s in 4 s. What is its acceleration?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "-5",
+     "unit": "m/s^2"
+    }
+   ],
+   "gold_pages": [
+    125,
+    126
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "dev",
+   "arm": "solve",
+   "outcome": "checked_right",
+   "math_status": "solved",
+   "reason": null,
+   "answers": [
+    [
+     "-5",
+     "m/s^2"
+    ]
+   ],
+   "text": "**Acceleration** is the rate at which velocity changes over time, calculated by finding the change in velocity divided by the time taken [S1].\n\n1. We write the formula for acceleration, where v is the final velocity, u is the initial velocity, and t is the time taken [S1].\n   a = (v - u)/t\n2. We substitute the given values into the formula: the final velocity is 10 m/s, the initial velocity is 30 m/s, and the time taken is 4 s.\n   a = (10 - 30)/4\n3. We calculate the result, which gives the acceleration as negative 5 metres per second squared.\n   a = -5 m/s²\n\n**Answer: -5 m/s²**",
+   "raw_text": null,
+   "cited_pages": [
+    129
+   ],
+   "first_shown_s": 28.84,
+   "total_s": 64.91
+  },
+  {
+   "id": "num-v05",
+   "group": "variant",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "A car slows down from 30 m/s to 10 m/s in 4 s. What is its acceleration?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "-5",
+     "unit": "m/s^2"
+    }
+   ],
+   "gold_pages": [
+    125,
+    126
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "dev",
+   "arm": "alone",
+   "outcome": "right",
+   "answers": [
+    [
+     "-5",
+     "m/s^2"
+    ]
+   ],
+   "text": "Step 1: Identify the given variables. Initial velocity ($u$) = $30 \\text{ m/s}$, final velocity ($v$) = $10 \\text{ m/s}$, and time ($t$) = $4 \\text{ s}$.\nStep 2: Use the formula for acceleration: $a = (v - u) / t$.\nStep 3: Calculate the change in velocity: $v - u = 10 \\text{ m/s} - 30 \\text{ m/s} = -20 \\text{ m/s}$.\nStep 4: Calculate the acceleration: $a = -20 \\text{ m/s} / 4 \\text{ s} = -5 \\text{ m/s}^2$.\n\nFINAL: acceleration = -5 m/s^2",
+   "total_s": 35.66
+  },
+  {
+   "id": "num-v13",
+   "group": "variant",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "Cyclist P rides 120 m at 6 m/s. Cyclist Q rides 150 m at 10 m/s. Who takes less time?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "20",
+     "unit": "s"
+    },
+    {
+     "value": "15",
+     "unit": "s"
+    }
+   ],
+   "gold_note": "Q takes less time (15 s against 20 s)",
+   "gold_pages": [
+    121,
+    122
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "dev",
+   "arm": "solve",
+   "outcome": "checked_right",
+   "math_status": "solved",
+   "reason": null,
+   "answers": [
+    [
+     "20",
+     "s"
+    ],
+    [
+     "15",
+     "s"
+    ]
+   ],
+   "text": "To find out who takes less time, we need to calculate the **time** taken for each cyclist using the formula: time = distance / speed [S2].\n\n1. We use the formula to find the time taken by Cyclist P, which is the distance covered by P divided by the speed of P.\n   tP = dP / vP\n2. We use the same formula to find the time taken by Cyclist Q, which is the distance covered by Q divided by the speed of Q.\n   tQ = dQ / vQ\n3. We calculate the time for P and Q to see how long it takes each cyclist to complete their ride.\n   tP = 20 s, tQ = 15 s\n\n**Answer: tP = 20 s, tQ = 15 s**",
+   "raw_text": null,
+   "cited_pages": [
+    123
+   ],
+   "first_shown_s": 35.89,
+   "total_s": 73.89
+  },
+  {
+   "id": "num-v13",
+   "group": "variant",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "Cyclist P rides 120 m at 6 m/s. Cyclist Q rides 150 m at 10 m/s. Who takes less time?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "20",
+     "unit": "s"
+    },
+    {
+     "value": "15",
+     "unit": "s"
+    }
+   ],
+   "gold_note": "Q takes less time (15 s against 20 s)",
+   "gold_pages": [
+    121,
+    122
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "dev",
+   "arm": "alone",
+   "outcome": "right",
+   "answers": [
+    [
+     "15",
+     "s"
+    ],
+    [
+     "20",
+     "s"
+    ]
+   ],
+   "text": "Here is the step-by-step solution:\n\n1.  **Calculate the time for Cyclist P ($t_P$):** Time = Distance / Speed.\n    $t_P = 120 \\text{ m} / 6 \\text{ m/s} = 20 \\text{ s}$.\n2.  **Calculate the time for Cyclist Q ($t_Q$):** Time = Distance / Speed.\n    $t_Q = 150 \\text{ m} / 10 \\text{ m/s} = 15 \\text{ s}$.\n3.  **Compare the times:** Since $15 \\text{ s} < 20 \\text{ s}$, Cyclist Q takes less time.\n\nFINAL: Cyclist Q takes less time (15 s vs 20 s)",
+   "total_s": 35.54
+  },
+  {
+   "id": "num-v14",
+   "group": "variant",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "A scooter moves at 10 m/s for 30 s, then speeds up uniformly to 20 m/s in 10 s. What total distance does it cover?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "450",
+     "unit": "m"
+    }
+   ],
+   "gold_note": "300 m + (10 + 20)/2 x 10 = 150 m",
+   "gold_pages": [
+    122,
+    126
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "dev",
+   "arm": "solve",
+   "outcome": "checked_right",
+   "math_status": "solved",
+   "reason": null,
+   "answers": [
+    [
+     "450",
+     "m"
+    ]
+   ],
+   "text": "To find the total distance covered, we need to calculate the distance covered in the first part of the journey and the distance covered in the second part, and then add them together [S2].\n\n1. We calculate the distance covered in the first part using the formula distance equals speed multiplied by time.\n   s1 = v1 * t1\n2. We calculate the distance covered in the second part using the formula for the distance covered when speed changes uniformly.\n   s2 = (v1 + v2) / 2 * t2\n3. We add the distance from the first part and the distance from the second part to get the total distance.\n   s = s1 + s2\n4. We put the calculated values into the total distance formula to find the final answer.\n   s = 450 m\n\n**Answer: 450 m**",
+   "raw_text": null,
+   "cited_pages": [
+    129
+   ],
+   "first_shown_s": 42.81,
+   "total_s": 88.9
+  },
+  {
+   "id": "num-v14",
+   "group": "variant",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "A scooter moves at 10 m/s for 30 s, then speeds up uniformly to 20 m/s in 10 s. What total distance does it cover?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "450",
+     "unit": "m"
+    }
+   ],
+   "gold_note": "300 m + (10 + 20)/2 x 10 = 150 m",
+   "gold_pages": [
+    122,
+    126
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "dev",
+   "arm": "alone",
+   "outcome": "right",
+   "answers": [
+    [
+     "450",
+     "m"
+    ]
+   ],
+   "text": "Here is the step-by-step solution:\n\n1.  **Calculate the distance covered in the first phase ($d_1$):**\n    Distance = Speed $\\times$ Time.\n    $d_1 = 10 \\, \\text{m/s} \\times 30 \\, \\text{s} = 300 \\, \\text{m}$.\n\n2.  **Calculate the distance covered in the second phase ($d_2$):**\n    The scooter accelerates uniformly from $u = 10 \\, \\text{m/s}$ to $v = 20 \\, \\text{m/s}$ over $t = 10 \\, \\text{s}$.\n    The distance covered is $d_2 = \\left(\\frac{u+v}{2}\\right) \\times t$.\n    $d_2 = \\left(\\frac{10 + 20}{2}\\right) \\times 10 = \\left(\\frac{30}{2}\\right) \\times 10 = 15 \\times 10 = 150 \\, \\text{m}$.\n\n3.  **Calculate the total distance ($D$):**\n    Total distance = $d_1 + d_2$.\n    $D = 300 \\, \\text{m} + 150 \\, \\text{m} = 450 \\, \\text{m}$.\n\nFINAL: Total distance covered is 450 m",
+   "total_s": 60.42
+  },
+  {
+   "id": "num-v15",
+   "group": "variant",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "How many kilograms is 2500 g?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "2.5",
+     "unit": "kg"
+    }
+   ],
+   "gold_pages": [
+    103,
+    108
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "dev",
+   "arm": "solve",
+   "outcome": "unsolved",
+   "math_status": "no_solution",
+   "reason": null,
+   "answers": [],
+   "text": "",
+   "raw_text": null,
+   "cited_pages": [
+    77,
+    105
+   ],
+   "first_shown_s": 12.31,
+   "total_s": 12.31
+  },
+  {
+   "id": "num-v15",
+   "group": "variant",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "How many kilograms is 2500 g?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "2.5",
+     "unit": "kg"
+    }
+   ],
+   "gold_pages": [
+    103,
+    108
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "dev",
+   "arm": "alone",
+   "outcome": "right",
+   "answers": [
+    [
+     "2.5",
+     "kg"
+    ]
+   ],
+   "text": "To convert grams (g) to kilograms (kg), we use the conversion factor that 1000 g = 1 kg.\nDivide the mass in grams by 1000 to get the mass in kilograms.\n$2500 \\text{ g} / 1000 \\text{ g/kg} = 2.5 \\text{ kg}$.\n\nFINAL: 2.5 kg",
+   "total_s": 15.73
+  },
+  {
+   "id": "num-u01",
+   "group": "user",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "A car starts from A and reaches B, which is 75m away, with a uniform speed of 25 m/s. Another car with a uniform speed of 30m/s starts from A and reaches B point C(where the distance Ac = 50m and CB = 70m). Which car reaches destination first?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "3",
+     "unit": "s"
+    },
+    {
+     "value": "4",
+     "unit": "s"
+    }
+   ],
+   "gold_note": "the first car (3 s against 4 s)",
+   "gold_pages": [
+    121,
+    122
+   ],
+   "origin": "user test 20 Oct",
+   "forced_split": "dev",
+   "why_dev": "the 20 Oct fixes were made on it",
+   "verified": false,
+   "split": "dev",
+   "arm": "solve",
+   "outcome": "unsolved",
+   "math_status": "many_solutions",
+   "reason": null,
+   "answers": [],
+   "text": "",
+   "raw_text": null,
+   "cited_pages": [
+    129,
+    122
+   ],
+   "first_shown_s": 23.64,
+   "total_s": 23.64
+  },
+  {
+   "id": "num-u01",
+   "group": "user",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "A car starts from A and reaches B, which is 75m away, with a uniform speed of 25 m/s. Another car with a uniform speed of 30m/s starts from A and reaches B point C(where the distance Ac = 50m and CB = 70m). Which car reaches destination first?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "3",
+     "unit": "s"
+    },
+    {
+     "value": "4",
+     "unit": "s"
+    }
+   ],
+   "gold_note": "the first car (3 s against 4 s)",
+   "gold_pages": [
+    121,
+    122
+   ],
+   "origin": "user test 20 Oct",
+   "forced_split": "dev",
+   "why_dev": "the 20 Oct fixes were made on it",
+   "verified": false,
+   "split": "dev",
+   "arm": "alone",
+   "outcome": "wrong",
+   "answers": [
+    [
+     "1",
+     "reaches"
+    ]
+   ],
+   "text": "Here is the step-by-step solution:\n\n1.  **Calculate time for Car 1 (A to B):** Distance $d_1 = 75 \\text{ m}$, Speed $v_1 = 25 \\text{ m/s}$. Time $t_1 = d_1 / v_1 = 75 / 25 = 3 \\text{ s}$.\n2.  **Calculate time for Car 2 (A to C):** Distance $d_2 = 50 \\text{ m}$, Speed $v_2 = 30 \\text{ m/s}$. Time $t_2 = d_2 / v_2 = 50 / 30 = 5/3 \\approx 1.67 \\text{ s}$.\n3.  **Determine the destination:** The problem implies both cars are aiming for point B (the initial destination mentioned for the first car). We need to check if Car 2 reaches B first.\n4.  **Calculate time for Car 2 (A to B via C):** The total distance for Car 2 to reach B is $d_{2B} = AC + CB = 50 \\text{ m} + 70 \\text{ m} = 120 \\text{ m}$. Time $t_{2B} = d_{2B} / v_2 = 120 / 30 = 4 \\text{ s}$.\n5.  **Compare times:** Car 1 reaches B at $t_1 = 3 \\text{ s}$. Car 2 reaches B at $t_{2B} = 4 \\text{ s}$.\n6.  **Conclusion:** Car 1 reaches the destination first.\n\nFINAL: Car 1 reaches first",
+   "total_s": 66.99
+  },
+  {
+   "id": "num-u02",
+   "group": "user",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "A car was at rest then gets to 20m/s and then to 100m/s within 5 and 10 seconds and then comes to rest after deaccerating uniformly for 20minutes calculate the distance covered.",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "60650",
+     "unit": "m"
+    }
+   ],
+   "gold_note": "50 + 600 + 60000 m (times read as 5 s and 10 s for the two stages)",
+   "gold_pages": [
+    126
+   ],
+   "origin": "user test 20 Oct",
+   "forced_split": "dev",
+   "why_dev": "the 20 Oct fixes were made on it",
+   "verified": false,
+   "split": "dev",
+   "arm": "solve",
+   "outcome": "checked_right",
+   "math_status": "solved",
+   "reason": null,
+   "answers": [
+    [
+     "60650",
+     "m"
+    ]
+   ],
+   "text": "To find the total **distance** covered, we need to calculate the distance covered in each time interval separately and then add them all up [S2].\n\n1. We calculate the distance covered in the first time interval using the formula for distance when acceleration is uniform.\n   d1 = (u + v1) / 2 * t1\n2. We calculate the distance covered in the second time interval using the same formula.\n   d2 = (v1 + v2) / 2 * t2\n3. We calculate the distance covered in the third time interval using the same formula.\n   d3 = (v2 + v3) / 2 * t3\n4. We add the distances from all the intervals to find the total distance covered.\n   d = d1 + d2 + d3\n5. This is the final total distance covered by the car.\n   d = 60650 m\n\n**Answer: 60650 m**",
+   "raw_text": null,
+   "cited_pages": [
+    122
+   ],
+   "first_shown_s": 45.45,
+   "total_s": 86.8
+  },
+  {
+   "id": "num-u02",
+   "group": "user",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "A car was at rest then gets to 20m/s and then to 100m/s within 5 and 10 seconds and then comes to rest after deaccerating uniformly for 20minutes calculate the distance covered.",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "60650",
+     "unit": "m"
+    }
+   ],
+   "gold_note": "50 + 600 + 60000 m (times read as 5 s and 10 s for the two stages)",
+   "gold_pages": [
+    126
+   ],
+   "origin": "user test 20 Oct",
+   "forced_split": "dev",
+   "why_dev": "the 20 Oct fixes were made on it",
+   "verified": false,
+   "split": "dev",
+   "arm": "alone",
+   "outcome": "wrong",
+   "answers": [
+    [
+     "60400",
+     "m"
+    ]
+   ],
+   "text": "Here is the step-by-step solution:\n\n**Phase 1: Acceleration from rest to 20 m/s**\nAssume constant acceleration $a_1$. Time taken $t_1$ is not explicitly given, but the problem implies a sequence of events. Let's assume the time taken to reach 20 m/s is $t_a$.\n\n**Phase 2: Acceleration from 20 m/s to 100 m/s**\nThe car reaches 100 m/s within 5 to 10 seconds. Let's assume the maximum time given, $t_2 = 10$ s, for calculation purposes, and assume constant acceleration $a_2$.\nUsing $v = u + at$: $100 = 20 + a_2(10) \\implies a_2 = 8$ m/s$^2$.\nDistance covered $d_2 = \\frac{20 + 100}{2} \\times 10 = 600$ m.\n\n**Phase 3: Deceleration from 100 m/s to rest**\nInitial velocity $u = 100$ m/s, final velocity $v = 0$ m/s, time $t_3 = 20$ minutes $= 1200$ s.\nUniform deceleration $a_3$: $0 = 100 + a_3(1200) \\implies a_3 = -\\frac{100}{1200} = -\\frac{1}{12}$ m/s$^2$.\nDistance covered $d_3 = \\frac{100 + 0}{2} \\times 1200 = 60,000$ m.\n\n**Total Distance Calculation**\nSince the time taken for the first phase is not specified, we must assume the simplest interpretation: the total distance is the sum of the distances covered during the acceleration phases, assuming the time intervals given (5-10s) apply to the transition between the speeds. If we assume the acceleration phases are instantaneous or negligible compared to the deceleration phase, the distance is dominated by the final phase. However, a complete solution requires defining the time for the first phase.\n\n*Revisiting the problem structure:* The problem describes three distinct stages. If we assume the time taken to reach 20 m/s is $t_1=5$ s (using the lower bound of the range), and the time to go from 20 to 100 m/s is $t_2=5$ s:\n1. $d_1 = \\frac{0 + 20}{2} \\times 5 = 50$ m.\n2. $d_2 = \\frac{20 + 100}{2} \\times 5 = 350$ m.\n3. $d_3 = 60,000$ m (calculated above).\nTotal distance $\\approx 50 + 350 + 60,000 = 60,400$ m.\n\nGiven the ambiguity, the most robust calculation is the distance covered during the deceleration phase, as it is fully defined.\n\nFINAL: Distance covered $\\approx 60,400$ m (based on assumed time intervals)",
+   "total_s": 123.54
+  },
+  {
+   "id": "num-u03",
+   "group": "user",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "A car goes from rest and reaches velocity 20 m/s in 30s and then reaches 100m/s velocity in 20s and then uniformly deaccerates at the 2m/s² find the distance travelled by the car",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "4000",
+     "unit": "m"
+    }
+   ],
+   "gold_note": "300 + 1200 + 2500 m (last stage: v^2 = u^2 + 2as)",
+   "gold_pages": [
+    126
+   ],
+   "origin": "user test 20 Oct",
+   "forced_split": "dev",
+   "why_dev": "the 20 Oct fixes were made on it",
+   "verified": false,
+   "split": "dev",
+   "arm": "solve",
+   "outcome": "unsolved",
+   "math_status": "setup_unreadable",
+   "reason": null,
+   "answers": [],
+   "text": "",
+   "raw_text": null,
+   "cited_pages": [
+    123,
+    122
+   ],
+   "first_shown_s": 41.24,
+   "total_s": 41.24
+  },
+  {
+   "id": "num-u03",
+   "group": "user",
+   "arms": [
+    "solve",
+    "alone"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "A car goes from rest and reaches velocity 20 m/s in 30s and then reaches 100m/s velocity in 20s and then uniformly deaccerates at the 2m/s² find the distance travelled by the car",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "4000",
+     "unit": "m"
+    }
+   ],
+   "gold_note": "300 + 1200 + 2500 m (last stage: v^2 = u^2 + 2as)",
+   "gold_pages": [
+    126
+   ],
+   "origin": "user test 20 Oct",
+   "forced_split": "dev",
+   "why_dev": "the 20 Oct fixes were made on it",
+   "verified": false,
+   "split": "dev",
+   "arm": "alone",
+   "outcome": "right",
+   "answers": [
+    [
+     "3999",
+     "m"
+    ]
+   ],
+   "text": "Here is the step-by-step solution:\n\n**Part 1: First phase (Acceleration)**\nInitial velocity $u_1 = 0$ m/s, final velocity $v_1 = 20$ m/s, time $t_1 = 30$ s.\nAcceleration $a_1 = (v_1 - u_1) / t_1 = (20 - 0) / 30 = 2/3$ m/s$^2$.\nDistance covered $d_1 = u_1 t_1 + \\frac{1}{2} a_1 t_1^2 = 0 + \\frac{1}{2} (2/3) (30)^2 = \\frac{1}{3} (900) = 300$ m.\n\n**Part 2: Second phase (Acceleration)**\nInitial velocity $u_2 = 20$ m/s, final velocity $v_2 = 100$ m/s, time $t_2 = 20$ s.\nAcceleration $a_2 = (v_2 - u_2) / t_2 = (100 - 20) / 20 = 80 / 20 = 4$ m/s$^2$.\nDistance covered $d_2 = u_2 t_2 + \\frac{1}{2} a_2 t_2^2 = (20)(20) + \\frac{1}{2} (4) (20)^2 = 400 + 2(400) = 400 + 800 = 1200$ m.\n\n**Part 3: Third phase (Deceleration)**\nInitial velocity $u_3 = 100$ m/s, final velocity $v_3 = 2$ m/s$^2$ (Note: This is acceleration, but the problem states \"decelerates at $2 \\text{ m/s}^2$\", implying $a_3 = -2$ m/s$^2$).\nAcceleration $a_3 = -2$ m/s$^2$.\nWe find the time $t_3$ using $v_3 = u_3 + a_3 t_3$: $2 = 100 + (-2) t_3 \\implies 2 t_3 = 98 \\implies t_3 = 49$ s.\nDistance covered $d_3 = u_3 t_3 + \\frac{1}{2} a_3 t_3^2 = (100)(49) + \\frac{1}{2} (-2) (49)^2 = 4900 - 2401 = 2499$ m.\n\n**Total Distance**\nTotal distance $D = d_1 + d_2 + d_3 = 300 + 1200 + 2499 = 3999$ m.\n\nFINAL: Distance travelled = 3999 m",
+   "total_s": 121.79
+  },
+  {
+   "id": "num-n01",
+   "group": "not_numerical",
+   "arms": [
+    "solve"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "Why do we use SI units?",
+   "expected": "explain",
+   "gold": [],
+   "gold_pages": [
+    110
+   ],
+   "origin": "drafted",
+   "forced_split": "dev",
+   "why_dev": "used in the 20 Oct prompt trials",
+   "verified": false,
+   "split": "dev",
+   "arm": "solve",
+   "outcome": "answered_plain",
+   "math_status": "not_numerical",
+   "reason": null,
+   "answers": [],
+   "text": "We use **SI units** because they provide a standard way to measure things so that everyone in the world can understand measurements the same way [S1]. They help us be **consistent** when we talk about things like length, mass, and time [S2].\n\n- SI units are the standard system used for measuring quantities like length, mass, and time [S2].\n- They help us use the right units for different situations [S1].\n- They help us understand **derived units**, which are made by combining fundamental units like length and breadth to find things like area [S2].",
+   "raw_text": null,
+   "cited_pages": [
+    115,
+    110
+   ],
+   "first_shown_s": 24.83,
+   "total_s": 55.86
+  },
+  {
+   "id": "num-n03",
+   "group": "not_numerical",
+   "arms": [
+    "solve"
+   ],
+   "book_id": "up-a6e85934a8c3",
+   "lang": "en",
+   "question": "What is the difference between speed and velocity?",
+   "expected": "explain",
+   "gold": [],
+   "gold_pages": [
+    121,
+    122
+   ],
+   "origin": "drafted",
+   "verified": false,
+   "split": "dev",
+   "arm": "solve",
+   "outcome": "answered_plain",
+   "math_status": "not_numerical",
+   "reason": null,
+   "answers": [],
+   "text": "Speed and velocity are different because speed is about how much distance you cover in a certain time, while velocity considers the direction too [S2]. Speed is defined as the **distance travelled** in a unit of time [S2]. Velocity, on the other hand, is the **displacement** in that same unit of time [S2]. Velocity is a **vector quantity** [S1].\n\n- Speed only cares about the total distance covered.\n- Velocity cares about the straight-line distance from the start to the end point, which is the displacement [S1].\n- If a body travels in a straight line in the same direction, the distance and displacement will be equal [S2].",
+   "raw_text": null,
+   "cited_pages": [
+    121,
+    122
+   ],
+   "first_shown_s": 15.75,
+   "total_s": 53.56
+  },
+  {
+   "id": "num-x01",
+   "group": "maths_setup",
+   "arms": [
+    "setup",
+    "alone"
+   ],
+   "lang": "en",
+   "question": "The sum of three consecutive odd numbers is 33. What are the numbers?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "9",
+     "unit": ""
+    },
+    {
+     "value": "11",
+     "unit": ""
+    },
+    {
+     "value": "13",
+     "unit": ""
+    }
+   ],
+   "origin": "book (Maths Pt1 p 41)",
+   "forced_split": "dev",
+   "why_dev": "used in the 20 Oct prompt trials",
+   "verified": false,
+   "split": "dev",
+   "arm": "setup",
+   "outcome": "checked_right",
+   "math_status": "solved",
+   "answers": [
+    [
+     "9",
+     ""
+    ],
+    [
+     "11",
+     ""
+    ],
+    [
+     "13",
+     ""
+    ]
+   ],
+   "equations": [
+    "x + (x + 2) + (x + 4) = 33"
+   ],
+   "total_s": 12.62
+  },
+  {
+   "id": "num-x01",
+   "group": "maths_setup",
+   "arms": [
+    "setup",
+    "alone"
+   ],
+   "lang": "en",
+   "question": "The sum of three consecutive odd numbers is 33. What are the numbers?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "9",
+     "unit": ""
+    },
+    {
+     "value": "11",
+     "unit": ""
+    },
+    {
+     "value": "13",
+     "unit": ""
+    }
+   ],
+   "origin": "book (Maths Pt1 p 41)",
+   "forced_split": "dev",
+   "why_dev": "used in the 20 Oct prompt trials",
+   "verified": false,
+   "split": "dev",
+   "arm": "alone",
+   "outcome": "right",
+   "answers": [
+    [
+     "9",
+     ""
+    ],
+    [
+     "11",
+     ""
+    ],
+    [
+     "13",
+     ""
+    ]
+   ],
+   "text": "Let the three consecutive odd numbers be $n-2$, $n$, and $n+2$.\nTheir sum is $(n-2) + n + (n+2) = 3n$.\nWe are given that the sum is 33, so $3n = 33$.\nSolving for $n$, we get $n = 33 / 3 = 11$.\nThe three consecutive odd numbers are $11-2 = 9$, $11$, and $11+2 = 13$.\nCheck: $9 + 11 + 13 = 33$.\n\nFINAL: The numbers are 9, 11, and 13",
+   "total_s": 28.38
+  },
+  {
+   "id": "num-x03",
+   "group": "maths_setup",
+   "arms": [
+    "setup",
+    "alone"
+   ],
+   "lang": "en",
+   "question": "The sum of three consecutive even numbers is 36. What are the numbers?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "10",
+     "unit": ""
+    },
+    {
+     "value": "12",
+     "unit": ""
+    },
+    {
+     "value": "14",
+     "unit": ""
+    }
+   ],
+   "origin": "book (Maths Pt1 p 41)",
+   "verified": false,
+   "split": "dev",
+   "arm": "setup",
+   "outcome": "checked_right",
+   "math_status": "solved",
+   "answers": [
+    [
+     "10",
+     ""
+    ],
+    [
+     "12",
+     ""
+    ],
+    [
+     "14",
+     ""
+    ]
+   ],
+   "equations": [
+    "x + (x + 2) + (x + 4) = 36"
+   ],
+   "total_s": 10.7
+  },
+  {
+   "id": "num-x03",
+   "group": "maths_setup",
+   "arms": [
+    "setup",
+    "alone"
+   ],
+   "lang": "en",
+   "question": "The sum of three consecutive even numbers is 36. What are the numbers?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "10",
+     "unit": ""
+    },
+    {
+     "value": "12",
+     "unit": ""
+    },
+    {
+     "value": "14",
+     "unit": ""
+    }
+   ],
+   "origin": "book (Maths Pt1 p 41)",
+   "verified": false,
+   "split": "dev",
+   "arm": "alone",
+   "outcome": "right",
+   "answers": [
+    [
+     "10",
+     ""
+    ],
+    [
+     "12",
+     ""
+    ],
+    [
+     "14",
+     ""
+    ]
+   ],
+   "text": "Let the three consecutive even numbers be $n-2$, $n$, and $n+2$.\nTheir sum is $(n-2) + n + (n+2) = 3n$.\nWe are given that the sum is 36, so $3n = 36$.\nSolving for $n$, we get $n = 36 / 3 = 12$.\nThe three numbers are $12-2 = 10$, $12$, and $12+2 = 14$.\nCheck: $10 + 12 + 14 = 36$.\n\nFINAL: The numbers are 10, 12, and 14",
+   "total_s": 25.0
+  },
+  {
+   "id": "num-x04",
+   "group": "maths_setup",
+   "arms": [
+    "setup",
+    "alone"
+   ],
+   "lang": "en",
+   "question": "The perimeter of a rectangle is 80 metres and its length is one metre more than twice the breadth. What are its length and breadth?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "27",
+     "unit": ""
+    },
+    {
+     "value": "13",
+     "unit": ""
+    }
+   ],
+   "origin": "book (Maths Pt1 p 41)",
+   "forced_split": "dev",
+   "why_dev": "used in the 20 Oct prompt trials",
+   "verified": false,
+   "split": "dev",
+   "arm": "setup",
+   "outcome": "checked_right",
+   "math_status": "solved",
+   "answers": [
+    [
+     "27",
+     "metres"
+    ],
+    [
+     "13",
+     "metres"
+    ]
+   ],
+   "equations": [
+    "2l + 2b = 80",
+    "l = 2b + 1"
+   ],
+   "total_s": 12.89
+  },
+  {
+   "id": "num-x04",
+   "group": "maths_setup",
+   "arms": [
+    "setup",
+    "alone"
+   ],
+   "lang": "en",
+   "question": "The perimeter of a rectangle is 80 metres and its length is one metre more than twice the breadth. What are its length and breadth?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "27",
+     "unit": ""
+    },
+    {
+     "value": "13",
+     "unit": ""
+    }
+   ],
+   "origin": "book (Maths Pt1 p 41)",
+   "forced_split": "dev",
+   "why_dev": "used in the 20 Oct prompt trials",
+   "verified": false,
+   "split": "dev",
+   "arm": "alone",
+   "outcome": "right",
+   "answers": [
+    [
+     "27",
+     "m"
+    ],
+    [
+     "13",
+     "m"
+    ]
+   ],
+   "text": "Let $L$ be the length and $B$ be the breadth of the rectangle.\nThe perimeter $P$ is given by $P = 2(L + B) = 80$ m.\nFrom the perimeter equation, $L + B = \\frac{80}{2} = 40$ (Equation 1).\nThe length is one metre more than twice the breadth, so $L = 2B + 1$ (Equation 2).\nSubstitute Equation 2 into Equation 1:\n$(2B + 1) + B = 40$\n$3B + 1 = 40$\n$3B = 39$\n$B = 13$ metres.\nNow find the length using Equation 2:\n$L = 2(13) + 1 = 26 + 1 = 27$ metres.\nCheck the perimeter: $2(27 + 13) = 2(40) = 80$ m.\n\nFINAL: Length = 27 m, Breadth = 13 m",
+   "total_s": 44.89
+  },
+  {
+   "id": "num-x06",
+   "group": "maths_setup",
+   "arms": [
+    "setup",
+    "alone"
+   ],
+   "lang": "en",
+   "question": "The price of a book is 4 rupees more than the price of a pen. The price of a pencil is 2 rupees less than the price of the pen. The total price of 5 books, 2 pens and 3 pencils is 74 rupees. What is the price of each?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "10",
+     "unit": ""
+    },
+    {
+     "value": "6",
+     "unit": ""
+    },
+    {
+     "value": "4",
+     "unit": ""
+    }
+   ],
+   "origin": "book (Maths Pt1 p 41)",
+   "forced_split": "dev",
+   "why_dev": "used in the trials; the setup prompt's age example has the same shape",
+   "verified": false,
+   "split": "dev",
+   "arm": "setup",
+   "outcome": "checked_right",
+   "math_status": "solved",
+   "answers": [
+    [
+     "10",
+     "rupees"
+    ],
+    [
+     "6",
+     "rupees"
+    ],
+    [
+     "4",
+     "rupees"
+    ]
+   ],
+   "equations": [
+    "b = p + 4",
+    "c = p - 2",
+    "5b + 2p + 3c = 74"
+   ],
+   "total_s": 16.0
+  },
+  {
+   "id": "num-x06",
+   "group": "maths_setup",
+   "arms": [
+    "setup",
+    "alone"
+   ],
+   "lang": "en",
+   "question": "The price of a book is 4 rupees more than the price of a pen. The price of a pencil is 2 rupees less than the price of the pen. The total price of 5 books, 2 pens and 3 pencils is 74 rupees. What is the price of each?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "10",
+     "unit": ""
+    },
+    {
+     "value": "6",
+     "unit": ""
+    },
+    {
+     "value": "4",
+     "unit": ""
+    }
+   ],
+   "origin": "book (Maths Pt1 p 41)",
+   "forced_split": "dev",
+   "why_dev": "used in the trials; the setup prompt's age example has the same shape",
+   "verified": false,
+   "split": "dev",
+   "arm": "alone",
+   "outcome": "right",
+   "answers": [
+    [
+     "10",
+     "rupees"
+    ],
+    [
+     "6",
+     "rupees"
+    ],
+    [
+     "4",
+     "rupees"
+    ]
+   ],
+   "text": "Let $P$ be the price of a pen.\nThe price of a book ($B$) is $P + 4$.\nThe price of a pencil ($C$) is $P - 2$.\n\nThe total cost is: $5B + 2P + 3C = 74$.\nSubstitute the expressions in terms of $P$:\n$5(P + 4) + 2P + 3(P - 2) = 74$\n$5P + 20 + 2P + 3P - 6 = 74$\nCombine the terms with $P$:\n$(5P + 2P + 3P) + (20 - 6) = 74$\n$10P + 14 = 74$\nSubtract 14 from both sides:\n$10P = 74 - 14$\n$10P = 60$\nDivide by 10:\n$P = 6$ rupees.\n\nNow find the prices of the book and pencil:\nPrice of pen ($P$): 6 rupees.\nPrice of book ($B$): $6 + 4 = 10$ rupees.\nPrice of pencil ($C$): $6 - 2 = 4$ rupees.\n\nCheck the total cost: $5(10) + 2(6) + 3(4) = 50 + 12 + 12 = 74$ rupees. (Correct)\n\nFINAL: Price of book = 10 rupees, Price of pen = 6 rupees, Price of pencil = 4 rupees",
+   "total_s": 60.81
+  },
+  {
+   "id": "num-x07",
+   "group": "maths_setup",
+   "arms": [
+    "setup",
+    "alone"
+   ],
+   "lang": "en",
+   "question": "In a calendar, a square of four numbers is marked. The sum of the numbers is 80. What are the numbers?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "16",
+     "unit": ""
+    },
+    {
+     "value": "17",
+     "unit": ""
+    },
+    {
+     "value": "23",
+     "unit": ""
+    },
+    {
+     "value": "24",
+     "unit": ""
+    }
+   ],
+   "origin": "book (Maths Pt1 p 41)",
+   "forced_split": "dev",
+   "why_dev": "used in the 20 Oct prompt trials",
+   "verified": false,
+   "split": "dev",
+   "arm": "setup",
+   "outcome": "unsolved",
+   "math_status": "many_solutions",
+   "answers": [],
+   "equations": [
+    "n1 + n2 + n3 + n4 = 80"
+   ],
+   "total_s": 12.84
+  },
+  {
+   "id": "num-x07",
+   "group": "maths_setup",
+   "arms": [
+    "setup",
+    "alone"
+   ],
+   "lang": "en",
+   "question": "In a calendar, a square of four numbers is marked. The sum of the numbers is 80. What are the numbers?",
+   "expected": "solve",
+   "gold": [
+    {
+     "value": "16",
+     "unit": ""
+    },
+    {
+     "value": "17",
+     "unit": ""
+    },
+    {
+     "value": "23",
+     "unit": ""
+    },
+    {
+     "value": "24",
+     "unit": ""
+    }
+   ],
+   "origin": "book (Maths Pt1 p 41)",
+   "forced_split": "dev",
+   "why_dev": "used in the 20 Oct prompt trials",
+   "verified": false,
+   "split": "dev",
+   "arm": "alone",
+   "outcome": "wrong",
+   "answers": [
+    [
+     "20",
+     ""
+    ],
+    [
+     "20",
+     ""
+    ],
+    [
+     "20",
+     ""
+    ],
+    [
+     "20",
+     ""
+    ]
+   ],
+   "text": "Let the four numbers be $a, b, c, d$.\nWe are given that the sum of the numbers is 80: $a + b + c + d = 80$.\nSince the problem does not provide any other constraints (like the numbers being consecutive, in an arithmetic progression, or having a specific relationship), there are infinitely many possible sets of four numbers that sum to 80.\n\nAssuming the question implies a unique solution, it is likely missing information. However, in the context of simple puzzles, sometimes the simplest assumption is that the numbers are equal (i.e., a square implies all sides are equal).\n\nIf the numbers are equal: $a = b = c = d$.\nThen $4a = 80$.\n$a = 80 / 4 = 20$.\nThe numbers are 20, 20, 20, and 20.\n\nFINAL: The numbers are 20, 20, 20, and 20",
+   "total_s": 36.53
+  }
+ ]
+}

@@ -6,7 +6,7 @@ import { api, ApiError, askStream, type Book, type Citation } from './api.js';
 import { prefs } from './prefs.svelte.js';
 import { remember } from './session.svelte.js';
 
-export type Mode = 'explain' | 'simpler' | 'example' | 'story' | 'quiz' | 'summary' | 'solve';
+export type Mode = 'explain' | 'simpler' | 'example' | 'story' | 'quiz' | 'summary' | 'solve' | 'method';
 // "Solve step by step": the calculator's worked lines with the model's sentence under each.
 export type SolutionCard = {
 	idea: string;
@@ -48,6 +48,7 @@ export type Turn = {
 	notes?: Notes;
 	card?: SolutionCard;
 	mathStatus?: string; // "solved", or why the calculator could not check this problem
+	unsolved?: boolean; // the calculator could not take the problem: no model text, only pages
 	firstTurn: boolean;
 	approved?: boolean;
 };
@@ -208,7 +209,8 @@ function apply(turn: Turn, event: string, data: Record<string, any>): void {
 			language: data.language ?? turn.language,
 			mode: data.mode ?? turn.mode,
 			card: data.card ?? undefined,
-			mathStatus: data.math_status ?? undefined
+			mathStatus: data.math_status ?? undefined,
+			unsolved: data.unsolved ?? false
 		});
 	} else if (event === 'notes') {
 		turn.status = 'notes';

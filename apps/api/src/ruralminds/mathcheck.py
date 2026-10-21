@@ -303,12 +303,19 @@ def _real(solution: dict[sympy.Symbol, sympy.Expr]) -> bool:
     return all(_strip_units(value).is_real for value in solution.values())
 
 
+def symbol(name: str) -> sympy.Symbol:
+    """A real-valued symbol. A plain Symbol("s") cannot be solved for next to the unit second,
+    whose short name is also s: SymPy returned no solution for "s = v * t" (bench, 21 Oct).
+    School answers are real numbers anyway; complex roots are dropped by solve itself."""
+    return sympy.Symbol(name, real=True)
+
+
 def _setup(problem: Problem, limits: Limits) -> tuple[list[sympy.Eq], list[sympy.Symbol], dict]:
     if not 1 <= len(problem.unknowns) <= limits.max_unknowns:
         raise MathParseError(f"needs 1 to {limits.max_unknowns} unknowns")
     if len(problem.equations) > limits.max_unknowns:
         raise MathParseError("too many equations")
-    unknowns = [sympy.Symbol(name) for name in problem.unknowns]
+    unknowns = [symbol(name) for name in problem.unknowns]
     names: dict[str, sympy.Expr] = {str(symbol): symbol for symbol in unknowns}
     for name, quantity in problem.knowns:
         if name in names or not re.fullmatch(r"[A-Za-z][A-Za-z0-9_]*", name):
@@ -409,7 +416,7 @@ def _formula_steps(
     if left_text.strip() == str(unknown):  # already "d = v × t": substitute into it as written
         formula = _as_written(right_text, limits, implicit=False)
     else:
-        names = {name: sympy.Symbol(name) for name, _ in problem.knowns} | {str(unknown): unknown}
+        names = {name: symbol(name) for name, _ in problem.knowns} | {str(unknown): unknown}
         rearranged = sympy.solve(_equation(problem.equations[0], names, limits), unknown)
         if len(rearranged) != 1:
             return lines
@@ -432,7 +439,7 @@ def worked_steps(problem: Problem, answer: Answer, limits: Limits) -> tuple[str,
     """Worked lines for one equation in one unknown, ending with the answer; else ()."""
     if len(problem.equations) != 1:
         return ()
-    unknown = sympy.Symbol(problem.unknowns[0])
+    unknown = symbol(problem.unknowns[0])
     try:
         if problem.knowns:
             lines = _formula_steps(problem, unknown, answer, limits)

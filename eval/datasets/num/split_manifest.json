@@ -1,0 +1,8 @@
+{
+ "seed": "ruralminds-num-v1",
+ "counts": {
+  "dev": 21,
+  "test": 17
+ },
+ "test_sha256": "693f934e7a3fd1219e8cebdc007efec33333885fb225841087730409aaa42fe5"
+}

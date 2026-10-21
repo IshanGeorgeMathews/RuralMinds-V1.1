@@ -72,7 +72,9 @@ def _hit() -> RetrievedChunk:
     return RetrievedChunk(1, "sci8", "en", 9, "Motion", 129, 129, "Acceleration = (v - u)/t", 20)
 
 
-def _run_solve(monkeypatch, setup_reply: str, explain: str, language: str = "en") -> list[dict]:
+def _run_solve(
+    monkeypatch, setup_reply: str, explain: str, language: str = "en", mode: str = "solve"
+) -> list[dict]:
     calls: list[str] = []
 
     async def fake_complete(messages, client, max_tokens, grammar=None):
@@ -92,10 +94,11 @@ def _run_solve(monkeypatch, setup_reply: str, explain: str, language: str = "en"
     monkeypatch.setattr(numerical.mathcheck, "solve", in_process)
     conn = connect(":memory:")
     init_schema(conn)
-    request = AskRequest(QUESTION, language, "en", subject="science", document_id=1, mode="solve")
+    request = AskRequest(QUESTION, language, "en", subject="science", document_id=1, mode=mode)
+    answering = answer._solve if mode == "solve" else answer._method
 
     async def collect() -> list[dict]:
-        stream = answer._solve(conn, None, request, check_gate([_hit()]), [_hit()], Clock())
+        stream = answering(conn, None, request, check_gate([_hit()]), [_hit()], Clock())
         return [item async for item in stream]
 
     events = asyncio.run(collect())
@@ -120,38 +123,41 @@ def test_solved_problem_becomes_a_checked_card(monkeypatch) -> None:
 @pytest.mark.parametrize(
     ("setup_reply", "language", "status", "calls"),
     [
-        ("KIND: not_numerical", "en", "not_numerical", ["setup", "tutor"]),
-        ("KIND: algebraic\nUNKNOWNS: x\n", "en", "setup_unreadable", ["setup", "tutor"]),
+        ("KIND: algebraic\nUNKNOWNS: x\n", "en", "setup_unreadable", ["setup"]),
         (  # x + y = 10 with two unknowns: no single answer to show
             "KIND: algebraic\nUNKNOWNS: x, y\nEQUATION: x + y = 10\nASKED: x, y\nUNIT:\n",
             "en",
             "many_solutions",
-            ["setup", "tutor"],
+            ["setup"],
         ),
-        (SETUP_REPLY, "ml", "language_not_supported", ["tutor"]),
+        (SETUP_REPLY, "ml", "language_not_supported", []),  # no model call at all
     ],
 )
-def test_anything_unsolved_falls_back_to_the_method_without_a_number(
+def test_a_problem_the_calculator_cannot_take_gets_no_model_text(
     monkeypatch, setup_reply: str, language: str, status: str, calls: list[str]
 ) -> None:
-    tutor_answer = (
-        "പ്രവേഗത്തിലെ മാറ്റത്തെ സമയം കൊണ്ട് ഹരിക്കുക [S1]."  # the language check still applies
-        if language == "ml"
-        else "Divide the change in velocity by the time [S1]."
-    )
-    events = _run_solve(monkeypatch, setup_reply, tutor_answer, language)
-    final = events[-1]
+    # The method answer once said the faster car arrives first when it arrives last (20 Oct).
+    final = _run_solve(monkeypatch, setup_reply, "The faster car wins [S1].", language)[-1]
     assert final["event"] == "done" and final["calls"] == calls
-    assert final["data"]["math_status"] == status
-    assert "card" not in final["data"]
-    # Not streamed: only progress steps before the checked answer, so nothing is ever erased.
-    steps = [e["data"]["step"] for e in events[:-1]]
-    assert steps == (["method"] if language == "ml" else ["solving", "method"])
+    data = final["data"]
+    assert data["unsolved"] is True and data["text"] == "" and data["math_status"] == status
+    assert [c["page_start"] for c in data["citations"]] == [129]  # pages from our own index
 
 
-def test_unchecked_method_answer_is_refused_without_showing_any_text(monkeypatch) -> None:
-    events = _run_solve(monkeypatch, "KIND: not_numerical", "Divide distance by time.")
-    assert [e["event"] for e in events] == ["progress", "progress", "refused"]
+def test_nothing_to_calculate_gets_the_normal_answer(monkeypatch) -> None:
+    events = _run_solve(monkeypatch, "KIND: not_numerical", "SI units are shared by all [S1].")
+    final = events[-1]
+    assert final["calls"] == ["setup", "tutor"] and "token" in [e["event"] for e in events]
+    assert final["data"]["math_status"] == "not_numerical" and final["data"]["mode"] == "solve"
+    assert "unsolved" not in final["data"]
+
+
+def test_method_on_request_is_shown_only_after_its_checks(monkeypatch) -> None:
+    good = _run_solve(monkeypatch, "", "Divide the distance by the speed [S1].", mode="method")
+    assert [e["event"] for e in good] == ["progress", "done"]  # nothing streamed
+    assert good[-1]["calls"] == ["tutor"] and good[-1]["data"]["mode"] == "method"
+    uncited = _run_solve(monkeypatch, "", "Divide distance by time.", mode="method")
+    assert [e["event"] for e in uncited] == ["progress", "refused"]  # never shown, then erased
 
 
 def test_names_used_in_equations_become_unknowns() -> None:

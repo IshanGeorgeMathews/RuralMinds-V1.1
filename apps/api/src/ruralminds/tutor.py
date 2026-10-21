@@ -20,9 +20,10 @@ def load_prompt(name: str) -> str:
     return path.read_text(encoding="utf-8").split("\n---\n", 1)[1].strip()
 
 
-# "solve" comes only from the "Solve step by step" chip, never from detect_mode, so typed
-# questions (and the frozen eval) keep the tutor path (numerical.py, DECISIONS 2026-10-20).
-MODES = ("explain", "simpler", "example", "story", "quiz", "summary", "solve")
+# "solve" (the "Solve step by step" chip) and "method" (its "Show the method anyway" button)
+# come only from the phone, never from detect_mode, so typed questions and the frozen eval
+# keep the tutor path (numerical.py, DECISIONS 2026-10-20).
+MODES = ("explain", "simpler", "example", "story", "quiz", "summary", "solve", "method")
 
 # Phrases that ask for a kind of help, in English, Malayalam and Manglish. Order matters:
 # the first matching mode wins ("explain as a story" is a story, not a plain explanation).
@@ -178,9 +179,9 @@ _INSTRUCTIONS = {
         " or CHECK."
     ),
     "summary": 'Give the main ideas from these sources as 4 to 6 short "- " bullet points.',
-    # Used only when the calculator could not solve the problem: explain the method, and leave
-    # the numbers to the student rather than let a small model do arithmetic.
-    "solve": (
+    # Asked for only after the calculator could not take the problem; the phone warns that it
+    # may be wrong. The last sentence did not stop a wrong "which is first" claim (20 Oct).
+    "method": (
         "The student wants to solve this problem. Explain the rule or method from the sources"
         " step by step. Do not calculate anything and do not write any number that is not in"
         " the question. Never say what the result is or which choice is right (which is first,"
@@ -196,7 +197,7 @@ MAX_TOKENS = {
     "story": 420,
     "quiz": 320,
     "summary": 320,
-    "solve": 320,
+    "method": 320,
 }
 
 
