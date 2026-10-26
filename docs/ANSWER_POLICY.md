@@ -41,8 +41,14 @@ When the best retrieval score is below `REFUSAL_THRESHOLD`, or no retrieved chun
 - **Time-sensitive questions are refused** ("Who is the current President / Chief Minister / Prime Minister?", "this year's…"): office holders and current figures change, and the book only records what was true when it was printed. Refuse even when the book asks the same question as an activity, and even when the model "knows" an answer (18 Oct).
 
 ## 5. Maths safety
-- The model returns `expression` and `final_number` in JSON when there is arithmetic.
-- SymPy evaluates `expression`; if it doesn't equal `final_number`, replace the final number with the SymPy result and flag `math_corrected: true`, or fall back to showing steps without the final number.
+**As built: the "Solve step by step" chip** (Science numericals, English; DECISIONS 2026-10-20 and 2026-10-21). This replaces the original plan below.
+- The model writes the problem as equations in JSON: knowns with the question's own units, unknowns, and relations. It never writes conversion numbers. SymPy solves the equations and converts the units.
+- After the explanation, the same model solves the problem again on its own, ending with a FINAL line. "✓ Checked by the calculator" is shown only when every value the calculator shows also appears in that FINAL line (`agreement.py`).
+- When the problem cannot be set up or solved, or the two answers disagree, **no answer is shown**. The phone shows a fixed message, the pages that may help, and "Show the method anyway".
+- The method fallback is written without the calculator. It is labelled "written by AI without the calculator, may be wrong".
+- A Malayalam answer language gets the fixed message: step-by-step solving is English only until a Malayalam slice passes.
+
+*Original plan (not built):* the model returns `expression` and `final_number` in JSON; SymPy evaluates `expression`, and if it doesn't equal `final_number`, the final number is replaced with the SymPy result and flagged `math_corrected: true`.
 
 ## 6. Prerequisite fallback (later phase)
 If a student fails the same step twice, retrieve the prerequisite concept from a lower grade's book and explain that first.

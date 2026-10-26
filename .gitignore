@@ -28,6 +28,7 @@ coverage/
 
 # Downloaded model weights and Hugging Face caches; never commit these.
 models/
+*.gguf
 bge-m3-weights/
 bge-reranker-weights/
 **/.cache/
@@ -44,6 +45,7 @@ eval/data/
 
 # School documents and local document-ingestion fixtures.
 *.pdf
+*.part
 data/documents/
 
 # Local data / generated files
@@ -84,8 +86,12 @@ implementation/Claude_ruralminds/
 # Server and API logs (may contain student questions)
 logs/
 
-# Self-authored eval sets stay local until redistribution rights are confirmed (eval/README.md)
+# v1 draft eval sets stay local (eval/README.md). The v2 and numerical sets in
+# eval/datasets/v2/ and eval/datasets/num/ are tracked. Third-party items (IndicQuest)
+# and human grading/review sheets live in data/eval-private/ (ignored above).
 eval/datasets/*.jsonl
+# Grading or review sheets written anywhere under eval/ by mistake
+eval/**/*.csv
 
 # Research reports and notes (private; contain local paths)
 reports/
